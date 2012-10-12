@@ -94,6 +94,7 @@ h1, p {
     font-weight: bold;
     pointer-events: none;
     white-space: nowrap;
+    overflow: hidden;
 }
 
 #chatbutton {
