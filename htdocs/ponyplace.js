@@ -7,6 +7,10 @@
     var ponies = [
         'media/derpy_left_hover.gif',
         'media/derpy_right_hover.gif',
+        'media/spike_left.gif',
+        'media/spike_right.gif',
+        'media/spike_left_walk.gif',
+        'media/spike_right_walk.gif',
         'media/doctorwhooves_left.gif',
         'media/doctorwhooves_right.gif',
         'media/doctorwhooves_left_walk.gif',
