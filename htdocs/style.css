@@ -67,8 +67,7 @@ h1, p {
 #chatbox {
     position: absolute;
     left: 0;
-    right: 0;
-    width: 100%;
+    right: 75px;
     bottom: 2px;
     height: 16px;
     box-sizing: border-box;
@@ -77,6 +76,17 @@ h1, p {
     border: 1px solid black;
     border-radius: 3px;
     box-shadow: inset 1px 1px 3px #D3D3D3;
+}
+
+#chatbutton {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    height: 20px;
+    width: 75px;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
 }
 
 .pony {

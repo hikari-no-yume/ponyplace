@@ -43,7 +43,7 @@
     
     var socket, connected = false, me, users = {};
     
-    var container, stage, chooser, chooserbutton, background, chatbox;
+    var container, stage, chooser, chooserbutton, background, chatbox, chatbutton;
 
     function createPony(obj) {
         var elem = document.createElement('div');
@@ -125,6 +125,18 @@
             }
         };
         container.appendChild(chatbox);
+        
+        chatbutton = document.createElement('input');
+        chatbutton.type = 'submit';
+        chatbutton.value = 'Send';
+        chatbutton.id = 'chatbutton';
+        chatbutton.onclick = function (e) {
+            me.chat = chatbox.value;
+            chatbox.value = '';
+            pushState();
+            updatePony(me);
+        };
+        container.appendChild(chatbutton);
         
         chooserbutton = document.createElement('input');
         chooserbutton.id = 'chooser-button';
