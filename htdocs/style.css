@@ -103,6 +103,9 @@ h1, p {
     font-family: 'Comic Sans MS', sans-serif;
     color: black;
     margin: 2px;
+    position: relative;
+    left: -10px;
+    width: 148px;
 }
 .chatbubble:not(:empty) {
     border: 1px solid white;
