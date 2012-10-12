@@ -121,6 +121,9 @@
             updatePony(me);
             pushState();
         };
+        background.ondragstart = function () {
+            return false;
+        };
         stage.appendChild(background);
         
         chatbox = document.createElement('input');
