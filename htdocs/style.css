@@ -87,11 +87,10 @@ h1, p {
     left: 5px;
     bottom: 50px;
     height: 150px;
-    width: 400px;;
+    width: 100%;
     font-family: monospace;
     color: white;
     text-shadow: 2px 2px darkmagenta;
-    overflow: hidden;
     font-weight: bold;
     pointer-events: none;
 }
