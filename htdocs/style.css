@@ -90,8 +90,10 @@ h1, p {
     width: 400px;;
     font-family: monospace;
     color: white;
-    background-color: rgba(0, 0, 0, 0.4);
+    text-shadow: 2px 2px gray;
     overflow: hidden;
+    font-weight: bold;
+    pointer-events: none;
 }
 
 #chatbutton {
