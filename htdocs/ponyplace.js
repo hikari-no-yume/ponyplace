@@ -113,10 +113,10 @@
     }
     
     function logInChat(nick, msg) {
-        chatlog.insertBefore(document.createElement('br'), chatlog.firstChild);
-        chatlog.insertBefore(document.createTextNode('<' + nick + '> ' + msg), chatlog.firstChild);
-        while (chatlog.children.length > 10) {
-            chatlog.removeChild(chatlog.lastChild);
+        chatlog.appendChild(document.createElement('br'));
+        chatlog.appendChild(document.createTextNode('<' + nick + '> ' + msg));
+        while (chatlog.children.length > 8) {
+            chatlog.removeChild(chatlog.firstChild);
         }
     }
 
