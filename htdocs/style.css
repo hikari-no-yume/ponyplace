@@ -90,7 +90,7 @@ h1, p {
     width: 400px;;
     font-family: monospace;
     color: white;
-    text-shadow: 2px 2px gray;
+    text-shadow: 2px 2px darkmagenta;
     overflow: hidden;
     font-weight: bold;
     pointer-events: none;
