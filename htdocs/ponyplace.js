@@ -168,6 +168,39 @@
         };
         container.appendChild(chatbox);
         
+        document.body.onkeydown = function (e) {
+            var imgid = ponies.indexOf(me.img);
+            switch (e.keyCode) {
+                case 37: // left
+                    if (me.x - 100 >= 0 - PONY_WIDTH / 2) {
+                        me.x -= 100;
+                        me.img = ponies[(imgid|1) - 1];
+                    }
+                break;
+                case 38: // up
+                    if (me.y - 100 >= 0 - PONY_HEIGHT / 2) {
+                        me.y -= 100;
+                    }
+                break;
+                case 39: // right
+                    me.x += 100;
+                    me.img = ponies[imgid|1];
+                break;
+                case 40: // down
+                    if (me.y + 100 <= CV_HEIGHT - CHAT_HEIGHT - PONY_HEIGHT / 2) {
+                        me.y += 100;
+                    }
+                break;
+                default:
+                    return true;
+                break;
+            }
+            pushState();
+            updatePony(me);
+            e.preventDefault();
+            return false;
+        };
+        
         chatbutton = document.createElement('input');
         chatbutton.type = 'submit';
         chatbutton.value = 'Send';
