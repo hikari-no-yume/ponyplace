@@ -38,7 +38,11 @@
         'media/applejack_left.gif',
         'media/applejack_right.gif',
         'media/applejack_left_walk.gif',
-        'media/applejack_right_walk.gif'
+        'media/applejack_right_walk.gif',
+        'media/scootaloo_left.gif',
+        'media/scootaloo_right.gif',
+        'media/scootaloo_left_walk.gif',
+        'media/scootaloo_right_walk.gif'
     ];
     
     var socket, connected = false, me, users = {};
