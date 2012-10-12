@@ -93,6 +93,7 @@ h1, p {
     text-shadow: 2px 2px darkmagenta;
     font-weight: bold;
     pointer-events: none;
+    white-space: nowrap;
 }
 
 #chatbutton {
