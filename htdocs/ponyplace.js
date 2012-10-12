@@ -58,7 +58,15 @@
         'media/scootaloo_left.gif',
         'media/scootaloo_right.gif',
         'media/scootaloo_left_walk.gif',
-        'media/scootaloo_right_walk.gif'
+        'media/scootaloo_right_walk.gif',
+        'media/trixie_left.gif',
+        'media/trixie_right.gif',
+        'media/trixie_left_walk.gif',
+        'media/trixie_right_walk.gif',
+        'media/trixie2_left.gif',
+        'media/trixie2_right.gif',
+        'media/trixie2_left_walk.gif',
+        'media/trixie2_right_walk.gif'
     ];
     
     var socket, connected = false, me, users = {};
