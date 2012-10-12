@@ -189,7 +189,7 @@
         chooser = document.createElement('div');
         chooser.id = 'chooser';
         chooser.style.display = 'none';
-        for (var i = 0; i < ponies.length; i++) {
+        for (var i = 0; i < ponies.length; i += 2) {
             var preview = document.createElement('img');
             preview.src = ponies[i];
             preview.className = 'chooser-preview';
