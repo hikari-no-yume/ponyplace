@@ -2,7 +2,7 @@
     'use strict';
     var CV_WIDTH = 1000, CV_HEIGHT = 680;
     var CHAT_HEIGHT = 20;
-    var PONY_WIDTH = 128, PONY_HEIGHT = 128;
+    var PONY_WIDTH = 148, PONY_HEIGHT = 148;
     
     var ponies = [
         'media/derpy_left_hover.gif',
@@ -33,6 +33,10 @@
         'media/luna_right_walk.gif',
         'media/luna_left_hover.gif',
         'media/luna_right_hover.gif',
+        'media/luna2_left.gif',
+        'media/luna2_right.gif',
+        'media/luna2_left_walk.gif',
+        'media/luna2_right_walk.gif',
         'media/twilight_left.gif',
         'media/twilight_right.gif',
         'media/twilight_left_walk.gif',

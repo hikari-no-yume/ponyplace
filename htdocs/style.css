@@ -110,8 +110,8 @@ h1, p {
 
 .pony {
     position: absolute;
-    width: 128px;
-    height: 128px;
+    width: 148px;
+    height: 148px;
     background-position: center;
     background-repeat: no-repeat;
     pointer-events: none;
@@ -124,9 +124,9 @@ h1, p {
     background-color: rgba(236, 174, 255, 0.7);
     font-family: 'Comic Sans MS', sans-serif;
     color: black;
-    margin: 2px;
+    margin-bottom: 2px;
     position: relative;
-    left: -20px;
+    left: -10px;
     width: 168px;
 }
 .chatbubble:not(:empty) {
