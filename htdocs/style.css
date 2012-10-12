@@ -24,6 +24,10 @@ h1, p {
     background-color: black;
     overflow-y: hidden;
     overflow-x: auto;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
 }
 
 #background {
