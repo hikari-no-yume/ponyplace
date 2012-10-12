@@ -118,7 +118,7 @@
         background.onclick = function (e) {
             var newx = e.layerX - PONY_WIDTH / 2;
             var imgid = ponies.indexOf(me.img);
-            me.img = ponies[(me.img|1) - me.x<newx ? 0 : 1];
+            me.img = ponies[(imgid|1) - (me.x<newx ? 0 : 1)];
             me.x = newx;
             me.y = e.layerY - PONY_HEIGHT / 2;
             updatePony(me);
