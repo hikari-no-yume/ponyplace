@@ -99,7 +99,7 @@
                 logInChat(obj.nick, obj.chat);
             }
             
-            users.obj = obj;
+            user.obj = obj;
         } else {
             stage.removeChild(user.elem.root);
             delete users[obj.nick];
