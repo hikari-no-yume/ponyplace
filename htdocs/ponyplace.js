@@ -57,7 +57,7 @@
     
     var socket, connected = false, me, users = {};
     
-    var container, stage, chooser, chooserbutton, background, chatbox, chatbutton;
+    var container, stage, chooser, chooserbutton, background, chatbox, chatbutton, chatlog;
 
     function createPony(obj) {
         var elem = document.createElement('div');
@@ -95,6 +95,11 @@
             
             user.elem.chat.innerHTML = '';
             user.elem.chat.appendChild(document.createTextNode(obj.chat));
+            if (obj.chat !== user.obj.chat) {
+                logInChat(obj.nick, obj.chat);
+            }
+            
+            users.obj = obj;
         } else {
             stage.removeChild(user.elem.root);
             delete users[obj.nick];
@@ -104,6 +109,14 @@
     function pushState() {
         if (connected) {
             socket.send(JSON.stringify(me));
+        }
+    }
+    
+    function logInChat(nick, msg) {
+        chatlog.insertBefore(document.createElement('br'), chatlog.firstChild);
+        chatlog.insertBefore(document.createTextNode('<' + nick + '> ' + msg), chatlog.firstChild);
+        while (chatlog.children.length > 10) {
+            chatlog.removeChild(chatlog.lastChild);
         }
     }
 
@@ -130,12 +143,17 @@
         };
         stage.appendChild(background);
         
+        chatlog = document.createElement('div');
+        chatlog.id = 'chatlog';
+        container.appendChild(chatlog);
+        
         chatbox = document.createElement('input');
         chatbox.type = 'text';
         chatbox.id = 'chatbox';
         chatbox.onkeypress = function (e) {
             if (e.which == 13) {
                 me.chat = chatbox.value;
+                logInChat(me.nick, me.chat);
                 chatbox.value = '';
                 pushState();
                 updatePony(me);
@@ -149,6 +167,7 @@
         chatbutton.id = 'chatbutton';
         chatbutton.onclick = function (e) {
             me.chat = chatbox.value;
+            logInChat(me.nick, me.chat);
             chatbox.value = '';
             pushState();
             updatePony(me);

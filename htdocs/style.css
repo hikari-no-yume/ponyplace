@@ -82,6 +82,18 @@ h1, p {
     box-shadow: inset 1px 1px 3px #D3D3D3;
 }
 
+#chatlog {
+    position: absolute;
+    left: 5px;
+    bottom: 50px;
+    height: 200px;
+    width: 400px;;
+    font-family: monospace;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.4);
+    overflow: hidden;
+}
+
 #chatbutton {
     position: absolute;
     right: 0;
