@@ -111,8 +111,8 @@ h1, p {
     color: black;
     margin: 2px;
     position: relative;
-    left: -10px;
-    width: 148px;
+    left: -20px;
+    width: 168px;
 }
 .chatbubble:not(:empty) {
     border: 1px solid white;
