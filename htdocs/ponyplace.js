@@ -7,6 +7,8 @@
     var ponies = [
         'media/derpy_left_hover.gif',
         'media/derpy_right_hover.gif',
+        'media/derpy_left_hover_upsidedown.gif',
+        'media/derpy_right_hover_upsidedown.gif',
         'media/spike_left.gif',
         'media/spike_right.gif',
         'media/spike_left_walk.gif',
