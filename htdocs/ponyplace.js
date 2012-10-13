@@ -111,7 +111,9 @@
             user.elem.root.style.left = obj.x + 'px';
             user.elem.root.style.top = obj.y + 'px';
             if (ponies.hasOwnProperty(obj.img)) {
-                user.elem.root.style.backgroundImage = 'url(' + ponies[obj.img] + ')';
+                if (user.elem.root.style.backgroundImage !== 'url(' + ponies[obj.img] + ')') {
+                    user.elem.root.style.backgroundImage = 'url(' + ponies[obj.img] + ')';
+                }
             } else {
                 user.elem.root.style.backgroundImage = 'none';
             }
