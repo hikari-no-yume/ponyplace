@@ -27,7 +27,7 @@ function originIsAllowed(origin) {
   return true;
 }
 
-var badRegex = /butt|ass|shit|fuck|fag|faggot|bitch|cunt|cock|nigga|nigger|homosexual|gay|clopclop|clopping|\[\]\(\/[a-zA-Z0-9\-_]+\)/gi;
+var badRegex = /butt|ass|shit|fuck|fag|faggot|bitch|cunt|cock|nigga|nigger|homosexual|gay|clopclop|clopping|(\[\]\(\/[a-zA-Z0-9\-_]+\))/gi;
 
 function sanitise(obj) {
     if (obj.hasOwnProperty('chat')) {
