@@ -111,9 +111,7 @@
             user.elem.root.style.left = obj.x + 'px';
             user.elem.root.style.top = obj.y + 'px';
             if (ponies.hasOwnProperty(obj.img)) {
-                if (user.elem.root.style.backgroundImage !== 'url(' + ponies[obj.img] + ')') {
-                    user.elem.root.style.backgroundImage = 'url(' + ponies[obj.img] + ')';
-                }
+                user.elem.root.style.backgroundImage = 'url(' + ponies[obj.img] + ')';
             } else {
                 user.elem.root.style.backgroundImage = 'none';
             }
@@ -244,12 +242,12 @@
             preview.className = 'chooser-preview';
             (function (url) {
                 preview.onclick = function () {
-                    me.img = url;
+                    me.img = i;
                     updatePony(me);
                     pushState();
                     chooser.style.display = 'none';
                 };
-            }(ponies[i]));
+            }(i));
             chooser.appendChild(preview);
         }
         container.appendChild(chooser);
