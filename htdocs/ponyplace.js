@@ -227,7 +227,7 @@
         socket.onopen = function () {
             connected = true;
             me = {
-                nick: prompt('Choose a nickname.', ''),
+                nick: prompt('Choose a nickname.', '') || ('Silly filly #' + Math.floor(Math.random()*100)),
                 alive: true,
                 img: ponies[Math.floor(Math.random() * ponies.length)],
                 x: Math.floor(Math.random() * (CV_WIDTH - PONY_WIDTH)),
