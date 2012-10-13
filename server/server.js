@@ -27,7 +27,7 @@ function originIsAllowed(origin) {
   return true;
 }
 
-var badRegex = /penis|fap|butt|ass|shit|fuck|fag|faggot|bitch|cunt|cock|nigga|nigger|homosexual|gay|clopclop|clopping|(\[\]\(\/[a-zA-Z0-9\-_]+\))/gi;
+var badRegex = /tits|penis|fap|butt|ass|shit|fuck|fag|faggot|bitch|cunt|cock|nigga|nigger|homosexual|gay|clopclop|clopping|(\[\]\(\/[a-zA-Z0-9\-_]+\))/gi;
 
 var MAP_MAX_X = Math.floor(3831 - 148 / 2);
 
