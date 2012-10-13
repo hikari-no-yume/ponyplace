@@ -27,10 +27,12 @@ function originIsAllowed(origin) {
   return true;
 }
 
+var badRegex = /butt|ass|shit|fuck|fag|faggot|bitch|cunt|cock|nigga|nigger|homosexual|gay|clopclop|clopping/gi;
+
 function sanitise(obj) {
     if (obj.hasOwnProperty('chat')) {
         obj.chat = obj.chat.substr(0, 100);
-        obj.chat = obj.chat.replace(/butt|ass|shit|fuck|fag|faggot|bitch|cunt|cock|nigga|nigger|homosexual|gay/gi, 'pony');
+        obj.chat = obj.chat.replace(badRegex, 'pony');
     }
     return obj;
 }
@@ -67,6 +69,11 @@ wsServer.on('request', function(request) {
             // Prevent nickname duplication
             if (users.hasOwnProperty(obj.nick)) {
                 connection.sendUTF('nick_in_use');
+                connection.close();
+                return;
+            // Prefent long/profane nicks
+            } else if (badRegex.test(obj.nick) || obj.nick.length > 18) {
+                connection.sendUTF('bad_nick');
                 connection.close();
                 return;
             } else {

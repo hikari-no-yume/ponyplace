@@ -272,6 +272,8 @@
         socket.onmessage = function (e) {
             if (e.data === 'nick_in_use') {
                 alert('That nickname was already in use. Reload and choose a different one.');
+            } else if (e.data === 'bad_nick') {
+                alert('Bad nickname - nicknames can be a maximum of 18 characters.');
             } else {
                 var obj = JSON.parse(e.data);
                 if (!users.hasOwnProperty(obj.nick)) {
