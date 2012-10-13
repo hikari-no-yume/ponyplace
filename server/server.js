@@ -48,10 +48,18 @@ wsServer.on('request', function(request) {
             console.log('Received Initial Message: ' + message.utf8Data);
             
             // every frame is a JSON-encoded state object
-            var obj = JSON.parse(message.utf8Data);
+            try {
+                var obj = JSON.parse(message.utf8Data);
+            } catch (e) {
+                connection.close();
+                return;
+            }
+            
+            // Prevent nickname duplication
             if (users.hasOwnProperty(obj.nick)) {
                 connection.sendUTF('nick_in_use');
                 connection.close();
+                return;
             } else {
                 for (var nick in users) {
                     if (users.hasOwnProperty(nick)) {
@@ -70,10 +78,16 @@ wsServer.on('request', function(request) {
                 
                 // store in users map
                 users[obj.nick] = user;
+                
                 connection.on('message', function(message) {
                     if (message.type === 'utf8') {
                         // every frame is a JSON-encoded state object
-                        var obj = JSON.parse(message.utf8Data);
+                        try {
+                            var obj = JSON.parse(message.utf8Data);
+                        } catch (e) {
+                            connection.close();
+                            return;
+                        }
                         
                         // make sure this user doesn't spoof other nicknames
                         obj.nick = user.obj.nick;
