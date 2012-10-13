@@ -133,8 +133,11 @@
     }
     
     function chatPrint(line) {
-        chatlog.appendChild(document.createElement('br'));
-        chatlog.appendChild(document.createTextNode(line));
+        var span = document.createElement('span');
+        span.className = 'chatline';
+        span.appendChild(document.createTextNode(line));
+        span.appendChild(document.createElement('br'));
+        chatlog.appendChild(span);
         while (chatlog.children.length > 8) {
             chatlog.removeChild(chatlog.firstChild);
         }

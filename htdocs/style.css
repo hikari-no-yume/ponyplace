@@ -101,11 +101,14 @@ h1, p {
     width: 100%;
     font-family: monospace;
     color: white;
-    text-shadow: 2px 2px darkmagenta;
     font-weight: bold;
     pointer-events: none;
     white-space: nowrap;
     overflow: hidden;
+}
+
+.chatline {
+    background-color: rgba(0, 0, 0, 0.5);
 }
 
 #chatbutton {
