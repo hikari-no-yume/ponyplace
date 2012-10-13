@@ -30,7 +30,7 @@ function originIsAllowed(origin) {
 function sanitise(obj) {
     if (obj.hasOwnProperty('chat')) {
         obj.chat = obj.chat.substr(0, 100);
-        obj.chat = obj.chat.replace(/shit|fuck|fag|faggot|bitch|cunt|cock|nigga|nigger/gi, 'pony');
+        obj.chat = obj.chat.replace(/butt|ass|shit|fuck|fag|faggot|bitch|cunt|cock|nigga|nigger/gi, 'pony');
     }
     return obj;
 }
