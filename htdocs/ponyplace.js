@@ -73,7 +73,7 @@
         'media/trixie2_right_walk.gif'
     ];
     
-    var socket, connected = false, me, users = {};
+    var socket, connected = false, me, users = {}, lastmove = (new Date().getTime());
     
     var container, stage, chooser, chooserbutton, background, chatbox, chatbutton, chatlog;
 
@@ -165,13 +165,19 @@
         background.src = 'media/background.png';
         background.id = 'background';
         background.onclick = function (e) {
-            var newx = e.layerX - PONY_WIDTH / 2;
-            var imgid = ponies.indexOf(me.img);
-            me.img = ponies[(imgid|1) - (me.x<newx ? 0 : 1)];
-            me.x = newx;
-            me.y = e.layerY - PONY_HEIGHT / 2;
-            updatePony(me);
-            pushState();
+            var cur = (new Date().getTime());
+            if (cur - lastmove > 400) {
+                var newx = e.layerX - PONY_WIDTH / 2;
+                var imgid = ponies.indexOf(me.img);
+                me.img = ponies[(imgid|1) - (me.x<newx ? 0 : 1)];
+                me.x = newx;
+                me.y = e.layerY - PONY_HEIGHT / 2;
+                updatePony(me);
+                pushState();
+                lastmove = cur;
+            } else {
+                chatPrint('You are doing that too often.');
+            }
         };
         background.ondragstart = function () {
             return false;
