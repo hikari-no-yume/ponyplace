@@ -148,7 +148,7 @@
         container.appendChild(stage);
         
         background = document.createElement('img');
-        background.src = 'media/ponyville.png';
+        background.src = 'media/background.png';
         background.id = 'background';
         background.onclick = function (e) {
             var newx = e.layerX - PONY_WIDTH / 2;
