@@ -110,7 +110,11 @@
         if (obj.alive) {
             user.elem.root.style.left = obj.x + 'px';
             user.elem.root.style.top = obj.y + 'px';
-            user.elem.root.style.backgroundImage = 'url(' + obj.img + ')';
+            if (ponies.hasOwnProperty(obj.img)) {
+                user.elem.root.style.backgroundImage = 'url(' + ponies[obj.img] + ')';
+            } else {
+                user.elem.root.style.backgroundImage = 'none';
+            }
             
             user.elem.chat.innerHTML = '';
             user.elem.chat.appendChild(document.createTextNode(obj.chat));
@@ -171,8 +175,7 @@
             var cur = (new Date().getTime());
             if (cur - lastmove > 400) {
                 var newx = e.layerX - PONY_WIDTH / 2;
-                var imgid = ponies.indexOf(me.img);
-                me.img = ponies[(imgid|1) - (me.x<newx ? 0 : 1)];
+                me.img = (me.img|1) - (me.x<newx ? 0 : 1);
                 me.x = newx;
                 me.y = e.layerY - PONY_HEIGHT / 2;
                 updatePony(me);
@@ -255,7 +258,7 @@
             me = {
                 nick: prompt('Choose a nickname.', '') || ('Silly filly #' + Math.floor(Math.random()*100)),
                 alive: true,
-                img: ponies[Math.floor(Math.random() * ponies.length)],
+                img: Math.floor(Math.random() * ponies.length),
                 x: Math.floor(Math.random() * (CV_WIDTH - PONY_WIDTH)),
                 y: Math.floor(Math.random() * (CV_HEIGHT - PONY_HEIGHT - CHAT_HEIGHT)),
                 chat: ''
