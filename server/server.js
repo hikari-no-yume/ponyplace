@@ -29,10 +29,17 @@ function originIsAllowed(origin) {
 
 var badRegex = /butt|ass|shit|fuck|fag|faggot|bitch|cunt|cock|nigga|nigger|homosexual|gay|clopclop|clopping|(\[\]\(\/[a-zA-Z0-9\-_]+\))/gi;
 
+var MAP_MAX_X = Math.floor(3831 - 148 / 2);
+
 function sanitise(obj) {
     if (obj.hasOwnProperty('chat')) {
         obj.chat = obj.chat.substr(0, 100);
         obj.chat = obj.chat.replace(badRegex, 'pony');
+    }
+    if (obj.hasOwnProperty('x')) { 
+        if (obj.x > MAP_MAX_X) {
+            obj.x = MAP_MAX_X;
+        }
     }
     return obj;
 }
