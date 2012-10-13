@@ -114,7 +114,7 @@
             
             user.elem.chat.innerHTML = '';
             user.elem.chat.appendChild(document.createTextNode(obj.chat));
-            if (obj.chat !== user.obj.chat) {
+            if (obj.chat !== user.obj.chat && obj.chat !== '') {
                 logInChat(obj.nick, obj.chat);
             }
             
@@ -188,7 +188,9 @@
         chatbox.onkeypress = function (e) {
             if (e.which == 13) {
                 me.chat = chatbox.value;
-                logInChat(me.nick, me.chat);
+                if (me.chat !== '') {
+                    logInChat(me.nick, me.chat);
+                }
                 chatbox.value = '';
                 pushState();
                 updatePony(me);
