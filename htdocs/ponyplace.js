@@ -2,7 +2,7 @@
     'use strict';
     var CV_WIDTH = 1000, CV_HEIGHT = 680;
     var CHAT_HEIGHT = 20;
-    var PONY_WIDTH = 148, PONY_HEIGHT = 148;
+    var PONY_WIDTH = 148, PONY_HEIGHT = 168;
     
     var ponies = [
         'media/derpy_left_hover.gif',
