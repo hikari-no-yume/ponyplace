@@ -3,8 +3,19 @@ body {
     font-size: 10pt;
 }
 
+h1 {
+    margin: 5px 0;
+}
+
 h1, p {
     text-align: center;
+}
+
+#tips {
+    font-size: 120%;
+    font-family: 'Comic Sans MS', sans-serif;
+    font-weight: bold;
+    color: fuchsia;
 }
 
 #container {
