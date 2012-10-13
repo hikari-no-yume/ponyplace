@@ -269,7 +269,5 @@
                 }
             }
         };
-        
-        window.msg = function (msg) {socket.send(msg);};
     };
 }());
