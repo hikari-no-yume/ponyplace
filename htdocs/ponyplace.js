@@ -240,9 +240,9 @@
             var preview = document.createElement('img');
             preview.src = ponies[i];
             preview.className = 'chooser-preview';
-            (function (url) {
+            (function (imgid) {
                 preview.onclick = function () {
-                    me.img = i;
+                    me.img = imgid;
                     updatePony(me);
                     pushState();
                     chooser.style.display = 'none';
