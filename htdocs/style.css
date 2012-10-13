@@ -85,6 +85,7 @@ h1, p {
     right: 75px;
     bottom: 2px;
     height: 16px;
+    font-family: monospace;
     box-sizing: border-box;
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;

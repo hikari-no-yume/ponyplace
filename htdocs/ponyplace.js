@@ -194,6 +194,7 @@
         chatbox = document.createElement('input');
         chatbox.type = 'text';
         chatbox.id = 'chatbox';
+        chatbox.maxLength = 100;
         chatbox.onkeypress = function (e) {
             if (e.which == 13) {
                 me.chat = chatbox.value;
