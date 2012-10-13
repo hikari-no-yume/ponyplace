@@ -102,6 +102,7 @@
         };
         
         updatePony(obj);
+        logJoinInChat(obj.nick);
     }
     
     function updatePony(obj) {
@@ -119,6 +120,7 @@
             
             user.obj = obj;
         } else {
+            logLeaveInChat(obj.nick);
             stage.removeChild(user.elem.root);
             delete users[obj.nick];
         }
@@ -130,12 +132,24 @@
         }
     }
     
-    function logInChat(nick, msg) {
+    function chatPrint(line) {
         chatlog.appendChild(document.createElement('br'));
-        chatlog.appendChild(document.createTextNode('<' + nick + '> ' + msg));
+        chatlog.appendChild(document.createTextNode(line));
         while (chatlog.children.length > 8) {
             chatlog.removeChild(chatlog.firstChild);
         }
+    }
+    
+    function logInChat(nick, msg) {
+        chatPrint('<' + nick + '> ' + msg);
+    }
+    
+    function logJoinInChat(nick, msg) {
+        chatPrint(nick + ' appeared');
+    }
+    
+    function logLeaveInChat(nick, msg) {
+        chatPrint(nick + ' left');
     }
 
     window.onload = function () {
