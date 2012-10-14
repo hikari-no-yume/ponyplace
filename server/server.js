@@ -46,10 +46,11 @@ function sanitise(obj) {
 
 var users = {};
 
-var stdin = process.openStdin();
-require('tty').setRawMode(true);
+var keypress = require('keypress');
 
-stdin.on('keypress', function (chunk, key) {
+keypress(process.stdin);
+
+process.stdin.on('keypress', function (chunk, key) {
     if (key && key.name === 'u') {
         for (var nick in users) {
             if (users.hasOwnProperty(nick)) {
@@ -63,6 +64,9 @@ stdin.on('keypress', function (chunk, key) {
         process.exit();
     }
 });
+
+process.stdin.setRawMode(true);
+process.stdin.resume();
 
 wsServer.on('request', function(request) {
     if (!originIsAllowed(request.origin)) {
