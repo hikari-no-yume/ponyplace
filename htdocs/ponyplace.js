@@ -79,6 +79,8 @@
         'media/gummy_right.gif',
         'media/gummy_left_walk.gif',
         'media/gummy_right_walk.gif',
+        'media/gummy_left_bounce.gif',
+        'media/gummy_right_bounce.gif',
         'media/applejack_left.gif',
         'media/applejack_right.gif',
         'media/applejack_left_walk.gif',
