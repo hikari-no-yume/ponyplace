@@ -94,6 +94,28 @@ h1, p {
     box-shadow: inset 1px 1px 3px #D3D3D3;
 }
 
+#fullchatlog-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+#fullchatlog {
+    position: absolute;
+    right: 0;
+    top: 150px;
+    height: 400px;
+    width: 300px;
+    padding: 4px;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    font-family: monospace;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.7);
+    font-weight: bold;
+    overflow: auto;
+}
+
 #chatlog {
     position: absolute;
     left: 5px;

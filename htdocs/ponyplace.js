@@ -83,7 +83,7 @@
     
     var socket, connected = false, me, users = {}, lastmove = (new Date().getTime());
     
-    var container, stage, chooser, chooserbutton, background, chatbox, chatbutton, chatlog;
+    var container, stage, chooser, chooserbutton, background, chatbox, chatbutton, chatlog, fullchatlog, fullchatlogbutton, fullchatlogvisible;
 
     function createPony(obj) {
         var elem = document.createElement('div');
@@ -153,6 +153,10 @@
         while (chatlog.children.length > 8) {
             chatlog.removeChild(chatlog.firstChild);
         }
+        
+        fullchatlog.appendChild(document.createTextNode(line));
+        fullchatlog.appendChild(document.createElement('br'));
+        fullchatlog.scrollTop = fullchatlog.scrollHeight;
     }
     
     function logInChat(nick, msg) {
@@ -201,6 +205,29 @@
         chatlog = document.createElement('div');
         chatlog.id = 'chatlog';
         container.appendChild(chatlog);
+        
+        fullchatlog = document.createElement('div');
+        fullchatlog.id = 'fullchatlog';
+        fullchatlog.style.display = 'none';
+        fullchatlogvisible = false;
+        container.appendChild(fullchatlog);
+        
+        fullchatlogbutton = document.createElement('input');
+        fullchatlogbutton.id = 'fullchatlog-button';
+        fullchatlogbutton.type = 'submit';
+        fullchatlogbutton.value = 'Show full chatlog';
+        fullchatlogbutton.onclick = function () {
+            if (fullchatlogvisible) {
+                fullchatlog.style.display = 'none';
+                fullchatlogvisible = false;
+                fullchatlogbutton.value = 'Show full chatlog';
+            } else {
+                fullchatlog.style.display = 'block'
+                fullchatlogvisible = true;
+                fullchatlogbutton.value = 'Hide full chatlog';
+            }
+        };
+        container.appendChild(fullchatlogbutton);
         
         chatbox = document.createElement('input');
         chatbox.type = 'text';
