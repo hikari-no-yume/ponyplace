@@ -19,6 +19,8 @@
         'media/vinylscratch_right.gif',
         'media/vinylscratch_left_walk.gif',
         'media/vinylscratch_right_walk.gif',
+        'media/vinylscratch_left_dance.gif',
+        'media/vinylscratch_right_dance.gif',
         'media/spike_left.gif',
         'media/spike_right.gif',
         'media/spike_left_walk.gif',
