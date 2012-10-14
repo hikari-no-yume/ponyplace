@@ -92,7 +92,11 @@
         'media/trixie2_left.gif',
         'media/trixie2_right.gif',
         'media/trixie2_left_walk.gif',
-        'media/trixie2_right_walk.gif'
+        'media/trixie2_right_walk.gif',
+        'media/zecora_left.gif',
+        'media/zecora_right.gif',
+        'media/zecora_left_walk.gif',
+        'media/zecora_right_walk.gif'
     ];
     
     var socket, connected = false, me, users = {}, lastmove = (new Date().getTime());
