@@ -78,8 +78,8 @@ wsServer.on('request', function(request) {
                 connection.sendUTF('nick_in_use');
                 connection.close();
                 return;
-            // Prefent long/profane nicks
-            } else if (badRegex.test(obj.nick) || obj.nick.length > 18) {
+            // Prefent profane/long  nicks
+            } else if ((!!obj.nick.match(badRegex)) || obj.nick.length > 18) {
                 connection.sendUTF('bad_nick');
                 connection.close();
                 return;
