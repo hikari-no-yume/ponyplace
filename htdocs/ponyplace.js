@@ -41,6 +41,8 @@
         'media/rainbowdash_right_hover_dizzy.gif',
         'media/rainbowdash_left_fly.gif',
         'media/rainbowdash_right_fly.gif',
+        'media/tank_left_hover.gif',
+        'media/tank_right_hover.gif',
         'media/fluttershy_left.gif',
         'media/fluttershy_right.gif',
         'media/fluttershy_left_walk.gif',
