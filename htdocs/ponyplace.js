@@ -159,7 +159,7 @@
         'media/zecora_right_walk.gif'
     ];
     
-    var socket, connected = false, me, users = {}, lastmove = (new Date().getTime());
+    var socket, connected = false, ignoreDisconnect = false, me, users = {}, lastmove = (new Date().getTime());
     
     var container, stage, chooser, chooserbutton, background, chatbox, chatbutton, chatlog, fullchatlog, fullchatlogbutton, fullchatlogvisible;
 
@@ -384,7 +384,9 @@
         };
         socket.onclose = function (e) {
             connected = false;
-            alert('Error, lost connection!\nThis may be because:\n- Failed to connect (server\'s down)\n- Server crashed');
+            if (!ignoreDisconnect) {
+                alert('Error, lost connection!\nThis may be because:\n- Failed to connect (server\'s down)\n- Server crashed');
+            }
             container.className = 'disconnected';
             container.innerHTML = '';
         };
@@ -393,6 +395,10 @@
                 alert('That nickname was already in use. Reload and choose a different one.');
             } else if (e.data === 'bad_nick') {
                 alert('Bad nickname - nicknames can be a maximum of 18 characters.');
+            } else if (e.data === 'update') {
+                alert('ponyplace update happening - page will reload');
+                ignoreDisconnect = true;
+                window.location.reload();
             } else {
                 var obj = JSON.parse(e.data);
                 if (!users.hasOwnProperty(obj.nick)) {

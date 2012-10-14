@@ -46,6 +46,24 @@ function sanitise(obj) {
 
 var users = {};
 
+var stdin = process.openStdin();
+require('tty').setRawMode(true);
+
+stdin.on('keypress', function (chunk, key) {
+    if (key && key.name === 'u') {
+        for (var nick in users) {
+            if (users.hasOwnProperty(nick)) {
+                // kick for update
+                users[nick].conn.sendUTF('update');
+                users[nick].conn.close();
+                console.log('Update-kicked ' + nick);
+            }
+        }
+    } else if (key && key.ctrl && key.name === 'c') {
+        process.exit();
+    }
+});
+
 wsServer.on('request', function(request) {
     if (!originIsAllowed(request.origin)) {
       // Make sure we only accept requests from an allowed origin
