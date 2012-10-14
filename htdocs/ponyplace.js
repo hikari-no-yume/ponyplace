@@ -305,6 +305,7 @@
                 updatePony(me);
                 pushState();
                 lastmove = cur;
+                chatbox.focus();
             } else {
                 chatPrint('You are doing that too often.');
             }
@@ -415,6 +416,7 @@
             };
             createPony(me);
             pushState();
+            chatbox.focus();
         };
         socket.onclose = function (e) {
             connected = false;
