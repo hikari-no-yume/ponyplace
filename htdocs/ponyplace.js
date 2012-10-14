@@ -338,28 +338,29 @@
         chooserbutton.type = 'submit';
         chooserbutton.value = 'Change Avatar';
         chooserbutton.onclick = function () {
-            chooser.style.display = 'block';
+            if (chooser) {
+                chooser.style.display = 'block';
+            } else {
+                chooser = document.createElement('div');
+                chooser.id = 'chooser';
+                for (var i = 0; i < ponies.length; i += 2) {
+                    var preview = document.createElement('img');
+                    preview.src = ponies[i];
+                    preview.className = 'chooser-preview';
+                    (function (imgid) {
+                        preview.onclick = function () {
+                            me.img = imgid;
+                            updatePony(me);
+                            pushState();
+                            chooser.style.display = 'none';
+                        };
+                    }(i));
+                    chooser.appendChild(preview);
+                }
+                container.appendChild(chooser);
+            }
         };
         container.appendChild(chooserbutton);
-
-        chooser = document.createElement('div');
-        chooser.id = 'chooser';
-        chooser.style.display = 'none';
-        for (var i = 0; i < ponies.length; i += 2) {
-            var preview = document.createElement('img');
-            preview.src = ponies[i];
-            preview.className = 'chooser-preview';
-            (function (imgid) {
-                preview.onclick = function () {
-                    me.img = imgid;
-                    updatePony(me);
-                    pushState();
-                    chooser.style.display = 'none';
-                };
-            }(i));
-            chooser.appendChild(preview);
-        }
-        container.appendChild(chooser);
         
         socket = new WebSocket('ws://' + window.location.hostname + ':9001', 'ponyplace-broadcast');
         socket.onopen = function () {
