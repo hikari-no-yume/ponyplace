@@ -73,6 +73,8 @@
         'media/applejack_right.gif',
         'media/applejack_left_walk.gif',
         'media/applejack_right_walk.gif',
+        'media/applejack_left_gallop.gif',
+        'media/applejack_right_gallop.gif',
         'media/applebloom_left.gif',
         'media/applebloom_right.gif',
         'media/applebloom_left_walk.gif',
