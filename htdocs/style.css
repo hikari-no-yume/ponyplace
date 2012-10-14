@@ -12,6 +12,7 @@ h1, p {
 }
 
 #container {
+    min-width: 1000px;
     height: 680px;
     background-color: pink;
     margin: 0 auto;
