@@ -11,13 +11,6 @@ h1, p {
     text-align: center;
 }
 
-#tips {
-    font-size: 120%;
-    font-family: 'Comic Sans MS', sans-serif;
-    font-weight: bold;
-    color: fuchsia;
-}
-
 #container {
     width: 1000px;
     height: 680px;

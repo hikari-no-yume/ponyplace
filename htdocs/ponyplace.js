@@ -212,6 +212,8 @@
         fullchatlogvisible = false;
         container.appendChild(fullchatlog);
         
+        chatPrint("Hey you! Scroll right to find the forest and cloudsdale!");
+        
         fullchatlogbutton = document.createElement('input');
         fullchatlogbutton.id = 'fullchatlog-button';
         fullchatlogbutton.type = 'submit';
