@@ -5,10 +5,16 @@
     var PONY_WIDTH = 148, PONY_HEIGHT = 168;
     
     var ponies = [
+        'media/derpy_left.gif',
+        'media/derpy_right.gif',
+        'media/derpy_left_walk.gif',
+        'media/derpy_right_walk.gif',
         'media/derpy_left_hover.gif',
         'media/derpy_right_hover.gif',
         'media/derpy_left_hover_upsidedown.gif',
         'media/derpy_right_hover_upsidedown.gif',
+        'media/derpy_left_sleep.gif',
+        'media/derpy_right_sleep.gif',
         'media/vinylscratch_left.gif',
         'media/vinylscratch_right.gif',
         'media/vinylscratch_left_walk.gif',
