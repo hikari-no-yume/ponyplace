@@ -77,6 +77,8 @@
         'media/applebloom_right.gif',
         'media/applebloom_left_walk.gif',
         'media/applebloom_right_walk.gif',
+        'media/applebloom_left_skip.gif',
+        'media/applebloom_right_skip.gif',
         'media/scootaloo_left.gif',
         'media/scootaloo_right.gif',
         'media/scootaloo_left_walk.gif',
