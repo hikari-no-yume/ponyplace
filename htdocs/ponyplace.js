@@ -39,6 +39,8 @@
         'media/celestia_right_walk.gif',
         'media/celestia_left_hover.gif',
         'media/celestia_right_hover.gif',
+        'media/celestia_left_sleep.gif',
+        'media/celestia_right_sleep.gif',
         'media/luna_left.gif',
         'media/luna_right.gif',
         'media/luna_left_walk.gif',
