@@ -385,7 +385,7 @@
         socket.onclose = function (e) {
             connected = false;
             if (!ignoreDisconnect) {
-                alert('Error, lost connection!\nThis may be because:\n- Failed to connect (server\'s down)\n- Server crashed');
+                alert('Error, lost connection!\nThis may be because:\n- Server shut down to be updated (try reloading)\n- Failed to connect (server\'s down)\n- Server crashed\n- You were kicked');
             }
             container.className = 'disconnected';
             container.innerHTML = '';
