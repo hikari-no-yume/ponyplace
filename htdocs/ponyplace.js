@@ -39,6 +39,8 @@
         'media/fluttershy_right_walk.gif',
         'media/fluttershy_left_hover.gif',
         'media/fluttershy_right_hover.gif',
+        'media/fluttershy_left_sleep.gif',
+        'media/fluttershy_right_sleep.gif',
         'media/celestia_left.gif',
         'media/celestia_right.gif',
         'media/celestia_left_walk.gif',
