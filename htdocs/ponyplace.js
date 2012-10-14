@@ -23,6 +23,8 @@
         'media/spike_right.gif',
         'media/spike_left_walk.gif',
         'media/spike_right_walk.gif',
+        'media/spike_left_float.gif',
+        'media/spike_right_float.gif',
         'media/doctorwhooves_left.gif',
         'media/doctorwhooves_right.gif',
         'media/doctorwhooves_left_walk.gif',
