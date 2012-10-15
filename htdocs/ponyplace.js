@@ -1,8 +1,9 @@
 (function () {
     'use strict';
-    var CV_WIDTH = 1000, CV_HEIGHT = 680;
+    var CV_HEIGHT = 680;
     var CHAT_HEIGHT = 20;
     var PONY_WIDTH = 148, PONY_HEIGHT = 168;
+    var BG_WIDTH = 5664;
     
     var backgroundImages = [
         'media/background-ponyville.png',
@@ -575,13 +576,14 @@
                 nick: prompt('Choose a nickname.', '') || ('Blank flank #' + Math.floor(Math.random()*100)),
                 alive: true,
                 img: Math.floor(Math.random() * ponies.length),
-                x: Math.floor(Math.random() * (CV_WIDTH - PONY_WIDTH)),
+                x: Math.floor(Math.random() * (BG_WIDTH - PONY_WIDTH)),
                 y: Math.floor(Math.random() * (CV_HEIGHT - PONY_HEIGHT - CHAT_HEIGHT)),
                 chat: ''
             };
             createPony(me);
             pushState();
             chatbox.focus();
+            stage.scrollLeft = Math.floor(me.x + PONY_WIDTH / 2 - window.innerWidth / 2);
         };
         socket.onclose = function (e) {
             connected = false;
