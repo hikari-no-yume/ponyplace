@@ -21,7 +21,6 @@ function originIsAllowed(origin) {
     if (process.argv.hasOwnProperty('2') && process.argv[2] === '--debug') {
         return true;
     } else {
-        console.log('Origin: ' + origin);
         return origin === 'http://ponyplace.ajf.me';
     }
 }
