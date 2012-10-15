@@ -27,7 +27,7 @@ function originIsAllowed(origin) {
 
 var badRegex = /drug|milf|bdsm|tits|penis|fap|butt|ass|shit|fuck|fag|faggot|bitch|cunt|dick|cock|nigga|nigger|homosexual|gay|clopclop|clopping|(\[\]\(\/[a-zA-Z0-9\-_]+\))/gi;
 
-var MAP_MAX_X = Math.floor(3831 - 148 / 2);
+var MAP_MAX_X = Math.floor(4491 - 148 / 2);
 var MAP_MIN_X = Math.floor(0 - 148 / 2);
 var MAP_MAX_Y = Math.floor(660 - 168 / 2);
 var MAP_MIN_Y = Math.floor(0 - 168 / 2);
