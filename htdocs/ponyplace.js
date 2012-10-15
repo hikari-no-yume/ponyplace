@@ -92,6 +92,8 @@
         'media/daringdo_right.gif',
         'media/daringdo_left_walk.gif',
         'media/daringdo_right_walk.gif',
+        'media/ironwill_left_walk.gif',
+        'media/ironwill_right_walk.gif',
         'media/fluttershy_left.gif',
         'media/fluttershy_right.gif',
         'media/fluttershy_left_walk.gif',
