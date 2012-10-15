@@ -315,9 +315,9 @@
         'media/zecora_right_walk.gif'
     ];
     
-    var socket, connected = false, ignoreDisconnect = false, me, users = {}, lastmove = (new Date().getTime());
+    var socket, connected = false, ignoreDisconnect = false, me, users = {}, usercount = 0, lastmove = (new Date().getTime());
     
-    var container, stage, chooser, chooserbutton, background, chatbox, chatbutton, chatlog, fullchatlog, fullchatlogbutton, fullchatlogvisible;
+    var container, stage, usercounter, chooser, chooserbutton, background, chatbox, chatbutton, chatlog, fullchatlog, fullchatlogbutton, fullchatlogvisible;
 
     function createPony(obj) {
         var elem = document.createElement('div');
@@ -345,6 +345,8 @@
         
         updatePony(obj);
         logJoinInChat(obj.nick);
+        usercount++;
+        updateUserCounter();
     }
     
     function updatePony(obj) {
@@ -369,6 +371,8 @@
             logLeaveInChat(obj.nick);
             stage.removeChild(user.elem.root);
             delete users[obj.nick];
+            usercount--;
+            updateUserCounter();
         }
     }
     
@@ -405,6 +409,11 @@
     
     function logLeaveInChat(nick, msg) {
         chatPrint(nick + ' left');
+    }
+    
+    function updateUserCounter() {
+        usercounter.innerHTML = '';
+        usercounter.appendChild(document.createTextNode(usercount + ' users online'));
     }
 
     window.onload = function () {
@@ -526,6 +535,11 @@
             }
         };
         container.appendChild(chooserbutton);
+        
+        usercounter = document.createElement('div');
+        usercounter.id = 'usercounter';
+        updateUserCounter();
+        container.appendChild(usercounter);
         
         if (!window.hasOwnProperty('WebSocket')) {
             alert('ponyplace requires WebSocket.\nUse a modern browser like Chrome, Firefox, Safari or Internet Explorer 10');

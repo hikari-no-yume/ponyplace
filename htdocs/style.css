@@ -40,6 +40,17 @@ h1, p {
     position: relative;
 }
 
+#usercounter {
+    position: absolute;
+    left: 0;
+    top: 25px;
+    padding: 2px;
+    font-weight: bold;
+    font-family: monospace;
+    color: white;
+    text-shadow: 2px 2px gray;
+}
+
 #chooser-button {
     position: absolute;
     left: 0;
