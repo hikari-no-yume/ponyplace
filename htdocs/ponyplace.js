@@ -57,6 +57,8 @@
         'media/rainbowdash_right.gif',
         'media/rainbowdash_left_walk.gif',
         'media/rainbowdash_right_walk.gif',
+        'media/rainbowdash_left_dinosaur.gif',
+        'media/rainbowdash_right_dinosaur.gif',
         'media/rainbowdash_left_run.gif',
         'media/rainbowdash_right_run.gif',
         'media/rainbowdash_left_hover.gif',
