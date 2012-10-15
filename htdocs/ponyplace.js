@@ -479,7 +479,7 @@
         fullchatlogvisible = false;
         container.appendChild(fullchatlog);
         
-        chatPrint("Hey you! Scroll right to find the forest and cloudsdale!");
+        chatPrint("Scroll around!");
         
         fullchatlogbutton = document.createElement('input');
         fullchatlogbutton.id = 'fullchatlog-button';
