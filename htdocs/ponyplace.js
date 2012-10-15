@@ -417,6 +417,14 @@
     }
 
     window.onload = function () {
+        document.body.onkeypress = function (e) {
+            if (e.which == 13) {
+                chatbox.focus();
+                e.preventDefault();
+                return false;
+            }
+        };
+    
         container = document.createElement('div');
         container.id = 'container';
         document.body.appendChild(container);
@@ -438,7 +446,6 @@
                 updatePony(me);
                 pushState();
                 lastmove = cur;
-                chatbox.focus();
             } else {
                 chatPrint('You are doing that too often.');
             }
