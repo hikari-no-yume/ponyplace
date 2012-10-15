@@ -22,7 +22,7 @@ function originIsAllowed(origin) {
         return true;
     } else {
         console.log('Origin: ' + origin);
-        return origin === 'http://ponyplace.ajf.me/';
+        return origin === 'http://ponyplace.ajf.me';
     }
 }
 
