@@ -4,6 +4,14 @@
     var CHAT_HEIGHT = 20;
     var PONY_WIDTH = 148, PONY_HEIGHT = 168;
     
+    var backgroundImages = [
+        'media/background-ponyville.png',
+        'media/background-sweetappleacres.png',
+        'media/background-everfreeforest.png',
+        'media/background-cloudsdale.png',
+        'media/background-canterlot.png'
+    ];
+    
     var ponies = [
         'media/derpy_left.gif',
         'media/derpy_right.gif',
@@ -433,8 +441,7 @@
         stage.id = 'stage';
         container.appendChild(stage);
         
-        background = document.createElement('img');
-        background.src = 'media/background3.png';
+        background = document.createElement('div');
         background.id = 'background';
         background.onclick = function (e) {
             var cur = (new Date().getTime());
@@ -454,6 +461,12 @@
             return false;
         };
         stage.appendChild(background);
+        
+        for (var i = 0; i < backgroundImages.length; i++) {
+            var bgimg = document.createElement('img');
+            bgimg.src = backgroundImages[i];
+            background.appendChild(bgimg);
+        }
         
         chatlog = document.createElement('div');
         chatlog.id = 'chatlog';
