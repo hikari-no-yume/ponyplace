@@ -35,14 +35,6 @@ h1, p {
     -moz-user-select: none;
     -ms-user-select: none;
 }
- 
-#music {
-    overflow: hidden;
-}
-#music iframe {
-    position: relative;
-    top: -210px;
-}
 
 #background {
     position: relative;

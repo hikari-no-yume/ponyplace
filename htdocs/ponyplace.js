@@ -317,7 +317,7 @@
     
     var socket, connected = false, ignoreDisconnect = false, me, users = {}, usercount = 0, lastmove = (new Date().getTime());
     
-    var container, stage, usercounter, chooser, chooserbutton, background, chatbox, chatbutton, chatlog, fullchatlog, fullchatlogbutton, fullchatlogvisible, music;
+    var container, stage, usercounter, chooser, chooserbutton, background, chatbox, chatbutton, chatlog, fullchatlog, fullchatlogbutton, fullchatlogvisible;
 
     function createPony(obj) {
         var elem = document.createElement('div');
@@ -540,11 +540,6 @@
         usercounter.id = 'usercounter';
         updateUserCounter();
         container.appendChild(usercounter);
-        
-        music = document.createElement('div');
-        music.id = 'music';
-        music.innerHTML = '<iframe width="320" height="240" src="http://www.youtube.com/embed/fB9HVfllw50?rel=0&autohide=0" frameborder="0" allowfullscreen></iframe>';
-        document.body.appendChild(music);
         
         if (!window.hasOwnProperty('WebSocket')) {
             alert('ponyplace requires WebSocket.\nUse a modern browser like Chrome, Firefox, Safari or Internet Explorer 10');
