@@ -574,9 +574,9 @@
             connected = false;
             if (!ignoreDisconnect) {
                 alert('Error, lost connection!\nThis may be because:\n- Server shut down to be updated (try reloading)\n- Failed to connect (server\'s down)\n- Server crashed\n- You were kicked');
+                container.className = 'disconnected';
+                container.innerHTML = '';
             }
-            container.className = 'disconnected';
-            container.innerHTML = '';
         };
         socket.onmessage = function (e) {
             if (e.data === 'nick_in_use') {
@@ -584,9 +584,11 @@
             } else if (e.data === 'bad_nick') {
                 alert('Bad nickname - nicknames can be a maximum of 18 characters.');
             } else if (e.data === 'update') {
-                alert('ponyplace update happening - page will reload');
                 ignoreDisconnect = true;
-                window.location.reload();
+                window.setTimeout(function () {
+                    alert('ponyplace update happening - page will reload');
+                    window.location.reload();
+                }, 5000);
             } else {
                 var obj = JSON.parse(e.data);
                 if (!users.hasOwnProperty(obj.nick)) {
