@@ -28,6 +28,9 @@ function originIsAllowed(origin) {
 var badRegex = /drug|milf|bdsm|tits|penis|fap|butt|ass|shit|fuck|fag|faggot|bitch|cunt|dick|cock|nigga|nigger|homosexual|gay|clopclop|clopping|(\[\]\(\/[a-zA-Z0-9\-_]+\))/gi;
 
 var MAP_MAX_X = Math.floor(3831 - 148 / 2);
+var MAP_MIN_X = Math.floor(0 - 148 / 2);
+var MAP_MAX_Y = Math.floor(660 - 168 / 2);
+var MAP_MIN_Y = Math.floor(0 - 168 / 2);
 
 function sanitise(obj) {
     if (obj.hasOwnProperty('chat')) {
@@ -37,6 +40,13 @@ function sanitise(obj) {
     if (obj.hasOwnProperty('x')) { 
         if (obj.x > MAP_MAX_X) {
             obj.x = MAP_MAX_X;
+        } else if (obj.x < MAP_MIN_X) {
+            obj.x = MAP_MIN_X;
+        }
+        if (obj.y < MAP_MIN_Y) {
+            obj.y = MAP_MIN_Y;
+        } else if (obj.y > MAP_MAX_Y) {
+            obj.y = MAP_MAX_Y;
         }
     }
     return obj;
