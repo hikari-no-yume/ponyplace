@@ -457,6 +457,11 @@
         };
         container.appendChild(chooserbutton);
         
+        if (!window.hasOwnProperty('WebSocket')) {
+            alert('ponyplace requires WebSocket.\nUse a modern browser like Chrome, Firefox, Safari or Internet Explorer 10');
+            return;
+        }
+        
         socket = new WebSocket('ws://' + window.location.hostname + ':9001', 'ponyplace-broadcast');
         socket.onopen = function () {
             connected = true;
