@@ -280,6 +280,8 @@
         'media/scootaloo_right_skip.gif',
         'media/scootaloo_left_scoot.gif',
         'media/scootaloo_right_scoot.gif',
+        'media/scootaloo_left_basket.gif',
+        'media/scootaloo_right_basket.gif',
         'media/sweetiebelle_left.gif',
         'media/sweetiebelle_right.gif',
         'media/sweetiebelle_left_walk.gif',
