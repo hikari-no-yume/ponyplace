@@ -311,16 +311,18 @@
     }
     
     function chatPrint(line) {
+        var date = '[' + (new Date()).toLocaleTimeString() + '] ';
+    
         var span = document.createElement('span');
         span.className = 'chatline';
-        span.appendChild(document.createTextNode(line));
+        span.appendChild(document.createTextNode(date + line));
         span.appendChild(document.createElement('br'));
         chatlog.appendChild(span);
         while (chatlog.children.length > 8) {
             chatlog.removeChild(chatlog.firstChild);
         }
         
-        fullchatlog.appendChild(document.createTextNode(line));
+        fullchatlog.appendChild(document.createTextNode(date + line));
         fullchatlog.appendChild(document.createElement('br'));
         fullchatlog.scrollTop = fullchatlog.scrollHeight;
     }
