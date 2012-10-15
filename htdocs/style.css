@@ -49,6 +49,7 @@ h1, p {
     font-family: monospace;
     color: white;
     text-shadow: 2px 2px gray;
+    pointer-events: none;
 }
 
 #chooser-button {
