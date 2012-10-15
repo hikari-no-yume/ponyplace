@@ -338,7 +338,7 @@
         'media/zecora_right_walk.gif'
     ];
     
-    var socket, connected = false, ignoreDisconnect = false, me, users = {}, usercount = 0, lastmove = (new Date().getTime());
+    var socket, connected = false, ignoreDisconnect = false, me, users = {}, usercount = 0, offscreencount = 0, lastmove = (new Date().getTime());
     
     var container, stage, usercounter, chooser, chooserbutton, background, chatbox, chatbutton, chatlog, fullchatlog, fullchatlogbutton, fullchatlogvisible;
 
@@ -390,6 +390,7 @@
             }
             
             user.obj = obj;
+            updateUserCounter();
         } else {
             logLeaveInChat(obj.nick);
             stage.removeChild(user.elem.root);
@@ -435,8 +436,19 @@
     }
     
     function updateUserCounter() {
+        offscreencount = 0;
+        for (var nick in users) {
+            if (users.hasOwnProperty(nick)) {
+                var user = users[nick];
+                if (user.obj.x - PONY_WIDTH < stage.scrollLeft || user.obj.x - PONY_WIDTH > stage.scrollLeft + window.innerWidth) {
+                    offscreencount++;
+                }
+            }
+        }
         usercounter.innerHTML = '';
         usercounter.appendChild(document.createTextNode(usercount + ' users online'));
+        usercounter.appendChild(document.createElement('br'));
+        usercounter.appendChild(document.createTextNode(offscreencount + ' users offscreen'));
     }
 
     window.onload = function () {
@@ -454,6 +466,7 @@
         
         stage = document.createElement('div');
         stage.id = 'stage';
+        stage.onscroll = updateUserCounter;
         container.appendChild(stage);
         
         background = document.createElement('div');
