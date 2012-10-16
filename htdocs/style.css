@@ -11,6 +11,12 @@ h1, p {
     text-align: center;
 }
 
+@font-face
+{
+	font-family: CelestiaRedux;
+	src: url("media/font.ttf");
+}
+
 #container {
     min-width: 1000px;
     max-width: 3831px;
@@ -166,7 +172,8 @@ h1, p {
 
 .chatbubble {
     background-color: rgba(236, 174, 255, 0.7);
-    font-family: 'Comic Sans MS', sans-serif;
+    font-family: CelestiaRedux, 'Comic Sans MS', sans-serif;
+    font-size: 11pt;
     color: black;
     margin-bottom: 2px;
     position: relative;
