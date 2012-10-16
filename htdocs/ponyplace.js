@@ -615,6 +615,7 @@
             } else {
                 fullchatlog.style.display = 'block'
                 fullchatlogvisible = true;
+                fullchatlog.scrollTop = fullchatlog.scrollHeight;
                 fullchatlogbutton.value = 'Hide full chatlog';
             }
         };
