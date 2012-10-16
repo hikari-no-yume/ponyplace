@@ -409,13 +409,14 @@
                 root: elem,
                 chat: chat,
                 nick: nick
-            }
+            },
+            onscreen: false
         };
         
         updatePony(obj);
-        logJoinInChat(obj.nick);
         usercount++;
         updateUserCounter();
+        logJoinInChat(obj.nick, users[obj.nick].onscreen);
     }
     
     function updatePony(obj) {
@@ -432,17 +433,17 @@
             user.elem.chat.innerHTML = '';
             user.elem.chat.appendChild(document.createTextNode(obj.chat));
             if (obj.chat !== user.obj.chat && obj.chat !== '') {
-                logInChat(obj.nick, obj.chat);
+                logInChat(obj.nick, obj.chat, user.onscreen);
             }
             
             user.obj = obj;
             updateUserCounter();
         } else {
-            logLeaveInChat(obj.nick);
-            stage.removeChild(user.elem.root);
-            delete users[obj.nick];
             usercount--;
             updateUserCounter();
+            logLeaveInChat(obj.nick, user.onscreen);
+            stage.removeChild(user.elem.root);
+            delete users[obj.nick];
         }
     }
     
@@ -452,11 +453,15 @@
         }
     }
     
-    function chatPrint(line) {
+    function chatPrint(line, onscreen) {
         var date = '[' + (new Date()).toLocaleTimeString() + '] ';
     
         var span = document.createElement('span');
-        span.className = 'chatline';
+        if (onscreen) {
+            span.className = 'chatline';
+        } else {
+            span.className = 'offscreen-chatline';
+        }
         span.appendChild(document.createTextNode(date + line));
         span.appendChild(document.createElement('br'));
         chatlog.appendChild(span);
@@ -469,16 +474,16 @@
         fullchatlog.scrollTop = fullchatlog.scrollHeight;
     }
     
-    function logInChat(nick, msg) {
-        chatPrint('<' + nick + '> ' + msg);
+    function logInChat(nick, msg, onscreen) {
+        chatPrint('<' + nick + '> ' + msg, onscreen);
     }
     
-    function logJoinInChat(nick, msg) {
-        chatPrint(nick + ' appeared');
+    function logJoinInChat(nick, msg, onscreen) {
+        chatPrint(nick + ' appeared', onscreen);
     }
     
-    function logLeaveInChat(nick, msg) {
-        chatPrint(nick + ' left');
+    function logLeaveInChat(nick, msg, onscreen) {
+        chatPrint(nick + ' left', onscreen);
     }
     
     function updateUserCounter() {
@@ -488,6 +493,9 @@
                 var user = users[nick];
                 if (user.obj.x - PONY_WIDTH < stage.scrollLeft || user.obj.x - PONY_WIDTH > stage.scrollLeft + window.innerWidth) {
                     offscreencount++;
+                    user.onscreen = false;
+                } else {
+                    user.onscreen = true;
                 }
             }
         }
@@ -572,7 +580,7 @@
         fullchatlogvisible = false;
         container.appendChild(fullchatlog);
         
-        chatPrint("Scroll around!");
+        chatPrint("Scroll around!", true);
         
         fullchatlogbutton = document.createElement('input');
         fullchatlogbutton.id = 'fullchatlog-button';
@@ -599,7 +607,7 @@
             if (e.which == 13) {
                 me.chat = chatbox.value;
                 if (me.chat !== '') {
-                    logInChat(me.nick, me.chat);
+                    logInChat(me.nick, me.chat, true);
                 }
                 chatbox.value = '';
                 pushState();
@@ -614,7 +622,7 @@
         chatbutton.id = 'chatbutton';
         chatbutton.onclick = function (e) {
             me.chat = chatbox.value;
-            logInChat(me.nick, me.chat);
+            logInChat(me.nick, me.chat, true);
             chatbox.value = '';
             pushState();
             updatePony(me);

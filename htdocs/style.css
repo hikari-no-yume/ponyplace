@@ -152,8 +152,12 @@ h1, p {
     overflow: hidden;
 }
 
-.chatline {
+.chatline, .offscreen-chatline {
     background-color: rgba(0, 0, 0, 0.5);
+}
+
+.offscreen-chatline {
+    opacity: 0.6;
 }
 
 #chatbutton {
