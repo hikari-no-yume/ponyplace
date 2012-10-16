@@ -54,7 +54,7 @@ function sanitise(obj) {
     return obj;
 }
 
-var users = {}, bannedList = [], ajfCanJoin = false;
+var users = {}, bannedList = [], bannedIPList = [], ajfCanJoin = false;
 
 var keypress = require('keypress');
 
@@ -96,7 +96,10 @@ wsServer.on('request', function(request) {
     var user = null;
     
     connection.once('message', function(message) {
-        if (message.type === 'utf8') {
+        // Bans are bans
+        if (bannedIPList.indexOf(connection.remoteAddress) !== -1) {
+            connection.close();
+        } else if (message.type === 'utf8') {
             console.log('Received Initial Message: ' + message.utf8Data);
             
             // every frame is a JSON-encoded state object
@@ -168,6 +171,8 @@ wsServer.on('request', function(request) {
                                 if (users.hasOwnProperty(kickee)) {
                                     users[kickee].conn.close();
                                     bannedList.push(kickee);
+                                    bannedIPList.push(users[kickee].conn.remoteAddress);
+                                    console.log('Kickbanned user with nick "' + kickee + '"');
                                 }
                                 // don't broadcast
                                 return;
