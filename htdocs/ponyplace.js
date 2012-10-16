@@ -5,13 +5,42 @@
     var PONY_WIDTH = 148, PONY_HEIGHT = 168;
     var BG_WIDTH = 5664;
     
-    var backgroundImages = [
-        'media/background-ponyville.png',
-        'media/background-sweetappleacres.png',
-        'media/background-everfreeforest.png',
-        'media/background-cloudsdale.png',
-        'media/background-canterlot.png'
+    var rooms = [
+        'ponyville',
+        'sweetappleacres',
+        'everfreeforest',
+        'cloudsdale',
+        'canterlot'
     ];
+    
+    // horizontal positions and names
+    var roomData = {
+        'ponyville': {
+            x: 0,
+            name: 'Ponyville',
+            img: 'media/background-ponyville.png'
+        },
+        'sweetappleacres': {
+            x: 1445,
+            name: 'Sweet Apple Acres',
+            img: 'media/background-sweetappleacres.png'
+        },
+        'everfreeforest': {
+            x: 2105,
+            name: 'Everfree Forest',
+            img: 'media/background-everfreeforest.png'
+        },
+        'cloudsdale': {
+            x: 3278,
+            name: 'Cloudsdale',
+            img: 'media/background-cloudsdale.png'
+        },
+        'canterlot': {
+            x: 4491,
+            name: 'Canterlot',
+            img: 'media/background-canterlot.png'
+        }
+    };
     
     var ponies = [
         'media/derpy_left.gif',
@@ -511,10 +540,26 @@
         };
         stage.appendChild(background);
         
-        for (var i = 0; i < backgroundImages.length; i++) {
+        var y = 0;
+        for (var i = 0; i < rooms.length; i += 1) {
+            var data = roomData[rooms[i]];
+            
             var bgimg = document.createElement('img');
-            bgimg.src = backgroundImages[i];
+            bgimg.src = data.img;
             background.appendChild(bgimg);
+            
+            var roombutton = document.createElement('input');
+            roombutton.type = 'submit';
+            roombutton.value = 'Go to ' + data.name;
+            roombutton.className = 'room-button';
+            roombutton.style.top = y + 'px';
+            (function (x) {
+                roombutton.onclick = function () {
+                    stage.scrollLeft = x;
+                };
+            }(data.x));
+            container.appendChild(roombutton);
+            y += 25;
         }
         
         chatlog = document.createElement('div');

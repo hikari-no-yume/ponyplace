@@ -49,22 +49,35 @@ h1, p {
     width: 5664px;
 }
 
+#chooser-button {
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+
+#fullchatlog-button {
+    position: absolute;
+    top: 25px;
+    left: 0;
+}
+
+.room-button {
+    position: absolute;
+    top: 0;
+    left: 150px;
+}
+
 #usercounter {
     position: absolute;
     left: 0;
-    top: 25px;
+    top: 50px;
     padding: 2px;
     font-weight: bold;
     font-family: monospace;
     color: white;
     text-shadow: 2px 2px gray;
     pointer-events: none;
-}
-
-#chooser-button {
-    position: absolute;
-    left: 0;
-    top: 0;
 }
 
 #chooser {
@@ -107,12 +120,6 @@ h1, p {
     border: 1px solid black;
     border-radius: 3px;
     box-shadow: inset 1px 1px 3px #D3D3D3;
-}
-
-#fullchatlog-button {
-    position: absolute;
-    top: 0;
-    right: 0;
 }
 
 #fullchatlog {
