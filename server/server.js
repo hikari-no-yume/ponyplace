@@ -36,6 +36,8 @@ function sanitise(obj) {
     if (obj.hasOwnProperty('chat')) {
         obj.chat = obj.chat.substr(0, 100);
         obj.chat = obj.chat.replace(badRegex, 'pony');
+        // trim whitespace
+        obj.chat = obj.chat.replace(/^\s+|\s+$/g, '');
     }
     if (obj.hasOwnProperty('x')) { 
         if (obj.x > MAP_MAX_X) {
