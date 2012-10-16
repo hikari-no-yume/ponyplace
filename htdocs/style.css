@@ -20,7 +20,7 @@ h1, p {
 }
 
 #container {
-    min-width: 1000px;
+    min-width: 800px;
     max-width: 3831px;
     height: 680px;
     background-color: pink;

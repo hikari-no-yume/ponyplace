@@ -469,6 +469,10 @@
     }
 
     window.onload = function () {
+        if (window.location.search === '?eg-arcade') {
+            document.getElementById('description').style.display = 'none';
+        }
+    
         document.body.onkeypress = function (e) {
             if (e.which == 13) {
                 chatbox.focus();
