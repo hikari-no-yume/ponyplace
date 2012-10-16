@@ -138,6 +138,8 @@
         'media/celestia_right.gif',
         'media/celestia_left_walk.gif',
         'media/celestia_right_walk.gif',
+        'media/celestia_left_walk_troll.gif',
+        'media/celestia_right_walk_troll.gif',
         'media/celestia_left_hover.gif',
         'media/celestia_right_hover.gif',
         'media/celestia_left_sleep.gif',
