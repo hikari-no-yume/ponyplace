@@ -564,6 +564,7 @@
             (function (x) {
                 roombutton.onclick = function () {
                     stage.scrollLeft = x;
+                    updateUserCounter();
                 };
             }(data.x));
             container.appendChild(roombutton);
