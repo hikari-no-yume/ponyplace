@@ -454,7 +454,7 @@
     }
     
     function chatPrint(line, onscreen) {
-        var date = '[' + (new Date()).toLocaleTimeString() + '] ';
+        line = '[' + (new Date()).toLocaleTimeString() + '] ' + line;
     
         var span = document.createElement('span');
         if (onscreen) {
@@ -462,14 +462,34 @@
         } else {
             span.className = 'offscreen-chatline';
         }
-        span.appendChild(document.createTextNode(date + line));
+        span.appendChild(document.createTextNode(line));
         span.appendChild(document.createElement('br'));
         chatlog.appendChild(span);
         while (chatlog.children.length > 8) {
             chatlog.removeChild(chatlog.firstChild);
         }
         
-        fullchatlog.appendChild(document.createTextNode(date + line));
+        var pos;
+        while (((pos = line.indexOf('http://')) !== -1) || ((pos = line.indexOf('https://')) !== -1)) {
+            var pos2 = line.indexOf(' ', pos);
+            var anchor = document.createElement('a');
+            anchor.className = 'chat-link';
+            anchor.target = '_blank';
+            if (pos2 === -1) {
+                fullchatlog.appendChild(document.createTextNode(line.substr(0, pos)));
+                anchor.href = line.substr(pos);
+                anchor.appendChild(document.createTextNode(line.substr(pos)));
+                line = '';
+            } else {
+                fullchatlog.appendChild(document.createTextNode(line.substr(0, pos)));
+                anchor.href = line.substr(pos, pos2 - pos);
+                anchor.appendChild(document.createTextNode(line.substr(pos, pos2 - pos)));
+                line = line.substr(pos2);
+            }
+            fullchatlog.appendChild(anchor);
+        }
+
+        fullchatlog.appendChild(document.createTextNode(line));
         fullchatlog.appendChild(document.createElement('br'));
         fullchatlog.scrollTop = fullchatlog.scrollHeight;
     }

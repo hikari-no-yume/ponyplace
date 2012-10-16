@@ -152,6 +152,11 @@ h1, p {
     overflow: hidden;
 }
 
+.chat-link {
+    color: orange;
+    text-decoration: underline;
+}
+
 .chatline, .offscreen-chatline {
     background-color: rgba(0, 0, 0, 0.5);
 }
