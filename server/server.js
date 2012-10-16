@@ -54,9 +54,7 @@ function sanitise(obj) {
     return obj;
 }
 
-var users = {};
-
-var ajfCanJoin = false;
+var users = {}, bannedList = [], ajfCanJoin = false;
 
 var keypress = require('keypress');
 
@@ -73,6 +71,7 @@ process.stdin.on('keypress', function (chunk, key) {
             }
         }
     } else if (key && key.name === 'j') {
+        // open brief time window in which ajf can join
         ajfCanJoin = !ajfCanJoin;
         console.log('ajf can join: ' + ajfCanJoin);
     } else if (key && key.ctrl && key.name === 'c') {
@@ -124,6 +123,10 @@ wsServer.on('request', function(request) {
                 connection.sendUTF('nick_in_use');
                 connection.close();
                 return;
+            // Bans are bans
+            } else if (bannedList.indexOf(obj.nick) !== -1) {
+                connection.sendUTF('nick_in_use');
+                connection.close();
             } else {
                 for (var nick in users) {
                     if (users.hasOwnProperty(nick)) {
@@ -157,6 +160,19 @@ wsServer.on('request', function(request) {
                         
                         // make sure this user doesn't spoof other nicknames
                         obj.nick = user.obj.nick;
+                        
+                        // kicking
+                        if (obj.hasOwnProperty('chat') && user.obj.nick === 'ajf') {
+                            if (obj.chat.substr(0, 6) === '/kick ') {
+                                var kickee = obj.chat.substr(6);
+                                if (users.hasOwnProperty(kickee)) {
+                                    users[kickee].conn.close();
+                                    bannedList.push(kickee);
+                                }
+                                // don't broadcast
+                                return;
+                            }
+                        }
                         
                         // update their stored state
                         user.obj = obj;
