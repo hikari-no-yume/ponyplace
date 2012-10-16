@@ -594,7 +594,6 @@
         music = document.createElement('audio');
         music.controls = true;
         music.loop = true;
-        music.autoplay = true;
         music.volume = 0.5;
         
         var source = document.createElement('source');
