@@ -1,3 +1,9 @@
+@font-face
+{
+	font-family: CelestiaRedux;
+	src: url("media/font.ttf");
+}
+
 body {
     font-family: sans-serif;
     font-size: 10pt;
@@ -5,16 +11,12 @@ body {
 
 h1 {
     margin: 5px 0;
+    color: pink;
+    font-family: CelestiaRedux, 'Comic Sans MS', sans-serif;
 }
 
 h1, p {
     text-align: center;
-}
-
-@font-face
-{
-	font-family: CelestiaRedux;
-	src: url("media/font.ttf");
 }
 
 #container {
