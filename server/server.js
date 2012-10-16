@@ -56,6 +56,8 @@ function sanitise(obj) {
 
 var users = {};
 
+var ajfCanJoin = false;
+
 var keypress = require('keypress');
 
 keypress(process.stdin);
@@ -70,6 +72,9 @@ process.stdin.on('keypress', function (chunk, key) {
                 console.log('Update-kicked ' + nick);
             }
         }
+    } else if (key && key.name === 'j') {
+        ajfCanJoin = !ajfCanJoin;
+        console.log('ajf can join: ' + ajfCanJoin);
     } else if (key && key.ctrl && key.name === 'c') {
         process.exit();
     }
@@ -112,6 +117,11 @@ wsServer.on('request', function(request) {
             // Prefent profane/long  nicks
             } else if ((!!obj.nick.match(badRegex)) || obj.nick.length > 18) {
                 connection.sendUTF('bad_nick');
+                connection.close();
+                return;
+            // Prevent ajf spoofing
+            } else if (obj.nick === 'ajf' && !ajfCanJoin) {
+                connection.sendUTF('nick_in_use');
                 connection.close();
                 return;
             } else {

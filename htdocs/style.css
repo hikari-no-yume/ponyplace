@@ -199,6 +199,15 @@ h1, p {
     overflow: hidden;
 }
 
+.creator {
+    color: gold !important;
+}
+.creator::after {
+    font-weight: normal !important;
+    color: white !important;
+    content: ' (pp creator)';
+}
+
 .disconnected {
     background-color: gray !important;
     text-align: center;

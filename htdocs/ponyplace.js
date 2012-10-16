@@ -355,6 +355,9 @@
         var nick = document.createElement('p');
         nick.className = 'nickname';
         nick.appendChild(document.createTextNode(obj.nick));
+        if (obj.nick === 'ajf') {
+            nick.className += ' creator';
+        }
         elem.appendChild(nick);
         
         stage.appendChild(elem);
