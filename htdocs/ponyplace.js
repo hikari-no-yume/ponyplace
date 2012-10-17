@@ -3,7 +3,7 @@
     var CV_HEIGHT = 680;
     var CHAT_HEIGHT = 20;
     var PONY_WIDTH = 148, PONY_HEIGHT = 168;
-    var BG_WIDTH = 5004;
+    var BG_WIDTH = 6177;
        
     // horizontal positions and names
     var rooms = [
@@ -15,18 +15,24 @@
         },
         {
             x: 1445,
+            name: "Twilight's Library",
+            img: 'media/background-library.png',
+            width: 1173
+        },
+        {
+            x: 2618,
             name: 'Everfree Forest',
             img: 'media/background-everfreeforest.png',
             width: 1173
         },
         {
-            x: 2618,
+            x: 3791,
             name: 'Cloudsdale',
             img: 'media/background-cloudsdale.png',
             width: 1213
         },
         {
-            x: 3831,
+            x: 5004,
             name: 'Canterlot',
             img: 'media/background-canterlot.png',
             width: 1173
@@ -374,7 +380,7 @@
     
     var socket, connected = false, ignoreDisconnect = false, me, users = {}, usercount = 0, offscreencount = 0, lastmove = (new Date().getTime());
     
-    var container, stage, usercounter, chooser, chooserbutton, background, chatbox, chatbutton, chatlog, fullchatlog, fullchatlogbutton, fullchatlogvisible, music;
+    var container, stage, title, creditslink, usercounter, chooser, chooserbutton, background, chatbox, chatbutton, chatlog, fullchatlog, fullchatlogbutton, fullchatlogvisible, music;
 
     function createPony(obj) {
         var elem = document.createElement('div');
@@ -516,10 +522,6 @@
     }
 
     window.onload = function () {
-        if (window.location.search === '?eg-arcade') {
-            document.getElementById('description').style.display = 'none';
-        }
-    
         document.body.onkeypress = function (e) {
             if (e.which == 13) {
                 chatbox.focus();
@@ -558,6 +560,17 @@
             return false;
         };
         stage.appendChild(background);
+        
+        title = document.createElement('h1');
+        title.id = 'title';
+        title.appendChild(document.createTextNode('ponyplace'));
+        container.appendChild(title);
+        
+        creditslink = document.createElement('a');
+        creditslink.id = 'credits-link';
+        creditslink.href = 'credits.html';
+        creditslink.appendChild(document.createTextNode('Credits'));
+        container.appendChild(creditslink);
         
         var y = 0;
         for (var i = 0; i < rooms.length; i += 1) {
@@ -678,6 +691,7 @@
         container.appendChild(usercounter);
         
         music = document.createElement('audio');
+        music.id = 'music';
         music.controls = true;
         music.loop = true;
         music.volume = 0.5;
@@ -692,7 +706,7 @@
         source.type = 'audio/mpeg';
         music.appendChild(source);
         
-        document.body.appendChild(music);
+        container.appendChild(music);
         
         if (!window.hasOwnProperty('WebSocket')) {
             alert('ponyplace requires WebSocket.\nUse a modern browser like Chrome, Firefox, Safari or Internet Explorer 10');
