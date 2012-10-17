@@ -482,7 +482,6 @@
 
         fullchatlog.appendChild(document.createTextNode(line));
         fullchatlog.appendChild(document.createElement('br'));
-        fullchatlog.scrollTop = fullchatlog.scrollHeight;
     }
     
     function logInChat(nick, msg, onscreen) {
