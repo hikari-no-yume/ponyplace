@@ -456,7 +456,7 @@
         span.appendChild(document.createTextNode(line));
         span.appendChild(document.createElement('br'));
         chatlog.appendChild(span);
-        while (chatlog.children.length > 8) {
+        while (chatlog.children.length > 12) {
             chatlog.removeChild(chatlog.firstChild);
         }
         
