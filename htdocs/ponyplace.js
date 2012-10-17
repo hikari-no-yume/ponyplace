@@ -3,44 +3,35 @@
     var CV_HEIGHT = 680;
     var CHAT_HEIGHT = 20;
     var PONY_WIDTH = 148, PONY_HEIGHT = 168;
-    var BG_WIDTH = 5664;
-    
-    var rooms = [
-        'ponyville',
-        'sweetappleacres',
-        'everfreeforest',
-        'cloudsdale',
-        'canterlot'
-    ];
-    
+    var BG_WIDTH = 5004;
+       
     // horizontal positions and names
-    var roomData = {
-        'ponyville': {
+    var rooms = [
+        {
             x: 0,
             name: 'Ponyville',
-            img: 'media/background-ponyville.png'
+            img: 'media/background-ponyville.png',
+            width: 1445
         },
-        'sweetappleacres': {
+        {
             x: 1445,
-            name: 'Sweet Apple Acres',
-            img: 'media/background-sweetappleacres.png'
-        },
-        'everfreeforest': {
-            x: 2105,
             name: 'Everfree Forest',
-            img: 'media/background-everfreeforest.png'
+            img: 'media/background-everfreeforest.png',
+            width: 1173
         },
-        'cloudsdale': {
-            x: 3278,
+        {
+            x: 2618,
             name: 'Cloudsdale',
-            img: 'media/background-cloudsdale.png'
+            img: 'media/background-cloudsdale.png',
+            width: 1213
         },
-        'canterlot': {
-            x: 4491,
+        {
+            x: 3831,
             name: 'Canterlot',
-            img: 'media/background-canterlot.png'
+            img: 'media/background-canterlot.png',
+            width: 1173
         }
-    };
+    ];
     
     var ponies = [
         'media/derpy_left.gif',
@@ -549,6 +540,7 @@
         
         background = document.createElement('div');
         background.id = 'background';
+        background.style.width = BG_WIDTH + 'px';
         background.onclick = function (e) {
             var cur = (new Date().getTime());
             if (cur - lastmove > 400) {
@@ -570,10 +562,11 @@
         
         var y = 0;
         for (var i = 0; i < rooms.length; i += 1) {
-            var data = roomData[rooms[i]];
+            var data = rooms[i];
             
             var bgimg = document.createElement('img');
             bgimg.src = data.img;
+            bgimg.width = data.width;
             background.appendChild(bgimg);
             
             var roombutton = document.createElement('input');
@@ -709,7 +702,11 @@
             return;
         }
         
-        socket = new WebSocket('ws://ajf.me:9001', 'ponyplace-broadcast');
+        if (window.location.hostname === 'localhost') {
+            socket = new WebSocket('ws://localhost:9001', 'ponyplace-broadcast');
+        } else {
+            socket = new WebSocket('ws://ajf.me:9001', 'ponyplace-broadcast');
+        }
         socket.onopen = function () {
             connected = true;
             me = {
