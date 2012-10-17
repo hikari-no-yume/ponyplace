@@ -709,7 +709,7 @@
             return;
         }
         
-        socket = new WebSocket('ws://' + window.location.hostname + ':9001', 'ponyplace-broadcast');
+        socket = new WebSocket('ws://ajf.me:9001', 'ponyplace-broadcast');
         socket.onopen = function () {
             connected = true;
             me = {
