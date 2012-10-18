@@ -80,7 +80,13 @@ h1, p {
 
 #credits-link {
     position: absolute;
-    top: 90px;
+    top: 92px;
+    left: 5px;
+}
+
+#steamgroup-link {
+    position: absolute;
+    top: 108px;
     left: 5px;
 }
 

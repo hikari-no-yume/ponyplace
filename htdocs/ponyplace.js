@@ -386,7 +386,7 @@
     
     var socket, connected = false, ignoreDisconnect = false, me, users = {}, usercount = 0, offscreencount = 0, lastmove = (new Date().getTime());
     
-    var container, stage, title, creditslink, usercounter, chooser, chooserbutton, background, chatbox, chatbutton, chatlog, fullchatlog, fullchatlogbutton, fullchatlogvisible, music;
+    var container, stage, title, creditslink, steamgrouplink, usercounter, chooser, chooserbutton, background, chatbox, chatbutton, chatlog, fullchatlog, fullchatlogbutton, fullchatlogvisible, music;
 
     function createPony(obj) {
         var elem = document.createElement('div');
@@ -575,8 +575,16 @@
         creditslink = document.createElement('a');
         creditslink.id = 'credits-link';
         creditslink.href = 'credits.html';
+        creditslink.target = '_blank';
         creditslink.appendChild(document.createTextNode('Credits'));
         container.appendChild(creditslink);
+        
+        steamgrouplink = document.createElement('a');
+        steamgrouplink.id = 'steamgroup-link';
+        steamgrouplink.href = 'http://steamcommunity.com/groups/ponyplace';
+        steamgrouplink.target = '_blank';
+        steamgrouplink.appendChild(document.createTextNode('Steam Group'));
+        container.appendChild(steamgrouplink);
         
         var y = 0;
         for (var i = 0; i < rooms.length; i += 1) {
