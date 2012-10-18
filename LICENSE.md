@@ -1,4 +1,4 @@
-Pony avatar images from [Desktop Ponies](http://desktopponies.com/), copyright their respective owners.
+Licensing/copyright info for the avatars and backgrounds can be found in the `credits.html` page in the `htdocs` directory.
 
 Code License
 ============
