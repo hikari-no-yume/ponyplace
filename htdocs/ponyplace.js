@@ -3,7 +3,7 @@
     var CV_HEIGHT = 680;
     var CHAT_HEIGHT = 20;
     var PONY_WIDTH = 148, PONY_HEIGHT = 168;
-    var BG_WIDTH = 6177;
+    var BG_WIDTH = 7350;
        
     // horizontal positions and names
     var rooms = [
@@ -20,19 +20,25 @@
             width: 1173
         },
         {
-            x: 2618,
+            x: 1445 + 1173,
+            name: "Sugarcube Corner",
+            img: 'media/background-sugarcubecorner.png',
+            width: 1173
+        },
+        {
+            x: 1445 + 1173 + 1173,
             name: 'Everfree Forest',
             img: 'media/background-everfreeforest.png',
             width: 1173
         },
         {
-            x: 3791,
+            x: 1445 + 1173 + 1173 + 1173,
             name: 'Cloudsdale',
             img: 'media/background-cloudsdale.png',
             width: 1213
         },
         {
-            x: 5004,
+            x: 1445 + 1173 + 1173 + 1173 + 1213,
             name: 'Canterlot',
             img: 'media/background-canterlot.png',
             width: 1173
