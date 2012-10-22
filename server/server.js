@@ -202,9 +202,9 @@ wsServer.on('request', function(request) {
             return;
         }
         
-        // We're expecting an update packet first
+        // We're expecting an appear packet first
         // Anything else is unexpected
-        if (msg.type !== 'update') {
+        if (msg.type !== 'appear') {
             connection.sendUTF(JSON.stringify({
                 type: 'kick',
                 reason: 'protocol_error'
@@ -237,13 +237,13 @@ wsServer.on('request', function(request) {
             if (users.hasOwnProperty(nick)) {
                 // tell client about other clients
                 connection.sendUTF(JSON.stringify({
-                    type: 'update',
+                    type: 'appear',
                     obj: users[nick].obj
                 }));
                 
                 // tell other clients about client
                 users[nick].conn.sendUTF(JSON.stringify({
-                    type: 'update',
+                    type: 'appear',
                     obj: msg.obj
                 }));
             }
@@ -267,15 +267,12 @@ wsServer.on('request', function(request) {
             // remove from users map
             delete users[user.obj.nick];
             
-            // special alive value specifies user's existence
-            // (a hack, but I love this one, so elegant! :D)
-            user.obj.alive = false;
+            // broadcast user leave to other clients
             for (var nick in users) {
                 if (users.hasOwnProperty(nick)) {
-                    // broadcast user leave to other clients
                     users[nick].conn.sendUTF(JSON.stringify({
-                        type: 'update',
-                        obj: user.obj
+                        type: 'die',
+                        nick: user.obj.nick
                     }));
                 }
             }

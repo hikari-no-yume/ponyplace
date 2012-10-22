@@ -424,30 +424,31 @@
     
     function updatePony(obj) {
         var user = users[obj.nick];
-        if (obj.alive) {
-            user.elem.root.style.left = obj.x + 'px';
-            user.elem.root.style.top = obj.y + 'px';
-            if (ponies.hasOwnProperty(obj.img)) {
-                user.elem.root.style.backgroundImage = 'url(' + ponies[obj.img] + ')';
-            } else {
-                user.elem.root.style.backgroundImage = 'none';
-            }
-            
-            user.elem.chat.innerHTML = '';
-            user.elem.chat.appendChild(document.createTextNode(obj.chat));
-            if (obj.chat !== user.obj.chat && obj.chat !== '') {
-                logInChat(obj.nick, obj.chat, user.onscreen);
-            }
-            
-            user.obj = obj;
-            updateUserCounter();
+        user.elem.root.style.left = obj.x + 'px';
+        user.elem.root.style.top = obj.y + 'px';
+        if (ponies.hasOwnProperty(obj.img)) {
+            user.elem.root.style.backgroundImage = 'url(' + ponies[obj.img] + ')';
         } else {
-            usercount--;
-            updateUserCounter();
-            logLeaveInChat(obj.nick, user.onscreen);
-            stage.removeChild(user.elem.root);
-            delete users[obj.nick];
+            user.elem.root.style.backgroundImage = 'none';
         }
+        
+        user.elem.chat.innerHTML = '';
+        user.elem.chat.appendChild(document.createTextNode(obj.chat));
+        if (obj.chat !== user.obj.chat && obj.chat !== '') {
+            logInChat(obj.nick, obj.chat, user.onscreen);
+        }
+        
+        user.obj = obj;
+        updateUserCounter();
+    }
+    
+    function killPony(nick) {
+        var user = users[nick];
+        usercount--;
+        updateUserCounter();
+        logLeaveInChat(nick, user.onscreen);
+        stage.removeChild(user.elem.root);
+        delete users[nick];
     }
     
     function pushState() {
@@ -751,7 +752,10 @@
                 chat: ''
             };
             createPony(me);
-            pushState();
+            socket.send(JSON.stringify({
+                type: 'appear',
+                obj: me
+            }));
             chatbox.focus();
             stage.scrollLeft = Math.floor(me.x + PONY_WIDTH / 2 - window.innerWidth / 2);
         };
@@ -766,12 +770,14 @@
         socket.onmessage = function (e) {
             var msg = JSON.parse(e.data);
             switch (msg.type) {
+                case 'appear':
+                    createPony(msg.obj);
+                break;
                 case 'update':
-                    if (!users.hasOwnProperty(msg.obj.nick)) {
-                        createPony(msg.obj);
-                    } else {
-                        updatePony(msg.obj);
-                    }
+                    updatePony(msg.obj);
+                break;
+                case 'die':
+                    killPony(msg.nick);
                 break;
                 case 'kick':
                     if (msg.reason === 'nick_in_use') {
