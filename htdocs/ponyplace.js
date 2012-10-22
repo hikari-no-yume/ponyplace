@@ -477,9 +477,8 @@
     }
     
     function updateRoomList(rooms) {
-        var oldbuttons = document.getElementsByClassName('room-button');
-        for (var i = 0; i < oldbuttons.length; i++) {
-            overlay.removeChild(oldbuttons[i]);
+        while (document.getElementsByClassName('room-button').length) {
+            overlay.removeChild(document.getElementsByClassName('room-button')[0]);
         }
     
         var refreshbutton = document.createElement('input');
