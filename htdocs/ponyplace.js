@@ -560,6 +560,7 @@
         
         background = document.createElement('img');
         background.id = 'background';
+        background.src = 'media/background-noroom.png';
         background.onclick = function (e) {
             var cur = (new Date().getTime());
             if (cur - lastmove > 400) {
