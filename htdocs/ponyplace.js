@@ -452,7 +452,10 @@
     
     function pushState() {
         if (connected) {
-            socket.send(JSON.stringify(me));
+            socket.send(JSON.stringify({
+                type: 'update',
+                obj: me
+            }));
         }
     }
     
@@ -736,6 +739,7 @@
         } else {
             socket = new WebSocket('ws://ajf.me:9001', 'ponyplace-broadcast');
         }
+        
         socket.onopen = function () {
             connected = true;
             me = {
@@ -760,23 +764,34 @@
             }
         };
         socket.onmessage = function (e) {
-            if (e.data === 'nick_in_use') {
-                alert('That nickname was already in use. Reload and choose a different one.');
-            } else if (e.data === 'bad_nick') {
-                alert('Bad nickname - nicknames can be a maximum of 18 characters.');
-            } else if (e.data === 'update') {
-                ignoreDisconnect = true;
-                window.setTimeout(function () {
-                    alert('ponyplace update happening - page will reload');
-                    window.location.reload();
-                }, 5000);
-            } else {
-                var obj = JSON.parse(e.data);
-                if (!users.hasOwnProperty(obj.nick)) {
-                    createPony(obj);
-                } else {
-                    updatePony(obj);
-                }
+            var msg = JSON.parse(e.data);
+            switch (msg.type) {
+                case 'update':
+                    if (!users.hasOwnProperty(msg.obj.nick)) {
+                        createPony(msg.obj);
+                    } else {
+                        updatePony(msg.obj);
+                    }
+                break;
+                case 'kick':
+                    if (msg.reason === 'nick_in_use') {
+                        alert('That nickname was already in use. Reload and choose a different one.');
+                    } else if (msg.reason === 'bad_nick') {
+                        alert('Bad nickname - nicknames can be a maximum of 18 characters.');
+                    } else if (msg.reason === 'protocol_error') {
+                        alert('There was a protocol error. This usually means your client sent a malformed packet. Your client is probably out of date, try clearing your cache and refreshing.');
+                    } else if (msg.reason === 'update') {
+                        ignoreDisconnect = true;
+                        window.setTimeout(function () {
+                            alert('ponyplace update happening - page will reload');
+                            window.location.reload();
+                        }, 5000);
+                    }
+                break;
+                default:
+                    alert('There was a protocol error. This usually means the server sent a malformed packet. Your client is probably out of date, try clearing your cache and refreshing.');
+                    socket.close();
+                break;
             }
         };
     }

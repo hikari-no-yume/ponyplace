@@ -65,7 +65,10 @@ process.stdin.on('keypress', function (chunk, key) {
         for (var nick in users) {
             if (users.hasOwnProperty(nick)) {
                 // kick for update
-                users[nick].conn.sendUTF('update');
+                users[nick].conn.sendUTF({
+                    type: 'kick',
+                    reason: 'update'
+                });
                 users[nick].conn.close();
                 console.log('Update-kicked ' + nick);
             }
@@ -95,105 +98,169 @@ wsServer.on('request', function(request) {
     // this user
     var user = null;
     
-    connection.once('message', function(message) {
-        // Bans are bans
-        if (bannedIPList.indexOf(connection.remoteAddress) !== -1) {
+    function onMessage(message) {
+        // handle unexpected packet types
+        // we don't use binary frames
+        if (message.type !== 'utf8') {
+            connection.sendUTF(JSON.stringify({
+                type: 'kick',
+                reason: 'protocol_error'
+            }));
             connection.close();
-        } else if (message.type === 'utf8') {
-            console.log('Received Initial Message: ' + message.utf8Data);
-            
-            // every frame is a JSON-encoded state object
-            try {
-                var obj = JSON.parse(message.utf8Data);
-            } catch (e) {
-                connection.close();
-                return;
-            }
-            obj = sanitise(obj);
-            
-            // Prevent nickname duplication
-            if (users.hasOwnProperty(obj.nick)) {
-                connection.sendUTF('nick_in_use');
-                connection.close();
-                return;
-            // Prefent profane/long  nicks
-            } else if ((!!obj.nick.match(badRegex)) || obj.nick.length > 18) {
-                connection.sendUTF('bad_nick');
-                connection.close();
-                return;
-            // Prevent ajf spoofing
-            } else if (obj.nick === 'ajf' && !ajfCanJoin) {
-                connection.sendUTF('nick_in_use');
-                connection.close();
-                return;
-            // Bans are bans
-            } else if (bannedList.indexOf(obj.nick) !== -1) {
-                connection.sendUTF('nick_in_use');
-                connection.close();
-            } else {
-                for (var nick in users) {
-                    if (users.hasOwnProperty(nick)) {
-                        // tell client about other clients
-                        connection.sendUTF(JSON.stringify(users[nick].obj));
-                        
-                        // tell other clients about client
-                        users[nick].conn.sendUTF(JSON.stringify(obj));
+            return;
+        }
+        
+        // every frame is a JSON-encoded packet
+        try {
+            var msg = JSON.parse(message.utf8Data);
+        } catch (e) {
+            connection.sendUTF(JSON.stringify({
+                type: 'kick',
+                reason: 'protocol_error'
+            }));
+            connection.close();
+            return;
+        }
+        
+        switch (msg.type) {
+            case 'update':
+                msg.obj = sanitise(msg.obj);
+                
+                // make sure this user doesn't spoof other nicknames
+                msg.obj.nick = user.obj.nick;
+                
+                // kicking
+                if (msg.obj.hasOwnProperty('chat') && user.obj.nick === 'ajf') {
+                    if (msg.obj.chat.substr(0, 6) === '/kick ') {
+                        var kickee = msg.obj.chat.substr(6);
+                        if (users.hasOwnProperty(kickee)) {
+                            users[kickee].conn.close();
+                            bannedList.push(kickee);
+                            bannedIPList.push(users[kickee].conn.remoteAddress);
+                            console.log('Kickbanned user with nick "' + kickee + '"');
+                        }
+                        // don't broadcast
+                        return;
                     }
                 }
                 
-                user = {
-                    conn: connection,
-                    obj: obj
-                };
+                // update their stored state
+                user.obj = msg.obj;
                 
-                // store in users map
-                users[obj.nick] = user;
-                
-                connection.on('message', function(message) {
-                    if (message.type === 'utf8') {
-                        // every frame is a JSON-encoded state object
-                        try {
-                            var obj = JSON.parse(message.utf8Data);
-                        } catch (e) {
-                            connection.close();
-                            return;
-                        }
-                        
-                        obj = sanitise(obj);
-                        
-                        // make sure this user doesn't spoof other nicknames
-                        obj.nick = user.obj.nick;
-                        
-                        // kicking
-                        if (obj.hasOwnProperty('chat') && user.obj.nick === 'ajf') {
-                            if (obj.chat.substr(0, 6) === '/kick ') {
-                                var kickee = obj.chat.substr(6);
-                                if (users.hasOwnProperty(kickee)) {
-                                    users[kickee].conn.close();
-                                    bannedList.push(kickee);
-                                    bannedIPList.push(users[kickee].conn.remoteAddress);
-                                    console.log('Kickbanned user with nick "' + kickee + '"');
-                                }
-                                // don't broadcast
-                                return;
-                            }
-                        }
-                        
-                        // update their stored state
-                        user.obj = obj;
-                        for (var nick in users) {
-                            if (users.hasOwnProperty(nick)) {
-                                if (users[nick].conn != connection) {
-                                    // broadcast message to other clients
-                                    users[nick].conn.sendUTF(JSON.stringify(obj));
-                                }
-                            }
+                // broadcast new state to other clients
+                for (var nick in users) {
+                    if (users.hasOwnProperty(nick)) {
+                        if (users[nick].conn !== connection) {
+                            users[nick].conn.sendUTF(JSON.stringify({
+                                type: 'update',
+                                obj: msg.obj
+                            }));
                         }
                     }
-                });
+                }
+            break;
+            // handle unexpected packet types
+            default:
+                connection.sendUTF(JSON.stringify({
+                    type: 'kick',
+                    reason: 'protocol_error'
+                }));
+                connection.close();
+            break;
+        }
+    }
+    
+    // Deals with first message
+    connection.once('message', function(message) {
+        // IP ban
+        if (bannedIPList.indexOf(connection.remoteAddress) !== -1) {
+            connection.close();
+        }
+        
+        // handle unexpected packet types
+        // we don't use binary frames
+        if (message.type !== 'utf8') {
+            connection.sendUTF(JSON.stringify({
+                type: 'kick',
+                reason: 'protocol_error'
+            }));
+            connection.close();
+            return;
+        }
+
+        console.log('Received Initial Message: ' + message.utf8Data);
+        
+        // every frame is a JSON-encoded packet
+        try {
+            var msg = JSON.parse(message.utf8Data);
+        } catch (e) {
+            connection.sendUTF(JSON.stringify({
+                type: 'kick',
+                reason: 'protocol_error'
+            }));
+            connection.close();
+            return;
+        }
+        
+        // We're expecting an update packet first
+        // Anything else is unexpected
+        if (msg.type !== 'update') {
+            connection.sendUTF(JSON.stringify({
+                type: 'kick',
+                reason: 'protocol_error'
+            }));
+            connection.close();
+            return;
+        }
+        
+        msg.obj = sanitise(msg.obj);
+        
+        // Name banning and prevent nickname dupe/owner spoofing
+        if (users.hasOwnProperty(msg.obj.nick) || msg.obj.nick === 'ajf' && !ajfCanJoin || bannedList.indexOf(msg.obj.nick) !== -1) {
+            connection.sendUTF({
+                type: 'kick',
+                reason: 'nick_in_use'
+            });
+            connection.close();
+            return;
+        // Prefent profane/long  nicks
+        } else if ((!!msg.obj.nick.match(badRegex)) || msg.obj.nick.length > 18) {
+            connection.sendUTF({
+                type: 'kick',
+                reason: 'bad_nick'
+            });
+            connection.close();
+            return;
+        }
+        
+        for (var nick in users) {
+            if (users.hasOwnProperty(nick)) {
+                // tell client about other clients
+                connection.sendUTF(JSON.stringify({
+                    type: 'update',
+                    obj: users[nick].obj
+                }));
+                
+                // tell other clients about client
+                users[nick].conn.sendUTF(JSON.stringify({
+                    type: 'update',
+                    obj: msg.obj
+                }));
             }
         }
+        
+        user = {
+            conn: connection,
+            obj: msg.obj
+        };
+        
+        // store in users map
+        users[msg.obj.nick] = user;
+        
+        // call onMessage for subsequent messages
+        connection.on('message', onMessage);
     });
+    
     connection.on('close', function(reasonCode, description) {
         console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.');
         if (user !== null) {
@@ -206,7 +273,10 @@ wsServer.on('request', function(request) {
             for (var nick in users) {
                 if (users.hasOwnProperty(nick)) {
                     // broadcast user leave to other clients
-                    users[nick].conn.sendUTF(JSON.stringify(user.obj));
+                    users[nick].conn.sendUTF(JSON.stringify({
+                        type: 'update',
+                        obj: user.obj
+                    }));
                 }
             }
         }
