@@ -33,49 +33,56 @@ var rooms = [
         button_label: 'Ir a la biblioteca de Twilight (en español)',
         img: 'media/background-library.png',
         width: 1173,
-        user_count: 0
+        user_count: 0,
+        user_noun: 'españoles'
     },
     {
         name: 'ponyville',
         button_label: 'Go to Ponyville',
         img: 'media/background-ponyville.png',
         width: 1445,
-        user_count: 0
+        user_count: 0,
+        user_noun: 'ponies'
     },
     {
         name: "library",
         button_label: "Go to Twilight's Library",
         img: 'media/background-library.png',
         width: 1173,
-        user_count: 0
+        user_count: 0,
+        user_noun: 'bright sparks'
     },
     {
         name: 'sugarcube_corner',
         button_label: 'Go to Sugarcube Corner',
         img: 'media/background-sugarcubecorner.png',
         width: 1173,
-        user_count: 0
+        user_count: 0,
+        user_noun: 'party animals'
     },
     {
         name: 'everfree_forest',
         button_label: 'Go to Everfree Forest',
         img: 'media/background-everfreeforest.png',
         width: 1173,
-        user_count: 0
+        user_count: 0,
+        user_noun: 'rhyming zebras'
     },
     {
         name: 'cloudsdale',
         button_label: 'Go to Cloudsdale',
         img: 'media/background-cloudsdale.png',
         width: 1213,
-        user_count: 0
+        user_count: 0,
+        user_noun: 'wonderbolts'
     },
     {
         name: 'Canterlot',
         button_label: 'Go to Canterlot',
         img: 'media/background-canterlot.png',
         width: 1173,
-        user_count: 0
+        user_count: 0,
+        user_noun: 'posh ponies'
     }
 ];
 
