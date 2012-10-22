@@ -364,13 +364,13 @@ wsServer.on('request', function(request) {
     
     connection.on('close', function(reasonCode, description) {
         console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.');
-        if (user !== null && user.room !== null) {
+        if (user !== null) {
             // remove from users map
             delete users[user.nick];
             
             // broadcast user leave to other clients
             for (var nick in users) {
-                if (users.hasOwnProperty(nick) && users[nick].room === user.room) {
+                if (users.hasOwnProperty(nick) && users[nick].room === user.room && user.room !== null) {
                     users[nick].conn.sendUTF(JSON.stringify({
                         type: 'die',
                         nick: user.nick
