@@ -384,11 +384,11 @@
         'media/zecora_right_walk.gif'
     ];
     
-    var socket, connected = false, ignoreDisconnect = false, me, users = {}, usercount = 0, offscreencount = 0, lastmove = (new Date().getTime());
+    var socket, connected = false, ignoreDisconnect = false, me, myNick, users = {}, usercount = 0, offscreencount = 0, lastmove = (new Date().getTime());
     
     var container, stage, title, creditslink, steamgrouplink, usercounter, chooser, chooserbutton, background, chatbox, chatbutton, chatlog, fullchatlog, fullchatlogbutton, fullchatlogvisible, music;
 
-    function createPony(obj) {
+    function createPony(nick, obj) {
         var elem = document.createElement('div');
         elem.className = 'pony';
         
@@ -396,34 +396,35 @@
         chat.className = 'chatbubble';
         elem.appendChild(chat);
         
-        var nick = document.createElement('p');
-        nick.className = 'nickname';
-        nick.appendChild(document.createTextNode(obj.nick));
-        if (obj.nick === 'ajf') {
-            nick.className += ' creator';
+        var nickTag = document.createElement('p');
+        nickTag.className = 'nickname';
+        nickTag.appendChild(document.createTextNode(nick));
+        if (nick === 'ajf') {
+            nickTag.className += ' creator';
         }
-        elem.appendChild(nick);
+        elem.appendChild(nickTag);
         
         stage.appendChild(elem);
         
-        users[obj.nick] = {
+        users[nick] = {
             obj: obj,
+            nick: nick,
             elem: {
                 root: elem,
                 chat: chat,
-                nick: nick
+                nickTag: nickTag
             },
             onscreen: false
         };
         
-        updatePony(obj);
+        updatePony(nick, obj);
         usercount++;
         updateUserCounter();
-        logJoinInChat(obj.nick, users[obj.nick].onscreen);
+        logJoinInChat(nick, users[nick].onscreen);
     }
     
-    function updatePony(obj) {
-        var user = users[obj.nick];
+    function updatePony(nick, obj) {
+        var user = users[nick];
         user.elem.root.style.left = obj.x + 'px';
         user.elem.root.style.top = obj.y + 'px';
         if (ponies.hasOwnProperty(obj.img)) {
@@ -435,7 +436,7 @@
         user.elem.chat.innerHTML = '';
         user.elem.chat.appendChild(document.createTextNode(obj.chat));
         if (obj.chat !== user.obj.chat && obj.chat !== '') {
-            logInChat(obj.nick, obj.chat, user.onscreen);
+            logInChat(nick, obj.chat, user.onscreen);
         }
         
         user.obj = obj;
@@ -458,6 +459,11 @@
                 obj: me
             }));
         }
+    }
+    
+    function pushAndUpdateState(newState) {
+        updatePony(myNick, newState);
+        pushState();
     }
     
     function chatPrint(line, onscreen) {
@@ -559,8 +565,7 @@
                 me.img = (me.img|1) - (me.x<newx ? 0 : 1);
                 me.x = newx;
                 me.y = e.layerY - PONY_HEIGHT / 2;
-                updatePony(me);
-                pushState();
+                pushAndUpdateState(me);
                 lastmove = cur;
             } else {
                 chatPrint('You are doing that too often.');
@@ -652,11 +657,10 @@
             if (e.which == 13) {
                 me.chat = chatbox.value;
                 if (me.chat !== '') {
-                    logInChat(me.nick, me.chat, true);
+                    logInChat(myNick, me.chat, true);
                 }
                 chatbox.value = '';
-                pushState();
-                updatePony(me);
+                pushAndUpdateState(me);
             }
         };
         container.appendChild(chatbox);
@@ -667,10 +671,9 @@
         chatbutton.id = 'chatbutton';
         chatbutton.onclick = function (e) {
             me.chat = chatbox.value;
-            logInChat(me.nick, me.chat, true);
+            logInChat(myNick, me.chat, true);
             chatbox.value = '';
-            pushState();
-            updatePony(me);
+            pushAndUpdateState(me);
         };
         container.appendChild(chatbutton);
         
@@ -691,8 +694,7 @@
                     (function (imgid) {
                         preview.onclick = function () {
                             me.img = imgid;
-                            updatePony(me);
-                            pushState();
+                            pushAndUpdateState(me);
                             chooser.style.display = 'none';
                         };
                     }(i));
@@ -743,18 +745,19 @@
         
         socket.onopen = function () {
             connected = true;
+            myNick = prompt('Choose a nickname.', '') || ('Blank flank #' + Math.floor(Math.random()*100));
             me = {
-                nick: prompt('Choose a nickname.', '') || ('Blank flank #' + Math.floor(Math.random()*100)),
                 alive: true,
                 img: Math.floor(Math.random() * ponies.length),
                 x: Math.floor(Math.random() * (BG_WIDTH - PONY_WIDTH)),
                 y: Math.floor(Math.random() * (CV_HEIGHT - PONY_HEIGHT - CHAT_HEIGHT)),
                 chat: ''
             };
-            createPony(me);
+            createPony(myNick, me);
             socket.send(JSON.stringify({
                 type: 'appear',
-                obj: me
+                obj: me,
+                nick: myNick
             }));
             chatbox.focus();
             stage.scrollLeft = Math.floor(me.x + PONY_WIDTH / 2 - window.innerWidth / 2);
@@ -771,10 +774,12 @@
             var msg = JSON.parse(e.data);
             switch (msg.type) {
                 case 'appear':
-                    createPony(msg.obj);
+                    createPony(msg.nick, msg.obj);
                 break;
                 case 'update':
-                    updatePony(msg.obj);
+                    if (msg.nick !== myNick) {
+                        updatePony(msg.nick, msg.obj);
+                    }
                 break;
                 case 'die':
                     killPony(msg.nick);

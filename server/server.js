@@ -126,11 +126,8 @@ wsServer.on('request', function(request) {
             case 'update':
                 msg.obj = sanitise(msg.obj);
                 
-                // make sure this user doesn't spoof other nicknames
-                msg.obj.nick = user.obj.nick;
-                
                 // kicking
-                if (msg.obj.hasOwnProperty('chat') && user.obj.nick === 'ajf') {
+                if (msg.obj.hasOwnProperty('chat') && user.nick === 'ajf') {
                     if (msg.obj.chat.substr(0, 6) === '/kick ') {
                         var kickee = msg.obj.chat.substr(6);
                         if (users.hasOwnProperty(kickee)) {
@@ -153,7 +150,8 @@ wsServer.on('request', function(request) {
                         if (users[nick].conn !== connection) {
                             users[nick].conn.sendUTF(JSON.stringify({
                                 type: 'update',
-                                obj: msg.obj
+                                obj: msg.obj,
+                                nick: user.nick
                             }));
                         }
                     }
@@ -213,10 +211,8 @@ wsServer.on('request', function(request) {
             return;
         }
         
-        msg.obj = sanitise(msg.obj);
-        
         // Name banning and prevent nickname dupe/owner spoofing
-        if (users.hasOwnProperty(msg.obj.nick) || msg.obj.nick === 'ajf' && !ajfCanJoin || bannedList.indexOf(msg.obj.nick) !== -1) {
+        if (users.hasOwnProperty(msg.nick) || msg.nick === 'ajf' && !ajfCanJoin || bannedList.indexOf(msg.nick) !== -1) {
             connection.sendUTF({
                 type: 'kick',
                 reason: 'nick_in_use'
@@ -224,7 +220,7 @@ wsServer.on('request', function(request) {
             connection.close();
             return;
         // Prefent profane/long  nicks
-        } else if ((!!msg.obj.nick.match(badRegex)) || msg.obj.nick.length > 18) {
+        } else if ((!!msg.nick.match(badRegex)) || msg.nick.length > 18) {
             connection.sendUTF({
                 type: 'kick',
                 reason: 'bad_nick'
@@ -233,29 +229,34 @@ wsServer.on('request', function(request) {
             return;
         }
         
+        msg.obj = sanitise(msg.obj);
+        
         for (var nick in users) {
             if (users.hasOwnProperty(nick)) {
                 // tell client about other clients
                 connection.sendUTF(JSON.stringify({
                     type: 'appear',
-                    obj: users[nick].obj
+                    obj: users[nick].obj,
+                    nick: nick
                 }));
                 
                 // tell other clients about client
                 users[nick].conn.sendUTF(JSON.stringify({
                     type: 'appear',
-                    obj: msg.obj
+                    obj: msg.obj,
+                    nick: msg.nick
                 }));
             }
         }
         
         user = {
             conn: connection,
-            obj: msg.obj
+            obj: msg.obj,
+            nick: msg.nick
         };
         
         // store in users map
-        users[msg.obj.nick] = user;
+        users[msg.nick] = user;
         
         // call onMessage for subsequent messages
         connection.on('message', onMessage);
@@ -265,14 +266,14 @@ wsServer.on('request', function(request) {
         console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.');
         if (user !== null) {
             // remove from users map
-            delete users[user.obj.nick];
+            delete users[user.nick];
             
             // broadcast user leave to other clients
             for (var nick in users) {
                 if (users.hasOwnProperty(nick)) {
                     users[nick].conn.sendUTF(JSON.stringify({
                         type: 'die',
-                        nick: user.obj.nick
+                        nick: user.nick
                     }));
                 }
             }
