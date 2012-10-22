@@ -526,8 +526,8 @@
         usercounter.appendChild(document.createElement('br'));
         usercounter.appendChild(document.createTextNode(offscreencount + ' users offscreen'));
     }
-
-    window.onload = function () {
+    
+    function initGUI() {
         document.body.onkeypress = function (e) {
             if (e.which == 13) {
                 chatbox.focus();
@@ -721,7 +721,9 @@
         music.appendChild(source);
         
         container.appendChild(music);
-        
+    }
+
+    function initNetwork() {
         if (!window.hasOwnProperty('WebSocket')) {
             alert('ponyplace requires WebSocket.\nUse a modern browser like Chrome, Firefox, Safari or Internet Explorer 10');
             container.className = 'disconnected';
@@ -777,5 +779,10 @@
                 }
             }
         };
+    }
+
+    window.onload = function () {
+        initGUI();
+        initNetwork();
     };
 }());
