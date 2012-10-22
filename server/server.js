@@ -29,37 +29,50 @@ var badRegex = /desu|rape|cum|wank|9gag|noob|porn|yolo|hash|weed|drug|milf|bdsm|
 
 var rooms = [
     {
-        name: 'Ponyville',
-        img: 'media/background-ponyville.png',
-        width: 1445,
-        user_count: 0
-    },
-    {
-        name: "Twilight's Library",
+        name: 'library_es',
+        button_label: 'Ir a la biblioteca de Twilight (en español)',
         img: 'media/background-library.png',
         width: 1173,
         user_count: 0
     },
     {
-        name: 'Sugarcube Corner',
+        name: 'ponyville',
+        button_label: 'Go to Ponyville',
+        img: 'media/background-ponyville.png',
+        width: 1445,
+        user_count: 0
+    },
+    {
+        name: "library",
+        button_label: "Go to Twilight's Library",
+        img: 'media/background-library.png',
+        width: 1173,
+        user_count: 0
+    },
+    {
+        name: 'sugarcube_corner',
+        button_label: 'Go to Sugarcube Corner',
         img: 'media/background-sugarcubecorner.png',
         width: 1173,
         user_count: 0
     },
     {
-        name: 'Everfree Forest',
+        name: 'everfree_forest',
+        button_label: 'Go to Everfree Forest',
         img: 'media/background-everfreeforest.png',
         width: 1173,
         user_count: 0
     },
     {
-        name: 'Cloudsdale',
+        name: 'cloudsdale',
+        button_label: 'Go to Cloudsdale',
         img: 'media/background-cloudsdale.png',
         width: 1213,
         user_count: 0
     },
     {
         name: 'Canterlot',
+        button_label: 'Go to Canterlot',
         img: 'media/background-canterlot.png',
         width: 1173,
         user_count: 0

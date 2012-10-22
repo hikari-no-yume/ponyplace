@@ -499,7 +499,7 @@
             
             var roombutton = document.createElement('input');
             roombutton.type = 'submit';
-            roombutton.value = 'Go to ' + data.name + ' (' + data.user_count + ' users)';
+            roombutton.value = data.button_label;
             roombutton.className = 'room-button';
             roombutton.style.top = y + 'px';
             (function (roomName) {
