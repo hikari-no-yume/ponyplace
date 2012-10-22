@@ -345,7 +345,7 @@
     
     var socket, connected = false, ignoreDisconnect = false, me, myNick, myRoom, users = {}, usercount = 0, lastmove = (new Date().getTime());
     
-    var container, stage, title, creditslink, steamgrouplink, usercounter, chooser, chooserbutton, background, chatbox, chatbutton, chatlog, fullchatlog, fullchatlogbutton, fullchatlogvisible, music;
+    var container, overlay, stage, title, creditslink, steamgrouplink, usercounter, chooser, chooserbutton, background, chatbox, chatbutton, chatlog, fullchatlog, fullchatlogbutton, fullchatlogvisible, music;
 
     function createPony(nick, obj) {
         var elem = document.createElement('div');
@@ -510,7 +510,7 @@
                     }));
                 };
             }(data.name));
-            container.appendChild(roombutton);
+            overlay.appendChild(roombutton);
             y += 25;
         }
     }
@@ -579,34 +579,38 @@
         };
         stage.appendChild(background);
         
+        overlay = document.createElement('div');
+        overlay.id = 'overlay';
+        container.appendChild(overlay);
+        
         title = document.createElement('h1');
         title.id = 'title';
         title.appendChild(document.createTextNode('ponyplace'));
-        container.appendChild(title);
+        overlay.appendChild(title);
         
         creditslink = document.createElement('a');
         creditslink.id = 'credits-link';
         creditslink.href = 'credits.html';
         creditslink.target = '_blank';
         creditslink.appendChild(document.createTextNode('Credits'));
-        container.appendChild(creditslink);
+        overlay.appendChild(creditslink);
         
         steamgrouplink = document.createElement('a');
         steamgrouplink.id = 'steamgroup-link';
         steamgrouplink.href = 'http://steamcommunity.com/groups/ponyplace';
         steamgrouplink.target = '_blank';
         steamgrouplink.appendChild(document.createTextNode('Steam Group'));
-        container.appendChild(steamgrouplink);
+        overlay.appendChild(steamgrouplink);
         
         chatlog = document.createElement('div');
         chatlog.id = 'chatlog';
-        container.appendChild(chatlog);
+        overlay.appendChild(chatlog);
         
         fullchatlog = document.createElement('div');
         fullchatlog.id = 'fullchatlog';
         fullchatlog.style.display = 'none';
         fullchatlogvisible = false;
-        container.appendChild(fullchatlog);
+        overlay.appendChild(fullchatlog);
         
         chatPrint("Choose a room.", true);
         
@@ -626,7 +630,7 @@
                 fullchatlogbutton.value = 'Hide full chatlog';
             }
         };
-        container.appendChild(fullchatlogbutton);
+        overlay.appendChild(fullchatlogbutton);
         
         chatbox = document.createElement('input');
         chatbox.type = 'text';
@@ -682,12 +686,12 @@
                 container.appendChild(chooser);
             }
         };
-        container.appendChild(chooserbutton);
+        overlay.appendChild(chooserbutton);
         
         usercounter = document.createElement('div');
         usercounter.id = 'usercounter';
         updateUserCounter();
-        container.appendChild(usercounter);
+        overlay.appendChild(usercounter);
         
         music = document.createElement('audio');
         music.id = 'music';
@@ -705,7 +709,7 @@
         source.type = 'audio/mpeg';
         music.appendChild(source);
         
-        container.appendChild(music);
+        overlay.appendChild(music);
     }
 
     function initNetwork() {
