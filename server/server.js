@@ -205,7 +205,7 @@ wsServer.on('request', function(request) {
                     if (rooms[i].name === msg.name) {
                         // tell clients in old room that client has left
                         for (var nick in users) {
-                            if (users.hasOwnProperty(nick) && users[nick].room === user.room && nick !== user.nick) {
+                            if (users.hasOwnProperty(nick) && users[nick].room === user.room && nick !== user.nick && user.room !== null) {
                                 users[nick].conn.sendUTF(JSON.stringify({
                                     type: 'die',
                                     nick: user.nick
