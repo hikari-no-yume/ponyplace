@@ -38,6 +38,15 @@ h1, p {
     background-color: pink;
     margin: 0 auto;
     position: relative;
+    transition: transform 0.5s linear;
+    -webkit-transition: -webkit-transform 0.5s linear;
+    -o-transition: -o-transform 0.5s linear;    
+}
+
+.upside-down {
+    transform: rotate(180deg);
+    -webkit-transform: rotate(180deg);
+    -o-transform: rotate(180deg);
 }
 
 #stage {

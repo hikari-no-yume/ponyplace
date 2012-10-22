@@ -679,6 +679,11 @@
                             me.img = imgid;
                             pushAndUpdateState(me);
                             chooser.style.display = 'none';
+                            if (ponies[imgid].indexOf('_upsidedown') !== -1) {
+                                container.className = 'upside-down';
+                            } else {
+                                container.className = '';
+                            }
                         };
                     }(i));
                     chooser.appendChild(preview);
