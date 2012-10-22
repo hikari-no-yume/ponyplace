@@ -592,7 +592,7 @@
         fullchatlogvisible = false;
         container.appendChild(fullchatlog);
         
-        chatPrint("Scroll around!", true);
+        chatPrint("Choose a room.", true);
         
         fullchatlogbutton = document.createElement('input');
         fullchatlogbutton.id = 'fullchatlog-button';
