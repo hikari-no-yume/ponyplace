@@ -477,13 +477,29 @@
     }
     
     function updateRoomList(rooms) {
-        var y = 0;
-        for (var i = 0; i < rooms.length; i += 1) {
+        var oldbuttons = document.getElementsByClassName('room-button');
+        for (var i = 0; i < oldbuttons.length; i++) {
+            container.removeChild(oldbuttons[i]);
+        }
+    
+        var refreshbutton = document.createElement('input');
+        refreshbutton.type = 'submit';
+        refreshbutton.value = 'Refresh room list';
+        refreshbutton.className = 'room-button';
+        refreshbutton.onclick = function () {
+            socket.send(JSON.stringify({
+                type: 'room_list'
+            }));
+        };
+        container.appendChild(refreshbutton);
+    
+        var y = 25;
+        for (var i = 0; i < rooms.length; i++) {
             var data = rooms[i];
             
             var roombutton = document.createElement('input');
             roombutton.type = 'submit';
-            roombutton.value = 'Go to ' + data.name;
+            roombutton.value = 'Go to ' + data.name + ' (' + data.user_count + ' users)';
             roombutton.className = 'room-button';
             roombutton.style.top = y + 'px';
             (function (roomName) {

@@ -31,32 +31,38 @@ var rooms = [
     {
         name: 'Ponyville',
         img: 'media/background-ponyville.png',
-        width: 1445
+        width: 1445,
+        user_count: 0
     },
     {
         name: "Twilight's Library",
         img: 'media/background-library.png',
-        width: 1173
+        width: 1173,
+        user_count: 0
     },
     {
         name: 'Sugarcube Corner',
         img: 'media/background-sugarcubecorner.png',
-        width: 1173
+        width: 1173,
+        user_count: 0
     },
     {
         name: 'Everfree Forest',
         img: 'media/background-everfreeforest.png',
-        width: 1173
+        width: 1173,
+        user_count: 0
     },
     {
         name: 'Cloudsdale',
         img: 'media/background-cloudsdale.png',
-        width: 1213
+        width: 1213,
+        user_count: 0
     },
     {
         name: 'Canterlot',
         img: 'media/background-canterlot.png',
-        width: 1173
+        width: 1173,
+        user_count: 0
     }
 ];
 
@@ -186,6 +192,14 @@ wsServer.on('request', function(request) {
                                 }));
                             }
                         }
+                        
+                        // decrease user count of old room
+                        for (var j = 0; j < rooms.length; j++) {
+                            if (rooms[j].name === user.room) {
+                                rooms[j].user_count--;
+                                break;
+                            }
+                        }
                     
                         user.room = msg.name;
                         
@@ -213,6 +227,10 @@ wsServer.on('request', function(request) {
                                 }
                             }
                         }
+                        
+                        // increase user count of new room
+                        rooms[i].user_count++;
+                        
                         return;
                     }
                 }
@@ -222,6 +240,13 @@ wsServer.on('request', function(request) {
                     reason: 'no_such_room'
                 }));
                 connection.close();
+            break;
+            case 'room_list':
+                // tell client about rooms
+                connection.sendUTF(JSON.stringify({
+                    type: 'room_list',
+                    list: rooms
+                }));
             break;
             // handle unexpected packet types
             default:
@@ -330,6 +355,14 @@ wsServer.on('request', function(request) {
                         type: 'die',
                         nick: user.nick
                     }));
+                }
+            }
+            
+            // decrease user count of old room
+            for (var i = 0; i < rooms.length; i++) {
+                if (rooms[i].name === user.room) {
+                    rooms[i].user_count--;
+                    break;
                 }
             }
         }
