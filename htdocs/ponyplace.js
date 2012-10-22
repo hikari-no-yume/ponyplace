@@ -3,47 +3,6 @@
     var CV_HEIGHT = 680;
     var CHAT_HEIGHT = 20;
     var PONY_WIDTH = 148, PONY_HEIGHT = 168;
-    var BG_WIDTH = 7350;
-       
-    // horizontal positions and names
-    var rooms = [
-        {
-            x: 0,
-            name: 'Ponyville',
-            img: 'media/background-ponyville.png',
-            width: 1445
-        },
-        {
-            x: 1445,
-            name: "Twilight's Library",
-            img: 'media/background-library.png',
-            width: 1173
-        },
-        {
-            x: 1445 + 1173,
-            name: "Sugarcube Corner",
-            img: 'media/background-sugarcubecorner.png',
-            width: 1173
-        },
-        {
-            x: 1445 + 1173 + 1173,
-            name: 'Everfree Forest',
-            img: 'media/background-everfreeforest.png',
-            width: 1173
-        },
-        {
-            x: 1445 + 1173 + 1173 + 1173,
-            name: 'Cloudsdale',
-            img: 'media/background-cloudsdale.png',
-            width: 1213
-        },
-        {
-            x: 1445 + 1173 + 1173 + 1173 + 1213,
-            name: 'Canterlot',
-            img: 'media/background-canterlot.png',
-            width: 1173
-        }
-    ];
     
     var ponies = [
         'media/derpy_left.gif',
@@ -384,7 +343,7 @@
         'media/zecora_right_walk.gif'
     ];
     
-    var socket, connected = false, ignoreDisconnect = false, me, myNick, users = {}, usercount = 0, offscreencount = 0, lastmove = (new Date().getTime());
+    var socket, connected = false, ignoreDisconnect = false, me, myNick, myRoom, users = {}, usercount = 0, lastmove = (new Date().getTime());
     
     var container, stage, title, creditslink, steamgrouplink, usercounter, chooser, chooserbutton, background, chatbox, chatbutton, chatlog, fullchatlog, fullchatlogbutton, fullchatlogvisible, music;
 
@@ -413,14 +372,13 @@
                 root: elem,
                 chat: chat,
                 nickTag: nickTag
-            },
-            onscreen: false
+            }
         };
         
         updatePony(nick, obj);
         usercount++;
         updateUserCounter();
-        logJoinInChat(nick, users[nick].onscreen);
+        logJoinInChat(nick);
     }
     
     function updatePony(nick, obj) {
@@ -436,18 +394,17 @@
         user.elem.chat.innerHTML = '';
         user.elem.chat.appendChild(document.createTextNode(obj.chat));
         if (obj.chat !== user.obj.chat && obj.chat !== '') {
-            logInChat(nick, obj.chat, user.onscreen);
+            logInChat(nick, obj.chat);
         }
         
         user.obj = obj;
-        updateUserCounter();
     }
     
     function killPony(nick) {
         var user = users[nick];
         usercount--;
         updateUserCounter();
-        logLeaveInChat(nick, user.onscreen);
+        logLeaveInChat(nick);
         stage.removeChild(user.elem.root);
         delete users[nick];
     }
@@ -466,15 +423,11 @@
         pushState();
     }
     
-    function chatPrint(line, onscreen) {
+    function chatPrint(line) {
         line = '[' + (new Date()).toLocaleTimeString() + '] ' + line;
     
         var span = document.createElement('span');
-        if (onscreen) {
-            span.className = 'chatline';
-        } else {
-            span.className = 'offscreen-chatline';
-        }
+        span.className = 'chatline';
         span.appendChild(document.createTextNode(line));
         span.appendChild(document.createElement('br'));
         chatlog.appendChild(span);
@@ -506,35 +459,70 @@
         fullchatlog.appendChild(document.createElement('br'));
     }
     
-    function logInChat(nick, msg, onscreen) {
-        chatPrint('<' + nick + '> ' + msg, onscreen);
+    function logInChat(nick, msg) {
+        chatPrint('<' + nick + '> ' + msg);
     }
     
-    function logJoinInChat(nick, msg, onscreen) {
-        chatPrint(nick + ' appeared', onscreen);
+    function logJoinInChat(nick, msg) {
+        chatPrint(nick + ' appeared');
     }
     
-    function logLeaveInChat(nick, msg, onscreen) {
-        chatPrint(nick + ' left', onscreen);
+    function logLeaveInChat(nick, msg) {
+        chatPrint(nick + ' left');
     }
     
     function updateUserCounter() {
-        offscreencount = 0;
+        usercounter.innerHTML = '';
+        usercounter.appendChild(document.createTextNode(usercount + ' users in room'));
+    }
+    
+    function updateRoomList(rooms) {
+        var y = 0;
+        for (var i = 0; i < rooms.length; i += 1) {
+            var data = rooms[i];
+            
+            var roombutton = document.createElement('input');
+            roombutton.type = 'submit';
+            roombutton.value = 'Go to ' + data.name;
+            roombutton.className = 'room-button';
+            roombutton.style.top = y + 'px';
+            (function (roomName) {
+                roombutton.onclick = function () {
+                    socket.send(JSON.stringify({
+                        type: 'room_change',
+                        name: roomName
+                    }));
+                };
+            }(data.name));
+            container.appendChild(roombutton);
+            y += 25;
+        }
+    }
+    
+    function changeRoom(room) {
+        // change background
+        background.src = room.img;
+        stage.scrollLeft = 0;
+        
+        // clear users
         for (var nick in users) {
-            if (users.hasOwnProperty(nick)) {
-                var user = users[nick];
-                if (user.obj.x - PONY_WIDTH < stage.scrollLeft || user.obj.x - PONY_WIDTH > stage.scrollLeft + window.innerWidth) {
-                    offscreencount++;
-                    user.onscreen = false;
-                } else {
-                    user.onscreen = true;
-                }
+            if (users.hasOwnProperty(nick) && nick !== myNick) {
+                killPony(nick);
             }
         }
-        usercounter.innerHTML = '';
-        usercounter.appendChild(document.createTextNode(usercount + ' users online'));
-        usercounter.appendChild(document.createElement('br'));
-        usercounter.appendChild(document.createTextNode(offscreencount + ' users offscreen'));
+        
+        // go to random position
+        me.x = me.x || Math.floor(Math.random() * (room.width - PONY_WIDTH));
+        me.y = me.y || Math.floor(Math.random() * (CV_HEIGHT - PONY_HEIGHT - CHAT_HEIGHT));
+        stage.scrollLeft = Math.floor(me.x + PONY_WIDTH / 2 - window.innerWidth / 2);
+        
+        // unhide
+        users[myNick].elem.root.style.display = 'block';
+        
+        // push state
+        pushAndUpdateState(me);
+        
+        chatPrint('You changed room to ' + room.name);
     }
     
     function initGUI() {
@@ -555,9 +543,8 @@
         stage.onscroll = updateUserCounter;
         container.appendChild(stage);
         
-        background = document.createElement('div');
+        background = document.createElement('img');
         background.id = 'background';
-        background.style.width = BG_WIDTH + 'px';
         background.onclick = function (e) {
             var cur = (new Date().getTime());
             if (cur - lastmove > 400) {
@@ -594,30 +581,6 @@
         steamgrouplink.target = '_blank';
         steamgrouplink.appendChild(document.createTextNode('Steam Group'));
         container.appendChild(steamgrouplink);
-        
-        var y = 0;
-        for (var i = 0; i < rooms.length; i += 1) {
-            var data = rooms[i];
-            
-            var bgimg = document.createElement('img');
-            bgimg.src = data.img;
-            bgimg.width = data.width;
-            background.appendChild(bgimg);
-            
-            var roombutton = document.createElement('input');
-            roombutton.type = 'submit';
-            roombutton.value = 'Go to ' + data.name;
-            roombutton.className = 'room-button';
-            roombutton.style.top = y + 'px';
-            (function (x) {
-                roombutton.onclick = function () {
-                    stage.scrollLeft = x;
-                    updateUserCounter();
-                };
-            }(data.x));
-            container.appendChild(roombutton);
-            y += 25;
-        }
         
         chatlog = document.createElement('div');
         chatlog.id = 'chatlog';
@@ -746,21 +709,24 @@
         socket.onopen = function () {
             connected = true;
             myNick = prompt('Choose a nickname.', '') || ('Blank flank #' + Math.floor(Math.random()*100));
+            myRoom = null;
             me = {
-                alive: true,
                 img: Math.floor(Math.random() * ponies.length),
-                x: Math.floor(Math.random() * (BG_WIDTH - PONY_WIDTH)),
-                y: Math.floor(Math.random() * (CV_HEIGHT - PONY_HEIGHT - CHAT_HEIGHT)),
+                x: 0,
+                y: 0,
                 chat: ''
             };
             createPony(myNick, me);
+            
+            // hide until room change
+            users[myNick].elem.root.style.display = 'none';
+            
             socket.send(JSON.stringify({
                 type: 'appear',
                 obj: me,
                 nick: myNick
             }));
             chatbox.focus();
-            stage.scrollLeft = Math.floor(me.x + PONY_WIDTH / 2 - window.innerWidth / 2);
         };
         socket.onclose = function (e) {
             connected = false;
@@ -784,6 +750,12 @@
                 case 'die':
                     killPony(msg.nick);
                 break;
+                case 'room_list':
+                    updateRoomList(msg.list);
+                break;
+                case 'room_change':
+                    changeRoom(msg.data);
+                break;
                 case 'kick':
                     if (msg.reason === 'nick_in_use') {
                         alert('That nickname was already in use. Reload and choose a different one.');
@@ -791,6 +763,8 @@
                         alert('Bad nickname - nicknames can be a maximum of 18 characters.');
                     } else if (msg.reason === 'protocol_error') {
                         alert('There was a protocol error. This usually means your client sent a malformed packet. Your client is probably out of date, try clearing your cache and refreshing.');
+                    } else if (msg.reason === 'no_such_room') {
+                        alert("No such room. You tried to join a room that doesn't exist.");
                     } else if (msg.reason === 'update') {
                         ignoreDisconnect = true;
                         window.setTimeout(function () {

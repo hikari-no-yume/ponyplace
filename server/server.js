@@ -27,10 +27,38 @@ function originIsAllowed(origin) {
 
 var badRegex = /desu|rape|cum|wank|9gag|noob|porn|yolo|hash|weed|drug|milf|bdsm|tits|penis|fap|butt|ass|shit|fuck|fag|faggot|bitch|cunt|dick|cock|nigga|nigger|homosexual|gay|clopclop|clopping|(\[\]\(\/[a-zA-Z0-9\-_]+\))/gi;
 
-var MAP_MAX_X = Math.floor(7350 - 148 / 2);
-var MAP_MIN_X = Math.floor(0 - 148 / 2);
-var MAP_MAX_Y = Math.floor(660 - 168 / 2);
-var MAP_MIN_Y = Math.floor(0 - 168 / 2);
+var rooms = [
+    {
+        name: 'Ponyville',
+        img: 'media/background-ponyville.png',
+        width: 1445
+    },
+    {
+        name: "Twilight's Library",
+        img: 'media/background-library.png',
+        width: 1173
+    },
+    {
+        name: 'Sugarcube Corner',
+        img: 'media/background-sugarcubecorner.png',
+        width: 1173
+    },
+    {
+        name: 'Everfree Forest',
+        img: 'media/background-everfreeforest.png',
+        width: 1173
+    },
+    {
+        name: 'Cloudsdale',
+        img: 'media/background-cloudsdale.png',
+        width: 1213
+    },
+    {
+        name: 'Canterlot',
+        img: 'media/background-canterlot.png',
+        width: 1173
+    }
+];
 
 function sanitise(obj) {
     if (obj.hasOwnProperty('chat')) {
@@ -38,18 +66,6 @@ function sanitise(obj) {
         obj.chat = obj.chat.replace(badRegex, 'pony');
         // trim whitespace
         obj.chat = obj.chat.replace(/^\s+|\s+$/g, '');
-    }
-    if (obj.hasOwnProperty('x')) { 
-        if (obj.x > MAP_MAX_X) {
-            obj.x = MAP_MAX_X;
-        } else if (obj.x < MAP_MIN_X) {
-            obj.x = MAP_MIN_X;
-        }
-        if (obj.y < MAP_MIN_Y) {
-            obj.y = MAP_MIN_Y;
-        } else if (obj.y > MAP_MAX_Y) {
-            obj.y = MAP_MAX_Y;
-        }
     }
     return obj;
 }
@@ -65,10 +81,10 @@ process.stdin.on('keypress', function (chunk, key) {
         for (var nick in users) {
             if (users.hasOwnProperty(nick)) {
                 // kick for update
-                users[nick].conn.sendUTF({
+                users[nick].conn.sendUTF(JSON.stringify({
                     type: 'kick',
                     reason: 'update'
-                });
+                }));
                 users[nick].conn.close();
                 console.log('Update-kicked ' + nick);
             }
@@ -144,10 +160,10 @@ wsServer.on('request', function(request) {
                 // update their stored state
                 user.obj = msg.obj;
                 
-                // broadcast new state to other clients
+                // broadcast new state to other clients in same room
                 for (var nick in users) {
                     if (users.hasOwnProperty(nick)) {
-                        if (users[nick].conn !== connection) {
+                        if (users[nick].conn !== connection && users[nick].room === user.room) {
                             users[nick].conn.sendUTF(JSON.stringify({
                                 type: 'update',
                                 obj: msg.obj,
@@ -156,6 +172,56 @@ wsServer.on('request', function(request) {
                         }
                     }
                 }
+            break;
+            case 'room_change':
+                for (var i = 0; i < rooms.length; i++) {
+                    // room exists
+                    if (rooms[i].name === msg.name) {
+                        // tell clients in old room that client has left
+                        for (var nick in users) {
+                            if (users.hasOwnProperty(nick) && users[nick].room === user.room && nick !== user.nick) {
+                                users[nick].conn.sendUTF(JSON.stringify({
+                                    type: 'die',
+                                    nick: user.nick
+                                }));
+                            }
+                        }
+                    
+                        user.room = msg.name;
+                        
+                        // tell client it has changed room and tell room details
+                        connection.sendUTF(JSON.stringify({
+                            type: 'room_change',
+                            data: rooms[i]
+                        }));
+                        
+                        for (var nick in users) {
+                            if (users.hasOwnProperty(nick) && users[nick].room === user.room) {
+                                if (nick !== user.nick) {
+                                    // tell client about other clients in room
+                                    connection.sendUTF(JSON.stringify({
+                                        type: 'appear',
+                                        obj: users[nick].obj,
+                                        nick: nick
+                                    }));
+                                    // tell other clients in room about client
+                                    users[nick].conn.sendUTF(JSON.stringify({
+                                        type: 'appear',
+                                        obj: user.obj,
+                                        nick: user.nick
+                                    }));
+                                }
+                            }
+                        }
+                        return;
+                    }
+                }
+                // room doesn't exist
+                connection.sendUTF(JSON.stringify({
+                    type: 'kick',
+                    reason: 'no_such_room'
+                }));
+                connection.close();
             break;
             // handle unexpected packet types
             default:
@@ -213,46 +279,35 @@ wsServer.on('request', function(request) {
         
         // Name banning and prevent nickname dupe/owner spoofing
         if (users.hasOwnProperty(msg.nick) || msg.nick === 'ajf' && !ajfCanJoin || bannedList.indexOf(msg.nick) !== -1) {
-            connection.sendUTF({
+            connection.sendUTF(JSON.stringify({
                 type: 'kick',
                 reason: 'nick_in_use'
-            });
+            }));
             connection.close();
             return;
         // Prefent profane/long  nicks
         } else if ((!!msg.nick.match(badRegex)) || msg.nick.length > 18) {
-            connection.sendUTF({
+            connection.sendUTF(JSON.stringify({
                 type: 'kick',
                 reason: 'bad_nick'
-            });
+            }));
             connection.close();
             return;
         }
         
         msg.obj = sanitise(msg.obj);
         
-        for (var nick in users) {
-            if (users.hasOwnProperty(nick)) {
-                // tell client about other clients
-                connection.sendUTF(JSON.stringify({
-                    type: 'appear',
-                    obj: users[nick].obj,
-                    nick: nick
-                }));
-                
-                // tell other clients about client
-                users[nick].conn.sendUTF(JSON.stringify({
-                    type: 'appear',
-                    obj: msg.obj,
-                    nick: msg.nick
-                }));
-            }
-        }
+        // tell client about rooms
+        connection.sendUTF(JSON.stringify({
+            type: 'room_list',
+            list: rooms
+        }));
         
         user = {
             conn: connection,
             obj: msg.obj,
-            nick: msg.nick
+            nick: msg.nick,
+            room: null
         };
         
         // store in users map
@@ -270,7 +325,7 @@ wsServer.on('request', function(request) {
             
             // broadcast user leave to other clients
             for (var nick in users) {
-                if (users.hasOwnProperty(nick)) {
+                if (users.hasOwnProperty(nick) && users[nick].room === user.room) {
                     users[nick].conn.sendUTF(JSON.stringify({
                         type: 'die',
                         nick: user.nick
