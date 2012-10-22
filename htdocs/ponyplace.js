@@ -479,7 +479,7 @@
     function updateRoomList(rooms) {
         var oldbuttons = document.getElementsByClassName('room-button');
         for (var i = 0; i < oldbuttons.length; i++) {
-            container.removeChild(oldbuttons[i]);
+            overlay.removeChild(oldbuttons[i]);
         }
     
         var refreshbutton = document.createElement('input');
@@ -491,7 +491,7 @@
                 type: 'room_list'
             }));
         };
-        container.appendChild(refreshbutton);
+        overlay.appendChild(refreshbutton);
     
         var y = 25;
         for (var i = 0; i < rooms.length; i++) {
