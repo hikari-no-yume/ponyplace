@@ -364,7 +364,7 @@ wsServer.on('request', function(request) {
     
     connection.on('close', function(reasonCode, description) {
         console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.');
-        if (user !== null) {
+        if (user !== null && user.room !== null) {
             // remove from users map
             delete users[user.nick];
             
