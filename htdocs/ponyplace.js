@@ -725,6 +725,8 @@
         socket.onopen = function () {
             connected = true;
             myNick = prompt('Choose a nickname.', '') || ('Blank flank #' + Math.floor(Math.random()*100));
+            // trim whitespace
+            myNick = myNick.replace(/^\s+|\s+$/g, '');
             myRoom = null;
             me = {
                 img: Math.floor(Math.random() * ponies.length),
