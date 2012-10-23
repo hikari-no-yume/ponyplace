@@ -338,8 +338,8 @@ wsServer.on('request', function(request) {
             }));
             connection.close();
             return;
-        // Prefent profane/long  nicks
-        } else if ((!!msg.nick.match(badRegex)) || msg.nick.length > 18) {
+        // Prefent profane/long/short/additional whitespace nicks
+        } else if ((!!msg.nick.match(badRegex)) || msg.nick.length > 18 || msg.nick.length < 1 || /^\s+|\s+$/g.test(msg.nick)) {
             connection.sendUTF(JSON.stringify({
                 type: 'kick',
                 reason: 'bad_nick'

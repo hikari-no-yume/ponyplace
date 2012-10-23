@@ -789,7 +789,7 @@
                     if (msg.reason === 'nick_in_use') {
                         alert('That nickname was already in use. Reload and choose a different one.');
                     } else if (msg.reason === 'bad_nick') {
-                        alert('Bad nickname - nicknames can be a maximum of 18 characters.');
+                        alert('Bad nickname - nicknames must be between 1 and 18 characters, and have no trailing or leading whitespace.');
                     } else if (msg.reason === 'protocol_error') {
                         alert('There was a protocol error. This usually means your client sent a malformed packet. Your client is probably out of date, try clearing your cache and refreshing.');
                     } else if (msg.reason === 'no_such_room') {
