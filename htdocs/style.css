@@ -38,8 +38,8 @@ h1, p {
     background-color: pink;
     margin: 0 auto;
     position: relative;
-    transition: transform 0.5s linear;
-    -webkit-transition: -webkit-transform 0.5s linear;
+    transition: transform 0.5s linear, filter 15s ease-in;
+    -webkit-transition: -webkit-transform 0.5s linear, -webkit-filter 15s ease-in;
     -o-transition: -o-transform 0.5s linear;    
 }
 
@@ -47,6 +47,11 @@ h1, p {
     transform: rotate(180deg);
     -webkit-transform: rotate(180deg);
     -o-transform: rotate(180deg);
+}
+
+.drunkovision {
+    filter: blur(10px) hue-rotate(50deg);
+    -webkit-filter: blur(10px) hue-rotate(50deg);
 }
 
 #stage {

@@ -681,6 +681,8 @@
                             chooser.style.display = 'none';
                             if (ponies[imgid].indexOf('_upsidedown') !== -1) {
                                 container.className = 'upside-down';
+                            } else if (ponies[imgid].indexOf('berrypunch_') !== -1) {
+                                container.className = 'drunkovision';
                             } else {
                                 container.className = '';
                             }
