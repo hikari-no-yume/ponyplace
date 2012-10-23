@@ -731,9 +731,7 @@
 
     function initNetwork() {
         if (!window.hasOwnProperty('WebSocket')) {
-            alert('ponyplace requires WebSocket.\nUse a modern browser like Chrome, Firefox, Safari or Internet Explorer 10');
-            container.className = 'disconnected';
-            container.innerHTML = '';
+            window.location = 'no-websocket.html';
             return;
         }
         
