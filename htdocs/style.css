@@ -49,11 +49,6 @@ h1, p {
     -o-transform: rotate(180deg);
 }
 
-.drunkovision {
-    filter: blur(10px) hue-rotate(50deg);
-    -webkit-filter: blur(10px) hue-rotate(50deg);
-}
-
 #stage {
     position: absolute;
     left: 0;
