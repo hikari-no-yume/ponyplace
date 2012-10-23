@@ -215,7 +215,7 @@ h1, p {
 
 .pony {
     position: absolute;
-    width: 148px;
+    width: 168px;
     height: 168px;
     background-position: center;
     background-repeat: no-repeat;
@@ -231,8 +231,6 @@ h1, p {
     font-size: 11pt;
     color: black;
     margin-bottom: 2px;
-    position: relative;
-    left: -10px;
     width: 168px;
     overflow: hidden;
 }
@@ -259,6 +257,15 @@ h1, p {
     font-weight: normal !important;
     color: white !important;
     content: ' (pp creator)';
+}
+
+.moderator {
+    color: rgb(204, 255, 0) !important;
+}
+.moderator::after {
+    font-weight: normal !important;
+    color: white !important;
+    content: ' (mod)';
 }
 
 .disconnected {

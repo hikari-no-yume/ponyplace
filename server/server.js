@@ -2,6 +2,7 @@
 
 var WebSocketServer = require('websocket').server;
 var http = require('http');
+var fs = require('fs');
 
 var server = http.createServer(function(request, response) {
     console.log((new Date()) + ' Received request for ' + request.url);
@@ -26,6 +27,22 @@ function originIsAllowed(origin) {
 }
 
 var badRegex = /desu|rape|cum|wank|9gag|noob|porn|yolo|hash|weed|drug|milf|bdsm|tits|penis|fap|butt|ass|shit|fuck|fag|faggot|bitch|cunt|dick|cock|nigga|nigger|homosexual|gay|clopclop|clopping|(\[\]\(\/[a-zA-Z0-9\-_]+\))/gi;
+
+var fs = require('fs');
+
+var creatorNick, moderatorNicks, passwords;
+
+fs.readFile('special-users.json', 'utf8', function (err, data) {
+    if (err) {
+        throw err;
+    }
+    
+    data = JSON.parse(data);
+    creatorNick = data.creator;
+    moderatorNicks = data.moderators;
+    passwords = data.passwords;
+    console.log('Loaded special users info');
+});
 
 var rooms = [
     {
@@ -115,10 +132,6 @@ process.stdin.on('keypress', function (chunk, key) {
                 console.log('Update-kicked ' + nick);
             }
         }
-    } else if (key && key.name === 'j') {
-        // open brief time window in which ajf can join
-        ajfCanJoin = !ajfCanJoin;
-        console.log('ajf can join: ' + ajfCanJoin);
     } else if (key && key.ctrl && key.name === 'c') {
         process.exit();
     }
@@ -169,10 +182,10 @@ wsServer.on('request', function(request) {
                 msg.obj = sanitise(msg.obj);
                 
                 // kicking
-                if (msg.obj.hasOwnProperty('chat') && user.nick === 'ajf') {
+                if (msg.obj.hasOwnProperty('chat') && (user.special === 'moderator' || user.special === 'creator')) {
                     if (msg.obj.chat.substr(0, 6) === '/kick ') {
                         var kickee = msg.obj.chat.substr(6);
-                        if (users.hasOwnProperty(kickee)) {
+                        if (users.hasOwnProperty(kickee) && kickee !== creatorNick && moderatorNicks.indexOf(kickee) === -1) {
                             users[kickee].conn.close();
                             bannedList.push(kickee);
                             bannedIPList.push(users[kickee].conn.remoteAddress);
@@ -244,13 +257,15 @@ wsServer.on('request', function(request) {
                                     connection.sendUTF(JSON.stringify({
                                         type: 'appear',
                                         obj: users[nick].obj,
-                                        nick: nick
+                                        nick: nick,
+                                        special: users[nick].special
                                     }));
                                     // tell other clients in room about client
                                     users[nick].conn.sendUTF(JSON.stringify({
                                         type: 'appear',
                                         obj: user.obj,
-                                        nick: user.nick
+                                        nick: user.nick,
+                                        special: user.special
                                     }));
                                 }
                             }
@@ -330,11 +345,28 @@ wsServer.on('request', function(request) {
             return;
         }
         
-        // Name banning and prevent nickname dupe/owner spoofing
-        if (users.hasOwnProperty(msg.nick) || msg.nick === 'ajf' && !ajfCanJoin || bannedList.indexOf(msg.nick) !== -1) {
+        var special = false;
+        
+        // Prevent owner/mod spoofing
+        if (msg.nick === creatorNick) {
+            special = 'creator';
+        } else if (moderatorNicks.indexOf(msg.nick) !== -1) {
+            special = 'moderator';
+        }
+        
+        // Name banning and prevent nickname dupe
+        if (users.hasOwnProperty(msg.nick) || bannedList.indexOf(msg.nick) !== -1) {
             connection.sendUTF(JSON.stringify({
                 type: 'kick',
                 reason: 'nick_in_use'
+            }));
+            connection.close();
+            return;
+        // Prevent moderator/creator spoofing
+        } else if (special && passwords[msg.nick] !== msg.password) {
+            connection.sendUTF(JSON.stringify({
+                type: 'kick',
+                reason: 'wrong_password'
             }));
             connection.close();
             return;
@@ -360,7 +392,8 @@ wsServer.on('request', function(request) {
             conn: connection,
             obj: msg.obj,
             nick: msg.nick,
-            room: null
+            room: null,
+            special: special
         };
         
         // store in users map

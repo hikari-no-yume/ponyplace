@@ -2,7 +2,7 @@
     'use strict';
     var CV_HEIGHT = 680;
     var CHAT_HEIGHT = 20;
-    var PONY_WIDTH = 148, PONY_HEIGHT = 168;
+    var PONY_WIDTH = 168, PONY_HEIGHT = 168;
     
     var ponies = [
         'media/derpy_left.gif',
@@ -355,11 +355,17 @@
         'media/zecora_right_walk.gif'
     ];
     
+    var specialNicks = {
+        'ajf': 'creator',
+        'swag': 'moderator',
+        'Berry the Drunk': 'moderator'
+    };
+    
     var socket, connected = false, ignoreDisconnect = false, me, myNick, myRoom, users = {}, usercount = 0, lastmove = (new Date().getTime());
     
     var container, overlay, stage, title, creditslink, steamgrouplink, usercounter, chooser, chooserbutton, background, chatbox, chatbutton, chatlog, fullchatlog, fullchatlogbutton, fullchatlogvisible, music;
 
-    function createPony(nick, obj) {
+    function createPony(nick, obj, special) {
         var elem = document.createElement('div');
         elem.className = 'pony';
         
@@ -370,8 +376,8 @@
         var nickTag = document.createElement('p');
         nickTag.className = 'nickname';
         nickTag.appendChild(document.createTextNode(nick));
-        if (nick === 'ajf') {
-            nickTag.className += ' creator';
+        if (special) {
+            nickTag.className += ' ' + special;
         }
         elem.appendChild(nickTag);
         
@@ -744,6 +750,10 @@
         socket.onopen = function () {
             connected = true;
             myNick = prompt('Choose a nickname.', '') || ('Blank flank #' + Math.floor(Math.random()*100));
+            var password = null;
+            if (specialNicks.hasOwnProperty(myNick)) {
+                password = prompt('This nickname is password protected.\nPlease enter its password.', '');
+            }
             // trim whitespace
             myNick = myNick.replace(/^\s+|\s+$/g, '');
             myRoom = null;
@@ -753,7 +763,7 @@
                 y: 0,
                 chat: ''
             };
-            createPony(myNick, me);
+            createPony(myNick, me, specialNicks.hasOwnProperty(myNick) ? specialNicks[myNick] : false);
             
             // hide until room change
             users[myNick].elem.root.style.display = 'none';
@@ -761,7 +771,8 @@
             socket.send(JSON.stringify({
                 type: 'appear',
                 obj: me,
-                nick: myNick
+                nick: myNick,
+                password: password
             }));
             chatbox.focus();
         };
@@ -777,7 +788,7 @@
             var msg = JSON.parse(e.data);
             switch (msg.type) {
                 case 'appear':
-                    createPony(msg.nick, msg.obj);
+                    createPony(msg.nick, msg.obj, msg.special);
                 break;
                 case 'update':
                     if (msg.nick !== myNick) {
@@ -798,6 +809,8 @@
                         alert('That nickname was already in use. Reload and choose a different one.');
                     } else if (msg.reason === 'bad_nick') {
                         alert('Bad nickname - nicknames must be between 1 and 18 characters, and have no trailing or leading whitespace.');
+                    } else if (msg.reason === 'wrong_password') {
+                        alert('Incorect password.');
                     } else if (msg.reason === 'protocol_error') {
                         alert('There was a protocol error. This usually means your client sent a malformed packet. Your client is probably out of date, try clearing your cache and refreshing.');
                     } else if (msg.reason === 'no_such_room') {
