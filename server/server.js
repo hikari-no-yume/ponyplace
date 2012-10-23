@@ -181,8 +181,9 @@ wsServer.on('request', function(request) {
             case 'update':
                 msg.obj = sanitise(msg.obj);
                 
-                // kicking
+                // mod powers
                 if (msg.obj.hasOwnProperty('chat') && (user.special === 'moderator' || user.special === 'creator')) {
+                    // kicking
                     if (msg.obj.chat.substr(0, 6) === '/kick ') {
                         var kickee = msg.obj.chat.substr(6);
                         if (users.hasOwnProperty(kickee) && kickee !== creatorNick && moderatorNicks.indexOf(kickee) === -1) {
@@ -201,6 +202,18 @@ wsServer.on('request', function(request) {
                         }
                         // don't broadcast
                         return;
+                    // broadcast message
+                    } else if (msg.obj.chat.substr(0, 11) === '/broadcast ') {
+                        var broadcast = msg.obj.chat.substr(11);
+                        for (var nick in users) {
+                            if (users.hasOwnProperty(nick) ) {
+                                users[nick].conn.sendUTF(JSON.stringify({
+                                    type: 'broadcast',
+                                    msg: broadcast
+                                }));
+                            }
+                        }
+                        console.log('Broadcasted message "' + broadcast + '" from user "' + user.nick + '"');
                     }
                 }
                 

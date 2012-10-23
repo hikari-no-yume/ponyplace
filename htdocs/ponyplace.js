@@ -481,6 +481,10 @@
         chatPrint('<' + nick + '> ' + msg);
     }
     
+    function logBroadcastInChat(msg) {
+        chatPrint('** BROADCAST: ' + msg);
+    }
+    
     function logJoinInChat(nick, msg) {
         chatPrint(nick + ' appeared');
     }
@@ -794,6 +798,9 @@
                     if (msg.nick !== myNick) {
                         updatePony(msg.nick, msg.obj);
                     }
+                break;
+                case 'broadcast':
+                    logBroadcastInChat(msg.msg);
                 break;
                 case 'die':
                     killPony(msg.nick);
