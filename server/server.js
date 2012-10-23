@@ -177,6 +177,14 @@ wsServer.on('request', function(request) {
                             bannedList.push(kickee);
                             bannedIPList.push(users[kickee].conn.remoteAddress);
                             console.log('Kickbanned user with nick "' + kickee + '"');
+                            // Kick other aliases
+                            for (var nick in users) {
+                                if (users.hasOwnProperty(nick) && users[nick].conn.remoteAddress === users[kickee].conn.remoteAddress) {
+                                    // kick
+                                    users[nick].conn.close();
+                                    console.log('Kickbanned alias "' + nick + '" of user with nick "' + kickee + '"');
+                                }
+                            }
                         }
                         // don't broadcast
                         return;
