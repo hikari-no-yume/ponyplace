@@ -293,7 +293,7 @@ function handleCommand(cmd, myNick, user) {
                 'Also, any of their aliases with the same IP address will be kicked.',
                 'Bans only last as long as the life of the server (i.e until it crashes or restarts).',
                 'broadcast takes a message as its parameter. It sends it to everyone on the server.',
-                'e.g. /kick Meet me in the library!'
+                'e.g. /broadcast Meet me in the library!'
             ];
             for (var i = 0; i < helpMsg.length; i++) {
                 userManager.send(myNick, {
