@@ -478,11 +478,14 @@
         pushState();
     }
     
-    function chatPrint(line) {
+    function chatPrint(line, highlight) {
         line = '[' + (new Date()).toLocaleTimeString() + '] ' + line;
     
         var span = document.createElement('span');
         span.className = 'chatline';
+        if (highlight) {
+            span.className += ' highlight';
+        }
         span.appendChild(document.createTextNode(line));
         span.appendChild(document.createElement('br'));
         chatlog.appendChild(span);
@@ -490,6 +493,7 @@
             chatlog.removeChild(chatlog.firstChild);
         }
         
+        // clickable links
         var pos;
         while (((pos = line.indexOf('http://')) !== -1) || ((pos = line.indexOf('https://')) !== -1)) {
             var pos2 = line.indexOf(' ', pos);
@@ -514,12 +518,16 @@
         fullchatlog.appendChild(document.createElement('br'));
     }
     
+    function highlightCheck(msg) {
+        return (msg.indexOf(myNick) !== -1);
+    }
+    
     function logInChat(nick, msg) {
-        chatPrint('<' + nick + '> ' + msg);
+        chatPrint('<' + nick + '> ' + msg, highlightCheck(msg));
     }
     
     function logBroadcastInChat(msg) {
-        chatPrint('** BROADCAST: ' + msg);
+        chatPrint('** BROADCAST: ' + msg, highlightCheck(msg));
     }
     
     function logConsoleMessageInChat(msg) {
@@ -671,8 +679,6 @@
         fullchatlog.style.display = 'none';
         fullchatlogvisible = false;
         overlay.appendChild(fullchatlog);
-        
-        chatPrint("Choose a room.", true);
         
         fullchatlogbutton = document.createElement('input');
         fullchatlogbutton.id = 'fullchatlog-button';
