@@ -353,13 +353,14 @@ wsServer.on('request', function(request) {
         }
         
         switch (msg.type) {
-            case 'update':
-                msg.obj = sanitise(msg.obj);
-                
-                if (msg.obj.hasOwnProperty('chat') && msg.obj.chat[0] === '/') {
-                    handleCommand(msg.obj.chat.substr(1), myNick, user);
+            case 'console_command':
+                if (msg.hasOwnProperty('cmd')) {
+                    handleCommand(msg.cmd, myNick, user);
                     return;
                 }
+            break;
+            case 'update':
+                msg.obj = sanitise(msg.obj);
                 
                 // update their stored state
                 user.obj = msg.obj;

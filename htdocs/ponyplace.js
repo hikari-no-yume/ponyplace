@@ -690,18 +690,31 @@
         };
         overlay.appendChild(fullchatlogbutton);
         
+        function handleChatMessage() {
+            // is command
+            if (chatbox.value[0] === '/') {
+                socket.send(JSON.stringify({
+                    type: 'console_command',
+                    cmd: chatbox.value.substr(1)
+                }));
+            // is chat message
+            } else {
+                me.chat = chatbox.value;
+                if (me.chat !== '') {
+                    logInChat(myNick, me.chat, true);
+                }
+                pushAndUpdateState(me);
+            }
+            chatbox.value = '';
+        }
+        
         chatbox = document.createElement('input');
         chatbox.type = 'text';
         chatbox.id = 'chatbox';
         chatbox.maxLength = 100;
         chatbox.onkeypress = function (e) {
-            if (e.which == 13) {
-                me.chat = chatbox.value;
-                if (me.chat !== '') {
-                    logInChat(myNick, me.chat, true);
-                }
-                chatbox.value = '';
-                pushAndUpdateState(me);
+            if (e.which === 13) {
+                handleChatMessage();
             }
         };
         container.appendChild(chatbox);
@@ -711,10 +724,7 @@
         chatbutton.value = 'Send';
         chatbutton.id = 'chatbutton';
         chatbutton.onclick = function (e) {
-            me.chat = chatbox.value;
-            logInChat(myNick, me.chat, true);
-            chatbox.value = '';
-            pushAndUpdateState(me);
+            handleChatMessage();
         };
         container.appendChild(chatbutton);
         
