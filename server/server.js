@@ -283,8 +283,6 @@ wsServer.on('request', function(request) {
             return;
         }
         
-        console.log(JSON.stringify(msg));
-        
         switch (msg.type) {
             case 'update':
                 msg.obj = sanitise(msg.obj);
