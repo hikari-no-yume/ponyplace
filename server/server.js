@@ -229,6 +229,75 @@ var roomManager = {
     }
 };
 
+function handleCommand(cmd, myNick, user) {
+    // mod powers
+    if (user.special === 'moderator' || user.special === 'creator') {
+        // kicking
+        if (cmd.substr(0, 5) === 'kick ') {
+            var kickee = cmd.substr(5);
+            if (!userManager.has(kickee)) {
+                userManager.send(myNick, {
+                    type: 'console_msg',
+                    msg: 'There is no user with nick: "' + kickee + '"'
+                });
+                return;
+            }
+            if (kickee === creatorNick || moderatorNicks.indexOf(kickee) !== -1) {
+                userManager.send(myNick, {
+                    type: 'console_msg',
+                    msg: 'You cannot kick other moderators or the creator'
+                });
+                return;
+            }
+            var IP = userManager.get(kickee).conn.remoteAddress;
+            banManager.addIPBan(IP);
+            banManager.addNickBan(kickee);
+            userManager.kick(kickee);
+            console.log('Kickbanned user with nick "' + kickee + '"');
+            userManager.send(myNick, {
+                type: 'console_msg',
+                msg: 'Kickbanned user with nick "' + kickee + '"'
+            });
+            // Kick other aliases
+            userManager.forEach(function (nick, iterUser) {
+                if (iterUser.conn.remoteAddress === IP) {
+                    // kick
+                    userManager.kick(nick);
+                    console.log('Kicked alias "' + nick + '" of user with nick "' + kickee + '"');
+                    userManager.send(myNick, {
+                        type: 'console_msg',
+                        msg: 'Kicked alias "' + nick + '" of user with nick "' + kickee + '"'
+                    });
+                }
+            });
+        // broadcast message
+        } else if (cmd.substr(0, 10) === 'broadcast ') {
+            var broadcast = cmd.substr(10);
+            userManager.forEach(function (nick) {
+                userManager.send(nick, {
+                    type: 'broadcast',
+                    msg: broadcast
+                });
+            });
+            console.log('Broadcasted message "' + broadcast + '" from user "' + myNick + '"');
+            userManager.send(myNick, {
+                type: 'console_msg',
+                msg: 'Broadcasted message'
+            });
+        } else {
+            userManager.send(myNick, {
+                type: 'console_msg',
+                msg: 'Unknown command'
+            });
+        }
+    } else {
+        userManager.send(myNick, {
+            type: 'console_msg',
+            msg: 'Commands require moderator or creator privileges'
+        });
+    }
+}
+
 var keypress = require('keypress');
 
 keypress(process.stdin);
@@ -287,39 +356,9 @@ wsServer.on('request', function(request) {
             case 'update':
                 msg.obj = sanitise(msg.obj);
                 
-                // mod powers
-                if (msg.obj.hasOwnProperty('chat') && (user.special === 'moderator' || user.special === 'creator')) {
-                    // kicking
-                    if (msg.obj.chat.substr(0, 6) === '/kick ') {
-                        var kickee = msg.obj.chat.substr(6);
-                        if (userManager.has(kickee) && kickee !== creatorNick && moderatorNicks.indexOf(kickee) === -1) {
-                            var IP = userManager.get(kickee).conn.remoteAddress;
-                            banManager.addIPBan(IP);
-                            banManager.addNickBan(kickee);
-                            userManager.kick(kickee);
-                            console.log('Kickbanned user with nick "' + kickee + '"');
-                            // Kick other aliases
-                            userManager.forEach(function (nick, iterUser) {
-                                if (iterUser.conn.remoteAddress === IP) {
-                                    // kick
-                                    userManager.kick(nick);
-                                    console.log('Kicked alias "' + nick + '" of user with nick "' + kickee + '"');
-                                }
-                            });
-                        }
-                        // don't broadcast
-                        return;
-                    // broadcast message
-                    } else if (msg.obj.chat.substr(0, 11) === '/broadcast ') {
-                        var broadcast = msg.obj.chat.substr(11);
-                        userManager.forEach(function (nick) {
-                            userManager.send(nick, {
-                                type: 'broadcast',
-                                msg: broadcast
-                            });
-                        });
-                        console.log('Broadcasted message "' + broadcast + '" from user "' + user.nick + '"');
-                    }
+                if (msg.obj.hasOwnProperty('chat') && msg.obj.chat[0] === '/') {
+                    handleCommand(msg.obj.chat.substr(1), myNick, user);
+                    return;
                 }
                 
                 // update their stored state

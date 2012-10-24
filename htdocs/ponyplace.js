@@ -522,6 +522,10 @@
         chatPrint('** BROADCAST: ' + msg);
     }
     
+    function logConsoleMessageInChat(msg) {
+        chatPrint('* CONSOLE: ' + msg);
+    }
+    
     function logJoinInChat(nick, msg) {
         chatPrint(nick + ' appeared');
     }
@@ -826,6 +830,9 @@
                 break;
                 case 'broadcast':
                     logBroadcastInChat(msg.msg);
+                break;
+                case 'console_msg':
+                    logConsoleMessageInChat(msg.msg);
                 break;
                 case 'die':
                     userManager.kill(msg.nick);
