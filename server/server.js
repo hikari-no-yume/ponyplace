@@ -342,7 +342,12 @@ wsServer.on('request', function(request) {
       return;
     }
 
-    var connection = request.accept('ponyplace-broadcast', request.origin);
+    try {
+        var connection = request.accept('ponyplace-broadcast', request.origin);
+    } catch (e) {
+        console.log('Caught error: ' + e);
+        return;
+    }
     console.log((new Date()) + ' Connection accepted.');    
     
     // IP ban
