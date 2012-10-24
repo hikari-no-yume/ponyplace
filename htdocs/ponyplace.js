@@ -361,71 +361,108 @@
         'Berry the Drunk': 'moderator'
     };
     
-    var socket, connected = false, ignoreDisconnect = false, me, myNick, myRoom, users = {}, usercount = 0, lastmove = (new Date().getTime());
+    var socket, connected = false, ignoreDisconnect = false, me, myNick, myRoom, lastmove = (new Date().getTime());
     
-    var container, overlay, stage, title, creditslink, steamgrouplink, usercounter, chooser, chooserbutton, background, chatbox, chatbutton, chatlog, fullchatlog, fullchatlogbutton, fullchatlogvisible, music;
-
-    function createPony(nick, obj, special) {
-        var elem = document.createElement('div');
-        elem.className = 'pony';
+    var container, overlay, stage, title, creditslink, steamgrouplink, chooser, chooserbutton, background, chatbox, chatbutton, chatlog, fullchatlog, fullchatlogbutton, fullchatlogvisible, music;
+    
+    var userManager = {
+        users: {},
+        userCount: 0,
+        userCounter: null,
         
-        var chat = document.createElement('p');
-        chat.className = 'chatbubble';
-        elem.appendChild(chat);
-        
-        var nickTag = document.createElement('p');
-        nickTag.className = 'nickname';
-        nickTag.appendChild(document.createTextNode(nick));
-        if (special) {
-            nickTag.className += ' ' + special;
-        }
-        elem.appendChild(nickTag);
-        
-        stage.appendChild(elem);
-        
-        users[nick] = {
-            obj: obj,
-            nick: nick,
-            elem: {
-                root: elem,
-                chat: chat,
-                nickTag: nickTag
+        initGUI: function () {
+            this.userCounter = document.createElement('div');
+            this.userCounter.id = 'usercounter';
+            this.updateCounter();
+            overlay.appendChild(this.userCounter);
+        },
+        add: function (nick, obj, special) {
+            if (this.has(nick)) {
+                throw new Error("There is already a user with the same nick.");
             }
-        };
         
-        updatePony(nick, obj);
-        usercount++;
-        updateUserCounter();
-        logJoinInChat(nick);
-    }
-    
-    function updatePony(nick, obj) {
-        var user = users[nick];
-        user.elem.root.style.left = obj.x + 'px';
-        user.elem.root.style.top = obj.y + 'px';
-        if (ponies.hasOwnProperty(obj.img)) {
-            user.elem.root.style.backgroundImage = 'url(' + ponies[obj.img] + ')';
-        } else {
-            user.elem.root.style.backgroundImage = 'none';
+            var elem = document.createElement('div');
+            elem.className = 'pony';
+            
+            var chat = document.createElement('p');
+            chat.className = 'chatbubble';
+            elem.appendChild(chat);
+            
+            var nickTag = document.createElement('p');
+            nickTag.className = 'nickname';
+            nickTag.appendChild(document.createTextNode(nick));
+            if (special) {
+                nickTag.className += ' ' + special;
+            }
+            elem.appendChild(nickTag);
+            
+            stage.appendChild(elem);
+            
+            this.users[nick] = {
+                obj: obj,
+                nick: nick,
+                elem: {
+                    root: elem,
+                    chat: chat,
+                    nickTag: nickTag
+                }
+            };
+            
+            this.update(nick, obj);
+            this.userCount++;
+            this.updateCounter();
+            logJoinInChat(nick);
+        },
+        update: function (nick, obj) {
+            this.hasCheck(nick);
+        
+            var user = this.users[nick];
+            user.elem.root.style.left = obj.x + 'px';
+            user.elem.root.style.top = obj.y + 'px';
+            if (ponies.hasOwnProperty(obj.img)) {
+                user.elem.root.style.backgroundImage = 'url(' + ponies[obj.img] + ')';
+            } else {
+                user.elem.root.style.backgroundImage = 'none';
+            }
+            
+            user.elem.chat.innerHTML = '';
+            user.elem.chat.appendChild(document.createTextNode(obj.chat));
+            if (obj.chat !== user.obj.chat && obj.chat !== '') {
+                logInChat(nick, obj.chat);
+            }
+            
+            user.obj = obj;
+        },
+        kill: function (nick) {
+            this.hasCheck(nick);
+        
+            var user = this.users[nick];
+            this.userCount--;
+            this.updateCounter();
+            logLeaveInChat(nick);
+            stage.removeChild(user.elem.root);
+            delete this.users[nick];
+        },
+        has: function (nick) {
+            return this.users.hasOwnProperty(nick);
+        },
+        hasCheck: function (nick) {
+            if (!this.has(nick)) {
+                throw new Error('There is no user with the nick: "' + nick + '"');
+            }
+        },
+        forEach: function (callback) {
+            for (var nick in this.users) {
+                if (this.users.hasOwnProperty(nick)) {
+                    callback(nick);
+                }
+            }
+        },
+        updateCounter: function () {
+            this.userCounter.innerHTML = '';
+            this.userCounter.appendChild(document.createTextNode(this.userCount + ' users in room'));
         }
-        
-        user.elem.chat.innerHTML = '';
-        user.elem.chat.appendChild(document.createTextNode(obj.chat));
-        if (obj.chat !== user.obj.chat && obj.chat !== '') {
-            logInChat(nick, obj.chat);
-        }
-        
-        user.obj = obj;
-    }
-    
-    function killPony(nick) {
-        var user = users[nick];
-        usercount--;
-        updateUserCounter();
-        logLeaveInChat(nick);
-        stage.removeChild(user.elem.root);
-        delete users[nick];
-    }
+    };
     
     function pushState() {
         if (connected) {
@@ -437,7 +474,7 @@
     }
     
     function pushAndUpdateState(newState) {
-        updatePony(myNick, newState);
+        userManager.update(myNick, newState);
         pushState();
     }
     
@@ -493,11 +530,6 @@
         chatPrint(nick + ' left');
     }
     
-    function updateUserCounter() {
-        usercounter.innerHTML = '';
-        usercounter.appendChild(document.createTextNode(usercount + ' users in room'));
-    }
-    
     function updateRoomList(rooms) {
         while (document.getElementsByClassName('room-button').length) {
             overlay.removeChild(document.getElementsByClassName('room-button')[0]);
@@ -542,19 +574,17 @@
         stage.scrollLeft = 0;
         
         // clear users
-        for (var nick in users) {
-            if (users.hasOwnProperty(nick) && nick !== myNick) {
-                killPony(nick);
-            }
-        }
+        userManager.forEach(function (nick) {
+            userManager.kill(nick);
+        });
+        
+        // add me
+        userManager.add(myNick, me, specialNicks.hasOwnProperty(myNick) ? specialNicks[myNick] : false);
         
         // go to random position
         me.x = me.x || Math.floor(Math.random() * (room.width - PONY_WIDTH));
         me.y = me.y || Math.floor(Math.random() * (CV_HEIGHT - PONY_HEIGHT - CHAT_HEIGHT));
         stage.scrollLeft = Math.floor(me.x + PONY_WIDTH / 2 - window.innerWidth / 2);
-        
-        // unhide
-        users[myNick].elem.root.style.display = 'block';
         
         // push state
         pushAndUpdateState(me);
@@ -577,7 +607,9 @@
         
         stage = document.createElement('div');
         stage.id = 'stage';
-        stage.onscroll = updateUserCounter;
+        stage.onscroll = function () {
+            userManager.updateCounter();
+        };
         container.appendChild(stage);
         
         background = document.createElement('img');
@@ -715,10 +747,7 @@
         };
         overlay.appendChild(chooserbutton);
         
-        usercounter = document.createElement('div');
-        usercounter.id = 'usercounter';
-        updateUserCounter();
-        overlay.appendChild(usercounter);
+        userManager.initGUI();
         
         music = document.createElement('audio');
         music.id = 'music';
@@ -767,10 +796,6 @@
                 y: 0,
                 chat: ''
             };
-            createPony(myNick, me, specialNicks.hasOwnProperty(myNick) ? specialNicks[myNick] : false);
-            
-            // hide until room change
-            users[myNick].elem.root.style.display = 'none';
             
             socket.send(JSON.stringify({
                 type: 'appear',
@@ -792,18 +817,18 @@
             var msg = JSON.parse(e.data);
             switch (msg.type) {
                 case 'appear':
-                    createPony(msg.nick, msg.obj, msg.special);
+                    userManager.add(msg.nick, msg.obj, msg.special, false);
                 break;
                 case 'update':
                     if (msg.nick !== myNick) {
-                        updatePony(msg.nick, msg.obj);
+                        userManager.update(msg.nick, msg.obj);
                     }
                 break;
                 case 'broadcast':
                     logBroadcastInChat(msg.msg);
                 break;
                 case 'die':
-                    killPony(msg.nick);
+                    userManager.kill(msg.nick);
                 break;
                 case 'room_list':
                     updateRoomList(msg.list);
