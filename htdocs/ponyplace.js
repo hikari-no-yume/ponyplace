@@ -597,6 +597,8 @@
     }
     
     function initGUI() {
+        document.body.innerHTML = '';
+    
         document.body.onkeypress = function (e) {
             if (e.which == 13) {
                 chatbox.focus();
