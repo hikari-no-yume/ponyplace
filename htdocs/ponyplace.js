@@ -556,7 +556,7 @@
             
             var roombutton = document.createElement('input');
             roombutton.type = 'submit';
-            roombutton.value = data.button_label + ' (' + data.user_count + ' ' + data.user_noun + ')';
+            roombutton.value = '⇨ ' + data.name_full + ' (' + data.user_count + ' ' + data.user_noun + ')';
             roombutton.className = 'room-button';
             roombutton.style.top = y + 'px';
             (function (roomName) {

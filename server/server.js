@@ -154,7 +154,7 @@ var roomManager = {
     rooms: [
         {
             name: 'library_es',
-            button_label: 'Ir a la biblioteca de Twilight (en español)',
+            name_full: 'La biblioteca de Twilight (español)',
             img: 'media/background-library.png',
             width: 1173,
             user_count: 0,
@@ -162,7 +162,7 @@ var roomManager = {
         },
         {
             name: 'ponyville',
-            button_label: 'Go to Ponyville',
+            name_full: 'Ponyville',
             img: 'media/background-ponyville.png',
             width: 1445,
             user_count: 0,
@@ -170,7 +170,7 @@ var roomManager = {
         },
         {
             name: "library",
-            button_label: "Go to Twilight's Library",
+            name_full: "Twilight's Library",
             img: 'media/background-library.png',
             width: 1173,
             user_count: 0,
@@ -178,7 +178,7 @@ var roomManager = {
         },
         {
             name: 'sugarcube_corner',
-            button_label: 'Go to Sugarcube Corner',
+            name_full: 'Sugarcube Corner',
             img: 'media/background-sugarcubecorner.png',
             width: 1173,
             user_count: 0,
@@ -186,7 +186,7 @@ var roomManager = {
         },
         {
             name: 'everfree_forest',
-            button_label: 'Go to Everfree Forest',
+            name_full: 'Everfree Forest',
             img: 'media/background-everfreeforest.png',
             width: 1173,
             user_count: 0,
@@ -194,7 +194,7 @@ var roomManager = {
         },
         {
             name: 'cloudsdale',
-            button_label: 'Go to Cloudsdale',
+            name_full: 'Cloudsdale',
             img: 'media/background-cloudsdale.png',
             width: 1213,
             user_count: 0,
@@ -202,7 +202,7 @@ var roomManager = {
         },
         {
             name: 'Canterlot',
-            button_label: 'Go to Canterlot',
+            name_full: 'Canterlot',
             img: 'media/background-canterlot.png',
             width: 1173,
             user_count: 0,
