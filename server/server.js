@@ -549,8 +549,8 @@ wsServer.on('request', function(request) {
             list: roomManager.rooms
         }));
         
-        user = userManager.add(msg.nick, connection, msg.obj, special, null);
         myNick = msg.nick;
+        user = userManager.add(msg.nick, connection, msg.obj, special, null);
         
         // call onMessage for subsequent messages
         connection.on('message', onMessage);
@@ -558,7 +558,7 @@ wsServer.on('request', function(request) {
     
     connection.on('close', function(reasonCode, description) {
         console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.');
-        if (user !== null) {
+        if (user !== null && userManager.has(myNick)) {
             // remove from users map
             userManager.remove(myNick);
             
