@@ -284,6 +284,24 @@ function handleCommand(cmd, myNick, user) {
                 type: 'console_msg',
                 msg: 'Broadcasted message'
             });
+        } else if (cmd.substr(0, 4) === 'help') {
+            var helpMsg = [
+                'Two commands are available:',
+                'kick and broadcast.',
+                'kick takes a single parameter, the name of someone, e.g. /kick sillyfilly',
+                'That person will be kicked, and their name and IP address will be banned.',
+                'Also, any of their aliases with the same IP address will be kicked.',
+                'Bans only last as long as the life of the server (i.e until it crashes or restarts).',
+                'broadcast takes a message as its parameter. It sends it to everyone on the server.',
+                'e.g. /kick Meet me in the library!'
+            ];
+            for (var i = 0; i < helpMsg.length; i++) {
+                userManager.send(myNick, {
+                    type: 'console_msg',
+                    msg: helpMsg[i]
+                });
+            }
+        // unknown
         } else {
             userManager.send(myNick, {
                 type: 'console_msg',
