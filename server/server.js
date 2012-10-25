@@ -235,19 +235,23 @@ var roomManager = {
 };
 
 function doRoomChange(myNick, room, user) {
+    var oldRoom = user.room;
+
     // don't if in null room (lobby)
-    if (user.room !== null) {
+    if (oldRoom !== null) {
         // tell clients in old room that client has left
         userManager.forEach(function (nick, iterUser) {
-            if (iterUser.room === user.room && nick !== myNick) {
+            if (iterUser.room === oldRoom && nick !== myNick) {
                 userManager.send(nick, {
                     type: 'die',
-                    nick: myNick
+                    nick: myNick,
+                    going_to: room.name,
+                    going_to_full: room.full_name
                 });
             }
         });
         // decrease user count of old room
-        roomManager.get(user.room).user_count--;
+        roomManager.get(oldRoom).user_count--;
     }
     
     // set current room to new room
@@ -269,13 +273,25 @@ function doRoomChange(myNick, room, user) {
                     nick: nick,
                     special: iterUser.special
                 });
+                // don't if in null room (lobby)
                 // tell other clients in room about client
-                userManager.send(nick, {
-                    type: 'appear',
-                    obj: user.obj,
-                    nick: user.nick,
-                    special: user.special
-                });
+                if (oldRoom !== null) {
+                    userManager.send(nick, {
+                        type: 'appear',
+                        obj: user.obj,
+                        nick: user.nick,
+                        special: user.special,
+                        coming_from: oldRoom,
+                        coming_from_full: roomManager.get(oldRoom).name_full
+                    });
+                } else {
+                    userManager.send(nick, {
+                        type: 'appear',
+                        obj: user.obj,
+                        nick: user.nick,
+                        special: user.special
+                    });
+                }
             }
         }
     });
