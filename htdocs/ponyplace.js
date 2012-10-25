@@ -376,7 +376,7 @@
             this.updateCounter();
             overlay.appendChild(this.userCounter);
         },
-        add: function (nick, obj, special, coming_from, coming_from_full) {
+        add: function (nick, obj, special) {
             if (this.has(nick)) {
                 throw new Error("There is already a user with the same nick.");
             }
@@ -411,7 +411,7 @@
             this.update(nick, obj);
             this.userCount++;
             this.updateCounter();
-            logJoinInChat(nick, coming_from, coming_from_full);
+            logJoinInChat(nick);
         },
         update: function (nick, obj) {
             this.hasCheck(nick);
@@ -433,13 +433,13 @@
             
             user.obj = obj;
         },
-        kill: function (nick, going_to, going_to_full) {
+        kill: function (nick) {
             this.hasCheck(nick);
         
             var user = this.users[nick];
             this.userCount--;
             this.updateCounter();
-            logLeaveInChat(nick, going_to, going_to_full);
+            logLeaveInChat(nick);
             stage.removeChild(user.elem.root);
             delete this.users[nick];
         },
@@ -534,20 +534,12 @@
         chatPrint('* CONSOLE: ' + msg);
     }
     
-    function logJoinInChat(nick, coming_from, coming_from_full) {
-        if (coming_from) {
-            chatPrint(nick + ' appeared from ' + coming_from + ' ("' + coming_from_full + '")');
-        } else {
-            chatPrint(nick + ' appeared');
-        }
+    function logJoinInChat(nick) {
+        chatPrint(nick + ' appeared');
     }
     
-    function logLeaveInChat(nick, going_to, going_to_full) {
-        if (going_to) {
-            chatPrint(nick + ' left and went to ' + going_to + ' ("' + going_to_full + '")');
-        } else {
-            chatPrint(nick + ' left');
-        }
+    function logLeaveInChat(nick) {
+        chatPrint(nick + ' left');
     }
     
     function updateRoomList(rooms) {
@@ -847,11 +839,7 @@
             var msg = JSON.parse(e.data);
             switch (msg.type) {
                 case 'appear':
-                    if (msg.hasOwnProperty('coming_from')) {
-                        userManager.add(msg.nick, msg.obj, msg.special, msg.coming_from, msg.coming_from_full);
-                    } else {
-                        userManager.add(msg.nick, msg.obj, msg.special);
-                    }
+                    userManager.add(msg.nick, msg.obj, msg.special);
                 break;
                 case 'update':
                     if (msg.nick !== myNick) {
@@ -865,11 +853,7 @@
                     logConsoleMessageInChat(msg.msg);
                 break;
                 case 'die':
-                    if (msg.hasOwnProperty('going_to')) {
-                        userManager.kill(msg.nick, msg.going_to, msg.going_to_full);
-                    } else {
-                        userManager.kill(msg.nick);
-                    }
+                    userManager.kill(msg.nick);
                 break;
                 case 'room_list':
                     updateRoomList(msg.list);

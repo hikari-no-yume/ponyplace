@@ -244,9 +244,7 @@ function doRoomChange(myNick, room, user) {
             if (iterUser.room === oldRoom && nick !== myNick) {
                 userManager.send(nick, {
                     type: 'die',
-                    nick: myNick,
-                    going_to: room.name,
-                    going_to_full: room.name_full
+                    nick: myNick
                 });
             }
         });
@@ -273,25 +271,13 @@ function doRoomChange(myNick, room, user) {
                     nick: nick,
                     special: iterUser.special
                 });
-                // don't if in null room (lobby)
                 // tell other clients in room about client
-                if (oldRoom !== null) {
-                    userManager.send(nick, {
-                        type: 'appear',
-                        obj: user.obj,
-                        nick: user.nick,
-                        special: user.special,
-                        coming_from: oldRoom,
-                        coming_from_full: roomManager.get(oldRoom).name_full
-                    });
-                } else {
-                    userManager.send(nick, {
-                        type: 'appear',
-                        obj: user.obj,
-                        nick: user.nick,
-                        special: user.special
-                    });
-                }
+                userManager.send(nick, {
+                    type: 'appear',
+                    obj: user.obj,
+                    nick: user.nick,
+                    special: user.special
+                });
             }
         }
     });
