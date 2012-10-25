@@ -246,7 +246,7 @@ function doRoomChange(myNick, room, user) {
                     type: 'die',
                     nick: myNick,
                     going_to: room.name,
-                    going_to_full: room.full_name
+                    going_to_full: room.name_full
                 });
             }
         });
