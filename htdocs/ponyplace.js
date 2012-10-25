@@ -478,19 +478,21 @@
         pushState();
     }
     
-    function chatPrint(line, highlight) {
+    function chatPrint(line, highlight, showInShortLog) {
         line = '[' + (new Date()).toLocaleTimeString() + '] ' + line;
     
-        var span = document.createElement('span');
-        span.className = 'chatline';
-        if (highlight) {
-            span.className += ' highlight';
-        }
-        span.appendChild(document.createTextNode(line));
-        span.appendChild(document.createElement('br'));
-        chatlog.appendChild(span);
-        while (chatlog.children.length > 12) {
-            chatlog.removeChild(chatlog.firstChild);
+        if (showInShortLog) {
+            var span = document.createElement('span');
+            span.className = 'chatline';
+            if (highlight) {
+                span.className += ' highlight';
+            }
+            span.appendChild(document.createTextNode(line));
+            span.appendChild(document.createElement('br'));
+            chatlog.appendChild(span);
+            while (chatlog.children.length > 12) {
+                chatlog.removeChild(chatlog.firstChild);
+            }
         }
         
         // clickable links
@@ -523,23 +525,27 @@
     }
     
     function logInChat(nick, msg) {
-        chatPrint('<' + nick + '> ' + msg, highlightCheck(msg));
+        chatPrint('<' + nick + '> ' + msg, highlightCheck(msg), true);
     }
     
     function logBroadcastInChat(msg) {
-        chatPrint('** BROADCAST: ' + msg, highlightCheck(msg));
+        chatPrint('** BROADCAST: ' + msg, highlightCheck(msg), true);
     }
     
     function logConsoleMessageInChat(msg) {
-        chatPrint('* CONSOLE: ' + msg);
+        chatPrint('* CONSOLE: ' + msg, false, true);
     }
     
     function logJoinInChat(nick) {
-        chatPrint(nick + ' appeared');
+        chatPrint(nick + ' appeared', false, false);
     }
     
     function logLeaveInChat(nick) {
-        chatPrint(nick + ' left');
+        chatPrint(nick + ' left', false, false);
+    }
+    
+    function logRoomJoinInChat(name, name_full) {
+        chatPrint('You joined the room ' + name + ' ("' + name_full + '")', false, true);
     }
     
     function updateRoomList(rooms) {
@@ -601,7 +607,7 @@
         // push state
         pushAndUpdateState(me);
         
-        chatPrint('You joined the room ' + room.name + ' ("' + room.name_full + '")');
+        logRoomJoinInChat(room.name, room.name_full);
     }
     
     function initGUI() {
