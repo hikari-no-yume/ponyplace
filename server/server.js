@@ -185,6 +185,14 @@ var roomManager = {
             user_noun: 'party animals'
         },
         {
+            name: 'classroom',
+            name_full: "Cheerilee's Classroom",
+            img: 'media/background-classroom.png',
+            width: 1173,
+            user_count: 0,
+            user_noun: 'eager students'
+        },
+        {
             name: 'everfree_forest',
             name_full: 'Everfree Forest',
             img: 'media/background-everfreeforest.png',
