@@ -230,123 +230,109 @@ var roomManager = {
 };
 
 function handleCommand(cmd, myNick, user) {
-    // mod powers
-    if (user.special === 'moderator' || user.special === 'creator') {
-        // kicking
-        if (cmd.substr(0, 5) === 'kick ') {
-            var kickee = cmd.substr(5);
-            if (!userManager.has(kickee)) {
-                userManager.send(myNick, {
-                    type: 'console_msg',
-                    msg: 'There is no user with nick: "' + kickee + '"'
-                });
-                return;
-            }
-            if (kickee === creatorNick || moderatorNicks.indexOf(kickee) !== -1) {
-                userManager.send(myNick, {
-                    type: 'console_msg',
-                    msg: 'You cannot kick other moderators or the creator'
-                });
-                return;
-            }
-            var IP = userManager.get(kickee).conn.remoteAddress;
-            banManager.addIPBan(IP);
-            banManager.addNickBan(kickee);
-            userManager.kick(kickee);
-            console.log('Kickbanned user with nick "' + kickee + '"');
-            userManager.send(myNick, {
-                type: 'console_msg',
-                msg: 'Kickbanned user with nick "' + kickee + '"'
-            });
-            // Kick other aliases
-            userManager.forEach(function (nick, iterUser) {
-                if (iterUser.conn.remoteAddress === IP) {
-                    // kick
-                    userManager.kick(nick);
-                    console.log('Kicked alias "' + nick + '" of user with nick "' + kickee + '"');
-                    userManager.send(myNick, {
-                        type: 'console_msg',
-                        msg: 'Kicked alias "' + nick + '" of user with nick "' + kickee + '"'
-                    });
-                }
-            });
-        // check alias
-        } else if (cmd.substr(0, 8) === 'aliases ') {
-            var checked = cmd.substr(8);
-            if (!userManager.has(checked)) {
-                userManager.send(myNick, {
-                    type: 'console_msg',
-                    msg: 'There is no user with nick: "' + checked + '"'
-                });
-                return;
-            }
-            var IP = userManager.get(checked).conn.remoteAddress;
-            // Find aliases
-            var aliasCount = 0;
-            userManager.send(myNick, {
-                type: 'console_msg',
-                msg: 'User with IP ' + IP + ' has the following aliases:'
-            });
-            userManager.forEach(function (nick, iterUser) {
-                if (iterUser.conn.remoteAddress === IP) {
-                    userManager.send(myNick, {
-                        type: 'console_msg',
-                        msg: (aliasCount+1) + '. Alias "' + nick + '"'
-                    });
-                    aliasCount++;
-                }
-            });
-            userManager.send(myNick, {
-                type: 'console_msg',
-                msg: '(' + aliasCount + ' aliases total)'
-            });
-        // broadcast message
-        } else if (cmd.substr(0, 10) === 'broadcast ') {
-            var broadcast = cmd.substr(10);
-            userManager.forEach(function (nick) {
-                userManager.send(nick, {
-                    type: 'broadcast',
-                    msg: broadcast
-                });
-            });
-            console.log('Broadcasted message "' + broadcast + '" from user "' + myNick + '"');
-            userManager.send(myNick, {
-                type: 'console_msg',
-                msg: 'Broadcasted message'
-            });
-        } else if (cmd.substr(0, 4) === 'help') {
-            var helpMsg = [
-                'Three commands are available: 1) kick, 2) broadcast, 3) aliases',
-                '1. kick',
-                'Takes a single parameter, the nick of someone, e.g. /kick sillyfilly',
-                'That person will be kicked, and their name and IP address will be banned.',
-                'Also, any of their aliases with the same IP address will be kicked.',
-                'Bans only last as long as the life of the server (i.e until it crashes or restarts).',
-                '2. broadcast',
-                'Takes a message as its parameter. It sends it to everyone on the server.',
-                'e.g. /broadcast Meet me in the library!',
-                '3. aliases',
-                'Takes a nick and lists aliases (people with same IP address)',
-                'e.g. /aliases someguy'
-            ];
-            for (var i = 0; i < helpMsg.length; i++) {
-                userManager.send(myNick, {
-                    type: 'console_msg',
-                    msg: helpMsg[i]
-                });
-            }
-        // unknown
-        } else {
-            userManager.send(myNick, {
-                type: 'console_msg',
-                msg: 'Unknown command'
-            });
-        }
-    } else {
+    function sendLine(line) {
         userManager.send(myNick, {
             type: 'console_msg',
-            msg: 'Commands require moderator or creator privileges'
+            msg: line
         });
+    }
+    function sendMultiLine(lines) {
+        for (var i = 0; i < lines.length; i++) {
+            sendLine(lines[i]);
+        }
+    }
+
+    var isMod = (myNick === creatorNick || moderatorNicks.indexOf(myNick) !== -1);
+    
+    // help
+    if (cmd.substr(0, 4) === 'help') {
+        if (isMod) {
+            sendMultiLine([
+                'Three moderator commands are available: 1) kick, 2) broadcast, 3) aliases',
+                '1. kick - Takes a single parameter, the nick of someone, e.g. /kick sillyfilly',
+                'They (and any aliases) will be kicked, and their name and IP address will be banned.',
+                'Bans only last as long as the life of the server (i.e until it crashes or restarts).',
+                '2. broadcast - Sends a message to everyone on the server, e.g. /broadcast Hello all!',
+                '3. aliases - Takes a nick and lists aliases (people with same IP address), e.g. /aliases joebloggs',
+                '---'
+            ]);
+            
+        }
+        sendMultiLine([
+            'One user command is available: whereis',
+            'Takes a nick, tells you what room someone is in, e.g. /whereis someguy'
+        ]);
+    // where is
+    } else if (cmd.substr(0, 8) === 'whereis ') {
+        var unfound = cmd.substr(8);
+        if (!userManager.has(unfound)) {
+            sendLine('There is no user with nick: "' + unfound + '"');
+            return;
+        }
+        var unfoundUser = userManager.get(unfound);
+        if (unfoundUser.room === null) {
+            sendLine('User "' + unfound + '" is not in a room.');
+        } else {
+            sendLine('User "' + unfound + '" is in "' + roomManager.get(unfoundUser.room).name_full + '" (' + unfoundUser.room + ')');
+        }
+    // kicking
+    } else if (isMod && cmd.substr(0, 5) === 'kick ') {
+        var kickee = cmd.substr(5);
+        if (!userManager.has(kickee)) {
+            sendLine('There is no user with nick: "' + kickee + '"');
+            return;
+        }
+        if (kickee === creatorNick || moderatorNicks.indexOf(kickee) !== -1) {
+            sendLine('You cannot kick other moderators or the creator');
+            return;
+        }
+        var IP = userManager.get(kickee).conn.remoteAddress;
+        banManager.addIPBan(IP);
+        banManager.addNickBan(kickee);
+        userManager.kick(kickee);
+        console.log('Kickbanned user with nick "' + kickee + '"');
+        sendLine('Kickbanned user with nick "' + kickee + '"');
+        // Kick other aliases
+        userManager.forEach(function (nick, iterUser) {
+            if (iterUser.conn.remoteAddress === IP) {
+                // kick
+                userManager.kick(nick);
+                console.log('Kicked alias "' + nick + '" of user with nick "' + kickee + '"');
+                sendLine('Kicked alias "' + nick + '" of user with nick "' + kickee + '"');
+            }
+        });
+    // check alias
+    } else if (isMod && cmd.substr(0, 8) === 'aliases ') {
+        var checked = cmd.substr(8);
+        if (!userManager.has(checked)) {
+            sendLine('There is no user with nick: "' + checked + '"');
+            return;
+        }
+        var IP = userManager.get(checked).conn.remoteAddress;
+        // Find aliases
+        var aliasCount = 0;
+        sendLine('User with IP ' + IP + ' has the following aliases:');
+        userManager.forEach(function (nick, iterUser) {
+            if (iterUser.conn.remoteAddress === IP) {
+                sendLine((aliasCount+1) + '. Alias "' + nick + '"');
+                aliasCount++;
+            }
+        });
+        sendLine('(' + aliasCount + ' aliases total)');
+    // broadcast message
+    } else if (isMod && cmd.substr(0, 10) === 'broadcast ') {
+        var broadcast = cmd.substr(10);
+        userManager.forEach(function (nick) {
+            userManager.send(nick, {
+                type: 'broadcast',
+                msg: broadcast
+            });
+        });
+        console.log('Broadcasted message "' + broadcast + '" from user "' + myNick + '"');
+        sendLine('Broadcasted message');
+    // unknown
+    } else {
+        sendLine('Unknown command');
     }
 }
 

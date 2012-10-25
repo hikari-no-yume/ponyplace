@@ -32,6 +32,9 @@ h1, p {
 }
 
 #container {
+    position: absolute;
+    left: 0;
+    top: 0;
     min-width: 800px;
     height: 680px;
     background-color: pink;
