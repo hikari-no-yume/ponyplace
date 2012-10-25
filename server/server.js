@@ -270,6 +270,36 @@ function handleCommand(cmd, myNick, user) {
                     });
                 }
             });
+        // check alias
+        } else if (cmd.substr(0, 8) === 'aliases ') {
+            var checked = cmd.substr(8);
+            if (!userManager.has(checked)) {
+                userManager.send(myNick, {
+                    type: 'console_msg',
+                    msg: 'There is no user with nick: "' + checked + '"'
+                });
+                return;
+            }
+            var IP = userManager.get(checked).conn.remoteAddress;
+            // Find aliases
+            var aliasCount = 0;
+            userManager.send(myNick, {
+                type: 'console_msg',
+                msg: 'User with IP ' + IP + ' has the following aliases:'
+            });
+            userManager.forEach(function (nick, iterUser) {
+                if (iterUser.conn.remoteAddress === IP) {
+                    userManager.send(myNick, {
+                        type: 'console_msg',
+                        msg: (aliasCount+1) + '. Alias "' + nick + '"'
+                    });
+                    aliasCount++;
+                }
+            });
+            userManager.send(myNick, {
+                type: 'console_msg',
+                msg: '(' + aliasCount + ' aliases total)'
+            });
         // broadcast message
         } else if (cmd.substr(0, 10) === 'broadcast ') {
             var broadcast = cmd.substr(10);
@@ -286,14 +316,18 @@ function handleCommand(cmd, myNick, user) {
             });
         } else if (cmd.substr(0, 4) === 'help') {
             var helpMsg = [
-                'Two commands are available:',
-                'kick and broadcast.',
-                'kick takes a single parameter, the name of someone, e.g. /kick sillyfilly',
+                'Three commands are available: 1) kick, 2) broadcast, 3) aliases',
+                '1. kick',
+                'Takes a single parameter, the nick of someone, e.g. /kick sillyfilly',
                 'That person will be kicked, and their name and IP address will be banned.',
                 'Also, any of their aliases with the same IP address will be kicked.',
                 'Bans only last as long as the life of the server (i.e until it crashes or restarts).',
-                'broadcast takes a message as its parameter. It sends it to everyone on the server.',
-                'e.g. /broadcast Meet me in the library!'
+                '2. broadcast',
+                'Takes a message as its parameter. It sends it to everyone on the server.',
+                'e.g. /broadcast Meet me in the library!',
+                '3. aliases',
+                'Takes a nick and lists aliases (people with same IP address)',
+                'e.g. /aliases someguy'
             ];
             for (var i = 0; i < helpMsg.length; i++) {
                 userManager.send(myNick, {
