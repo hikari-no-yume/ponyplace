@@ -877,7 +877,7 @@
                         window.setTimeout(function () {
                             alert('ponyplace update happening - page will reload');
                             window.location.reload();
-                        }, 5000);
+                        }, (5+Math.floor(Math.random() * 5)) * 1000);
                     }
                 break;
                 default:
