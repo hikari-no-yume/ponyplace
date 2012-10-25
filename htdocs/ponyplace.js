@@ -601,7 +601,7 @@
         // push state
         pushAndUpdateState(me);
         
-        chatPrint('You changed room to ' + room.name);
+        chatPrint('You joined the room ' + room.name + ' ("' + room.name_full + '")');
     }
     
     function initGUI() {

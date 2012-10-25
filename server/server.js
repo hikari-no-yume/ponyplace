@@ -201,7 +201,7 @@ var roomManager = {
             user_noun: 'wonderbolts'
         },
         {
-            name: 'Canterlot',
+            name: 'canterlot',
             name_full: 'Canterlot',
             img: 'media/background-canterlot.png',
             width: 1173,
@@ -226,8 +226,63 @@ var roomManager = {
             }
         }
         throw new Error('There is no room with the name: "' + name + '"');
+    },
+    forEach: function (callback) {
+        for (var i = 0; i < this.rooms.length; i++) {
+            callback(this.rooms[i].name, this.rooms[i]);
+        }
     }
 };
+
+function doRoomChange(myNick, room, user) {
+    // don't if in null room (lobby)
+    if (user.room !== null) {
+        // tell clients in old room that client has left
+        userManager.forEach(function (nick, iterUser) {
+            if (iterUser.room === user.room && nick !== myNick) {
+                userManager.send(nick, {
+                    type: 'die',
+                    nick: myNick
+                });
+            }
+        });
+        // decrease user count of old room
+        roomManager.get(user.room).user_count--;
+    }
+    
+    // set current room to new room
+    user.room = room.name;
+    
+    // tell client it has changed room and tell room details
+    userManager.send(myNick, {
+        type: 'room_change',
+        data: room
+    });
+    
+    userManager.forEach(function (nick, iterUser) {
+        if (iterUser.room === user.room) {
+            if (nick !== user.nick) {
+                // tell client about other clients in room
+                userManager.send(myNick, {
+                    type: 'appear',
+                    obj: iterUser.obj,
+                    nick: nick,
+                    special: iterUser.special
+                });
+                // tell other clients in room about client
+                userManager.send(nick, {
+                    type: 'appear',
+                    obj: user.obj,
+                    nick: user.nick,
+                    special: user.special
+                });
+            }
+        }
+    });
+    
+    // increase user count of new room
+    room.user_count++;
+}
 
 function handleCommand(cmd, myNick, user) {
     function sendLine(line) {
@@ -259,8 +314,10 @@ function handleCommand(cmd, myNick, user) {
             
         }
         sendMultiLine([
-            'One user command is available: whereis',
-            'Takes a nick, tells you what room someone is in, e.g. /whereis someguy'
+            'Three user commands are available: 1) whereis, 2) list, 3) join',
+            '1. whereis - Takes a nick, tells you what room someone is in, e.g. /whereis someguy',
+            '2. list - Lists available rooms, e.g. /list',
+            '3. join - Takes a room name, joins that room, e.g. /join library'
         ]);
     // where is
     } else if (cmd.substr(0, 8) === 'whereis ') {
@@ -273,8 +330,29 @@ function handleCommand(cmd, myNick, user) {
         if (unfoundUser.room === null) {
             sendLine('User "' + unfound + '" is not in a room.');
         } else {
-            sendLine('User "' + unfound + '" is in "' + roomManager.get(unfoundUser.room).name_full + '" (' + unfoundUser.room + ')');
+            sendLine('User "' + unfound + '" is in ' + unfoundUser.room + ' ("' + roomManager.get(unfoundUser.room).name_full + '")');
         }
+    // join room
+    } else if (cmd.substr(0, 5) === 'join ') {
+        var roomName = cmd.substr(5);
+        
+        // room doesn't exist
+        if (!roomManager.has(roomName)) {
+            sendLine('There is no room named "' + roomName + '". Try /list');
+            return;
+        } else {
+            doRoomChange(myNick, roomManager.get(roomName), user);
+        }
+    // list rooms
+    } else if (cmd.substr(0, 4) === 'list') {
+        var roomCount = 0;
+        
+        sendLine('Available rooms:');
+        roomManager.forEach(function (roomName, room) {
+            sendLine('* ' + roomName + ' ("' + room.name_full + '")');
+            roomCount++;
+        });
+        sendLine('(' + roomCount + ' rooms total)');
     // kicking
     } else if (isMod && cmd.substr(0, 5) === 'kick ') {
         var kickee = cmd.substr(5);
@@ -430,53 +508,7 @@ wsServer.on('request', function(request) {
                     room = roomManager.get(msg.name);
                 }
                 
-                // don't if in null room (lobby)
-                if (user.room !== null) {
-                    // tell clients in old room that client has left
-                    userManager.forEach(function (nick, iterUser) {
-                        if (iterUser.room === user.room && nick !== myNick) {
-                            userManager.send(nick, {
-                                type: 'die',
-                                nick: myNick
-                            });
-                        }
-                    });
-                    // decrease user count of old room
-                    roomManager.get(user.room).user_count--;
-                }
-                
-                // set current room to new room
-                user.room = msg.name;
-                
-                // tell client it has changed room and tell room details
-                userManager.send(myNick, {
-                    type: 'room_change',
-                    data: room
-                });
-                
-                userManager.forEach(function (nick, iterUser) {
-                    if (iterUser.room === user.room) {
-                        if (nick !== user.nick) {
-                            // tell client about other clients in room
-                            userManager.send(myNick, {
-                                type: 'appear',
-                                obj: iterUser.obj,
-                                nick: nick,
-                                special: iterUser.special
-                            });
-                            // tell other clients in room about client
-                            userManager.send(nick, {
-                                type: 'appear',
-                                obj: user.obj,
-                                nick: user.nick,
-                                special: user.special
-                            });
-                        }
-                    }
-                });
-                
-                // increase user count of new room
-                room.user_count++;
+                doRoomChange(myNick, room, user);
                 return;
             break;
             case 'room_list':
