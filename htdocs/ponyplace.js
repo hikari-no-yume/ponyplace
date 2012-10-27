@@ -812,37 +812,63 @@
             handleChatMessage();
         };
         container.appendChild(chatbutton);
+
+        chooser = document.createElement('div');
+        chooser.id = 'chooser';
+        chooser.style.display = 'none';
         
         chooserbutton = document.createElement('input');
         chooserbutton.id = 'chooser-button';
         chooserbutton.type = 'submit';
         chooserbutton.value = 'Change Avatar';
         chooserbutton.onclick = function () {
-            if (chooser) {
-                chooser.style.display = 'block';
-            } else {
-                chooser = document.createElement('div');
-                chooser.id = 'chooser';
-                for (var i = 0; i < ponies.length; i += 2) {
-                    var preview = document.createElement('img');
-                    preview.src = ponies[i];
-                    preview.className = 'chooser-preview';
-                    (function (imgid) {
-                        preview.onclick = function () {
-                            me.img = imgid;
-                            pushAndUpdateState(me);
-                            chooser.style.display = 'none';
-                            if (ponies[imgid].indexOf('_upsidedown') !== -1) {
-                                container.className = 'upside-down';
-                            } else {
-                                container.className = '';
-                            }
-                        };
-                    }(i));
-                    chooser.appendChild(preview);
+            chooser.style.display = 'block';
+            chooser.innerHTML = '';
+            var last = '', cur = '';
+            for (var i = 0; i < ponies.length; i++) {
+                // split pony name prefix
+                cur = ponies[i].split('_', 1)[0];
+                if (cur === last) {
+                    // only show first avatar
+                    continue;
+                } else {
+                    last = cur;
                 }
-                container.appendChild(chooser);
+
+                var preview = document.createElement('img');
+                preview.src = ponies[i];
+                preview.className = 'chooser-preview';
+                (function (imgid, prefix) {
+                    preview.onclick = function () {
+                        chooser.innerHTML = '';
+                        for (var i = imgid; i < ponies.length; i++) {
+                            // split pony name prefix
+                            if (ponies[i].split('_', 1)[0] !== prefix) {
+                                // only show avatars for that pony
+                                break;
+                            }
+                            var preview = document.createElement('img');
+                            preview.src = ponies[i];
+                            preview.className = 'chooser-preview';
+                            (function (imgid) {
+                                preview.onclick = function () {
+                                    me.img = imgid;
+                                    pushAndUpdateState(me);
+                                    chooser.style.display = 'none';
+                                    if (ponies[imgid].indexOf('_upsidedown') !== -1) {
+                                        container.className = 'upside-down';
+                                    } else {
+                                        container.className = '';
+                                    }
+                                };
+                            }(i));
+                            chooser.appendChild(preview);
+                        }
+                    };
+                }(i, cur));
+                chooser.appendChild(preview);
             }
+            container.appendChild(chooser);
         };
         overlay.appendChild(chooserbutton);
         
