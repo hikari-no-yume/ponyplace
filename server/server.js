@@ -29,7 +29,7 @@ function originIsAllowed(origin) {
     }
 }
 
-var badRegex = /fuck|shit|milf|bdsm|fag|faggot|nigga|nigger|clopclop|clopping|(\[\]\(\/[a-zA-Z0-9\-_]+\))/gi;
+var badRegex = /fuck|shit|milf|bdsm|fag|faggot|nigga|nigger|clop|(\[\]\(\/[a-zA-Z0-9\-_]+\))/gi;
 
 var fs = require('fs');
 
@@ -298,8 +298,9 @@ function doRoomChange(myNick, room, user) {
 }
 
 function handleCommand(cmd, myNick, user) {
-    function sendLine(line) {
-        userManager.send(myNick, {
+    function sendLine(line, nick) {
+        nick = nick || myNick;
+        userManager.send(nick, {
             type: 'console_msg',
             msg: line
         });
@@ -316,13 +317,12 @@ function handleCommand(cmd, myNick, user) {
     if (cmd.substr(0, 4) === 'help') {
         if (isMod) {
             sendMultiLine([
-                'Three moderator commands are available: 1) kick, 2) broadcast, 3) aliases',
-                '1. kick - Takes a single parameter, the nick of someone, e.g. /kick sillyfilly',
-                'They (and any aliases) will be kicked, and their name and IP address will be banned.',
-                'Bans only last as long as the life of the server (i.e until it crashes or restarts).',
+                'Four moderator commands are available: 1) kick, 2) broadcast, 3) aliases, 4) move',
+                '1. kick - Takes the nick of someone, they (& any aliases) will be kicked, e.g. /kick sillyfilly',
+                'Their name and IP address will be banned, bans only last until server crashes or restarts.',
                 '2. broadcast - Sends a message to everyone on the server, e.g. /broadcast Hello all!',
-                '3. aliases - Takes a nick and lists aliases (people with same IP address), e.g. /aliases joebloggs',
-                '---'
+                "3. aliases - Lists someone's aliases (people with same IP address), e.g. /aliases joebloggs",
+                '4. move - Forcibly moves a user to a room, e.g. /move canterlot sillyfilly'
             ]);
             
         }
@@ -392,6 +392,30 @@ function handleCommand(cmd, myNick, user) {
                 sendLine('Kicked alias "' + nick + '" of user with nick "' + kickee + '"');
             }
         });
+    // forced move
+    } else if (isMod && cmd.substr(0, 5) === 'move ') {
+        var pos = cmd.indexOf(' ', 5);
+        if (pos !== -1) {
+            var room = cmd.substr(5, pos-5);
+            var movee = cmd.substr(pos+1);
+            if (!userManager.has(movee)) {
+                sendLine('There is no user with nick: "' + movee + '"');
+                return;
+            }
+            if (!roomManager.has(room)) {
+                sendLine('There is no room named "' + room + '". Try /list');
+                return;
+            }
+            if (movee === creatorNick || moderatorNicks.indexOf(movee) !== -1) {
+                sendLine('You cannot move other moderators or the creator');
+                return;
+            }
+            doRoomChange(movee, roomManager.get(room), userManager.get(movee));
+            sendLine('You were forcibly moved room by ' + myNick, movee);
+        } else {
+            sendLine('/move takes a room and a nickname');
+            return;
+        }
     // check alias
     } else if (isMod && cmd.substr(0, 8) === 'aliases ') {
         var checked = cmd.substr(8);

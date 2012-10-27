@@ -1,5 +1,12 @@
 (function () {
     'use strict';
+
+    // get them before IE errors out
+    if (!window.hasOwnProperty('WebSocket')) {
+        window.location = 'no-websocket.html';
+        return;
+    }
+    
     var CV_HEIGHT = 680;
     var CHAT_HEIGHT = 20;
     var PONY_WIDTH = 168, PONY_HEIGHT = 168;
@@ -363,7 +370,7 @@
     
     var socket, connected = false, ignoreDisconnect = false, me, myNick, myRoom, lastmove = (new Date().getTime());
     
-    var container, overlay, stage, title, creditslink, steamgrouplink, chooser, chooserbutton, background, chatbox, chatbutton, chatlog, fullchatlog, fullchatlogbutton, fullchatlogvisible, music;
+    var container, loginbox, nickbox, passbox, loginsubmit, overlay, stage, title, creditslink, steamgrouplink, chooser, chooserbutton, background, chatbox, chatbutton, chatlog, fullchatlog, fullchatlogbutton, fullchatlogvisible, music;
     
     var userManager = {
         users: {},
@@ -656,6 +663,64 @@
         overlay = document.createElement('div');
         overlay.id = 'overlay';
         container.appendChild(overlay);
+
+        function doLogin() {
+            loginbox.style.display = 'none';
+            localStorage.setItem('login-details', JSON.stringify({
+                nick: nickbox.value,
+                pass: passbox.value
+            }));
+            initNetwork();
+        }
+        
+        loginbox = document.createElement('div');
+        loginbox.id = 'loginbox';
+        overlay.appendChild(loginbox);
+
+        nickbox = document.createElement('input');
+        nickbox.type = 'text';
+        nickbox.placeholder = 'nickname';
+        nickbox.onkeyup = function () {
+            if (specialNicks.hasOwnProperty(nickbox.value)) {
+                passbox.style.display = 'block';
+            } else {
+                passbox.style.display = 'none';
+            }
+            return true;
+        };
+        nickbox.onkeypress = function (e) {
+            if (e.which === 13) {
+                doLogin();
+            }
+        };
+        loginbox.appendChild(nickbox);
+        nickbox.focus();
+
+        passbox = document.createElement('input');
+        passbox.type = 'password';
+        passbox.placeholder = 'password';
+        passbox.style.display = 'none';
+        passbox.onkeypress = nickbox.onkeypress;
+        loginbox.appendChild(passbox);
+
+        // prepopulate from local storage
+        var data = localStorage.getItem('login-details');
+        if (data) {
+            data = JSON.parse(data);
+            nickbox.value = data.nick;
+            if (data.pass) {
+                passbox.value = data.pass;
+                passbox.style.display = 'block';
+            }
+        }
+
+        loginsubmit = document.createElement('input');
+        loginsubmit.type = 'submit';
+        loginsubmit.value = 'connect';
+        loginsubmit.onclick = function () {
+            doLogin();
+        };
+        loginbox.appendChild(loginsubmit);
         
         title = document.createElement('h1');
         title.id = 'title';
@@ -797,11 +862,6 @@
     }
 
     function initNetwork() {
-        if (!window.hasOwnProperty('WebSocket')) {
-            window.location = 'no-websocket.html';
-            return;
-        }
-        
         if (window.location.hostname === 'localhost') {
             socket = new WebSocket('ws://localhost:9001', 'ponyplace-broadcast');
         } else {
@@ -810,11 +870,7 @@
         
         socket.onopen = function () {
             connected = true;
-            myNick = prompt('Choose a nickname.', '') || ('Blank flank #' + Math.floor(Math.random()*100));
-            var password = null;
-            if (specialNicks.hasOwnProperty(myNick)) {
-                password = prompt('This nickname is password protected.\nPlease enter its password.', '');
-            }
+            myNick = nickbox.value || ('Blank flank #' + Math.floor(Math.random()*100));
             // trim whitespace
             myNick = myNick.replace(/^\s+|\s+$/g, '');
             myRoom = null;
@@ -829,7 +885,7 @@
                 type: 'appear',
                 obj: me,
                 nick: myNick,
-                password: password
+                password: passbox.value || null
             }));
             chatbox.focus();
         };
@@ -874,6 +930,8 @@
                         alert('Bad nickname - nicknames must be between 1 and 18 characters, and have no trailing or leading whitespace.');
                     } else if (msg.reason === 'wrong_password') {
                         alert('Incorect password.');
+                        // erase login details
+                        localStorage.setItem('login-details', '');
                     } else if (msg.reason === 'protocol_error') {
                         alert('There was a protocol error. This usually means your client sent a malformed packet. Your client is probably out of date, try clearing your cache and refreshing.');
                     } else if (msg.reason === 'no_such_room') {
@@ -896,6 +954,5 @@
 
     window.onload = function () {
         initGUI();
-        initNetwork();
     };
 }());

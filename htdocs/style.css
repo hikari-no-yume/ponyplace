@@ -51,6 +51,26 @@ h1, p {
     -o-transform: rotate(180deg);
 }
 
+#loginbox {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 150px;
+    height: 80px;
+    margin-left: -79px;
+    margin-top: -44px;
+    background-color: white;
+    border: 4px solid lime;
+}
+
+#loginbox input {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+}
+
 #stage {
     position: absolute;
     left: 0;
