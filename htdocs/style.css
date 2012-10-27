@@ -172,7 +172,6 @@ h1, p {
     right: 75px;
     bottom: 2px;
     height: 16px;
-    font-family: monospace;
     box-sizing: border-box;
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
@@ -190,11 +189,10 @@ h1, p {
     padding: 4px;
     border-top-left-radius: 10px;
     border-bottom-left-radius: 10px;
-    font-family: monospace;
     color: white;
     background-color: rgba(0, 0, 0, 0.7);
-    font-weight: bold;
     overflow: auto;
+    font-family: Georgia, Times New Roman, serif;
 }
 
 #chatlog {
@@ -203,11 +201,10 @@ h1, p {
     bottom: 50px;
     height: 220px;
     width: 100%;
-    font-family: monospace;
     color: white;
-    font-weight: bold;
     pointer-events: none;
     overflow: hidden;
+    font-family: Georgia, Times New Roman, serif;
 }
 
 .chat-link {
