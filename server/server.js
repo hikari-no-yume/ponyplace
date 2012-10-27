@@ -19,7 +19,10 @@ wsServer = new WebSocketServer({
 });
 
 function originIsAllowed(origin) {
-    if (process.argv.hasOwnProperty('2') && process.argv[2] === '--debug') {
+    // undefined origin (i.e. non-web clients) always allowed
+    if (!origin) {
+        return true;
+    } else if (process.argv.hasOwnProperty('2') && process.argv[2] === '--debug') {
         return true;
     } else {
         return origin === 'http://ponyplace.ajf.me';
