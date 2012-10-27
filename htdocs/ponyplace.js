@@ -968,6 +968,10 @@
                         alert('There was a protocol error. This usually means your client sent a malformed packet. Your client is probably out of date, try clearing your cache and refreshing.');
                     } else if (msg.reason === 'no_such_room') {
                         alert("No such room. You tried to join a room that doesn't exist.");
+                    } else if (msg.reason === 'kick') {
+                        alert('You were kicked!');
+                    } else if (msg.reason === 'ban') {
+                        alert('You were banned!');
                     } else if (msg.reason === 'update') {
                         ignoreDisconnect = true;
                         window.setTimeout(function () {

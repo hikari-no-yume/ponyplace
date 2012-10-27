@@ -318,12 +318,12 @@ function handleCommand(cmd, myNick, user) {
     if (cmd.substr(0, 4) === 'help') {
         if (isMod) {
             sendMultiLine([
-                'Four moderator commands are available: 1) kick, 2) broadcast, 3) aliases, 4) move',
+                'Four moderator commands are available: 1) kick, 2) kickban, 3) broadcast, 4) aliases, 5) move',
                 '1. kick - Takes the nick of someone, they (& any aliases) will be kicked, e.g. /kick sillyfilly',
-                'Their name and IP address will be banned, bans only last until server crashes or restarts.',
-                '2. broadcast - Sends a message to everyone on the server, e.g. /broadcast Hello all!',
-                "3. aliases - Lists someone's aliases (people with same IP address), e.g. /aliases joebloggs",
-                '4. move - Forcibly moves a user to a room, e.g. /move canterlot sillyfilly'
+                '2. kickban - Like /kick but also bans by name and IP, lasts only until server crash/restart',
+                '3. broadcast - Sends a message to everyone on the server, e.g. /broadcast Hello all!',
+                "4. aliases - Lists someone's aliases (people with same IP address), e.g. /aliases joebloggs",
+                '5. move - Forcibly moves a user to a room, e.g. /move canterlot sillyfilly'
             ]);
             
         }
@@ -367,6 +367,32 @@ function handleCommand(cmd, myNick, user) {
             roomCount++;
         });
         sendLine('(' + roomCount + ' rooms total)');
+    // kickbanning
+    } else if (isMod && cmd.substr(0, 8) === 'kickban ') {
+        var kickee = cmd.substr(8);
+        if (!userManager.has(kickee)) {
+            sendLine('There is no user with nick: "' + kickee + '"');
+            return;
+        }
+        if (kickee === creatorNick || moderatorNicks.indexOf(kickee) !== -1) {
+            sendLine('You cannot kickban other moderators or the creator');
+            return;
+        }
+        var IP = userManager.get(kickee).conn.remoteAddress;
+        banManager.addIPBan(IP);
+        banManager.addNickBan(kickee);
+        userManager.kick(kickee, 'ban');
+        console.log('Kickbanned user with nick "' + kickee + '"');
+        sendLine('Kickbanned user with nick "' + kickee + '"');
+        // Kick other aliases
+        userManager.forEach(function (nick, iterUser) {
+            if (iterUser.conn.remoteAddress === IP) {
+                // kick
+                userManager.kick(nick, 'ban');
+                console.log('Kicked alias "' + nick + '" of user with nick "' + kickee + '"');
+                sendLine('Kicked alias "' + nick + '" of user with nick "' + kickee + '"');
+            }
+        });
     // kicking
     } else if (isMod && cmd.substr(0, 5) === 'kick ') {
         var kickee = cmd.substr(5);
@@ -374,21 +400,14 @@ function handleCommand(cmd, myNick, user) {
             sendLine('There is no user with nick: "' + kickee + '"');
             return;
         }
-        if (kickee === creatorNick || moderatorNicks.indexOf(kickee) !== -1) {
-            sendLine('You cannot kick other moderators or the creator');
-            return;
-        }
-        var IP = userManager.get(kickee).conn.remoteAddress;
-        banManager.addIPBan(IP);
-        banManager.addNickBan(kickee);
-        userManager.kick(kickee);
-        console.log('Kickbanned user with nick "' + kickee + '"');
-        sendLine('Kickbanned user with nick "' + kickee + '"');
+        userManager.kick(kickee, 'kick');
+        console.log('Kicked user with nick "' + kickee + '"');
+        sendLine('Kicked user with nick "' + kickee + '"');
         // Kick other aliases
         userManager.forEach(function (nick, iterUser) {
             if (iterUser.conn.remoteAddress === IP) {
                 // kick
-                userManager.kick(nick);
+                userManager.kick(nick, 'kick');
                 console.log('Kicked alias "' + nick + '" of user with nick "' + kickee + '"');
                 sendLine('Kicked alias "' + nick + '" of user with nick "' + kickee + '"');
             }
