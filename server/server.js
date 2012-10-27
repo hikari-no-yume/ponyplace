@@ -29,7 +29,7 @@ function originIsAllowed(origin) {
     }
 }
 
-var badRegex = /desu|rape|cum|wank|9gag|noob|porn|yolo|hash|weed|drug|milf|bdsm|tits|penis|fap|butt|ass|shit|fuck|fag|faggot|bitch|cunt|dick|cock|nigga|nigger|homosexual|gay|clopclop|clopping|(\[\]\(\/[a-zA-Z0-9\-_]+\))/gi;
+var badRegex = /fuck|shit|milf|bdsm|fag|faggot|nigga|nigger|clopclop|clopping|(\[\]\(\/[a-zA-Z0-9\-_]+\))/gi;
 
 var fs = require('fs');
 
