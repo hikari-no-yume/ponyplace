@@ -486,7 +486,12 @@
     }
     
     function chatPrint(line, highlight, showInShortLog) {
-        var date = '[' + (new Date()).toLocaleTimeString() + '] ';
+        function digitPad(n) {
+            return n = (n < 10) ? ("0" + n) : n;
+        }
+    
+        var date = new Date()
+        line = '[' + digitPad(date.getHours()) + ':' + digitPad(date.getMinutes()) + '] ' + line;
     
         if (showInShortLog) {
             var span = document.createElement('span');
@@ -501,8 +506,6 @@
                 chatlog.removeChild(chatlog.firstChild);
             }
         }
-
-        line = date + line;
         
         // clickable links
         var pos;

@@ -192,7 +192,7 @@ h1, p {
     color: white;
     background-color: rgba(0, 0, 0, 0.7);
     overflow: auto;
-    font-family: Georgia, Times New Roman, serif;
+    font-family: monospace;
 }
 
 #chatlog {
@@ -204,7 +204,7 @@ h1, p {
     color: white;
     pointer-events: none;
     overflow: hidden;
-    font-family: Georgia, Times New Roman, serif;
+    font-family: monospace;
 }
 
 .chat-link {
