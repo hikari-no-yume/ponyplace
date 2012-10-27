@@ -290,6 +290,15 @@ h1, p {
     content: ' (mod)';
 }
 
+.bot {
+    color: red !important;
+}
+.bot::after {
+    font-weight: normal !important;
+    color: white !important;
+    content: ' (bot)';
+}
+
 .disconnected {
     background-color: gray !important;
     text-align: center;

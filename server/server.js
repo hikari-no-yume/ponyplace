@@ -33,7 +33,7 @@ var badRegex = /fuck|shit|milf|bdsm|fag|faggot|nigga|nigger|clop|(\[\]\(\/[a-zA-
 
 var fs = require('fs');
 
-var creatorNick, moderatorNicks, passwords;
+var creatorNick, moderatorNicks, botNicks, passwords;
 
 fs.readFile('special-users.json', 'utf8', function (err, data) {
     if (err) {
@@ -43,6 +43,7 @@ fs.readFile('special-users.json', 'utf8', function (err, data) {
     data = JSON.parse(data);
     creatorNick = data.creator;
     moderatorNicks = data.moderators;
+    botNicks = data.bots;
     passwords = data.passwords;
     console.log('Loaded special users info');
 });
@@ -311,7 +312,7 @@ function handleCommand(cmd, myNick, user) {
         }
     }
 
-    var isMod = (myNick === creatorNick || moderatorNicks.indexOf(myNick) !== -1);
+    var isMod = (myNick === creatorNick || moderatorNicks.indexOf(myNick) !== -1 || botNicks.indexOf(myNick) !== -1);
     
     // help
     if (cmd.substr(0, 4) === 'help') {
@@ -607,6 +608,8 @@ wsServer.on('request', function(request) {
             special = 'creator';
         } else if (moderatorNicks.indexOf(msg.nick) !== -1) {
             special = 'moderator';
+        } else if (botNicks.indexOf(msg.nick) !== -1) {
+            special = 'bot';
         }
         
         // Name banning and prevent nickname dupe

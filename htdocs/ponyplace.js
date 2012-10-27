@@ -365,7 +365,8 @@
     var specialNicks = {
         'ajf': 'creator',
         'swag': 'moderator',
-        'Berry the Drunk': 'moderator'
+        'Berry the Drunk': 'moderator',
+        'Berry in Db': 'bot'
     };
     
     var socket, connected = false, ignoreDisconnect = false, me, myNick, myRoom, lastmove = (new Date().getTime());

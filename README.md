@@ -11,6 +11,7 @@ Configuration
         {
             "creator": "joe",
             "moderators": ["fred", "garry"],
+            "bots": [],
             "passwords": {
                 "joe": "foobar",
                 "fred": "barfoo",
