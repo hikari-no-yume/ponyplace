@@ -486,7 +486,7 @@
     }
     
     function chatPrint(line, highlight, showInShortLog) {
-        line = '[' + (new Date()).toLocaleTimeString() + '] ' + line;
+        var date = '[' + (new Date()).toLocaleTimeString() + '] ';
     
         if (showInShortLog) {
             var span = document.createElement('span');
@@ -501,6 +501,8 @@
                 chatlog.removeChild(chatlog.firstChild);
             }
         }
+
+        line = date + line;
         
         // clickable links
         var pos;
