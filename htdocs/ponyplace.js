@@ -366,7 +366,8 @@
         'ajf': 'creator',
         'swag': 'moderator',
         'Berry the Drunk': 'moderator',
-        'Berry in Db': 'bot'
+        'Berry in Db': 'bot',
+        'Colgate': 'moderator'
     };
     
     var socket, connected = false, ignoreDisconnect = false, me, myNick, myRoom, lastmove = (new Date().getTime());
