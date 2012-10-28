@@ -121,9 +121,15 @@ h1, p {
     left: 5px;
 }
 
-.room-button {
+#room-refresh-button {
     position: absolute;
     top: 0;
+    left: 160px;
+}
+
+#room-list {
+    position: absolute;
+    top: 25px;
     left: 160px;
 }
 

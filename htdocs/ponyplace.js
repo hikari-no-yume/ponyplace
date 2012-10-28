@@ -371,7 +371,7 @@
     
     var socket, connected = false, ignoreDisconnect = false, me, myNick, myRoom, lastmove = (new Date().getTime());
     
-    var container, loginbox, nickbox, passbox, loginsubmit, overlay, stage, title, creditslink, steamgrouplink, chooser, chooserbutton, background, chatbox, chatbutton, chatlog, fullchatlog, fullchatlogbutton, fullchatlogvisible, music;
+    var container, loginbox, nickbox, passbox, loginsubmit, overlay, stage, title, creditslink, steamgrouplink, chooser, chooserbutton, roomlist, refreshbutton, background, chatbox, chatbutton, chatlog, fullchatlog, fullchatlogbutton, fullchatlogvisible, music;
     
     var userManager = {
         users: {},
@@ -562,40 +562,13 @@
     }
     
     function updateRoomList(rooms) {
-        while (document.getElementsByClassName('room-button').length) {
-            overlay.removeChild(document.getElementsByClassName('room-button')[0]);
-        }
-    
-        var refreshbutton = document.createElement('input');
-        refreshbutton.type = 'submit';
-        refreshbutton.value = 'Refresh room list';
-        refreshbutton.className = 'room-button';
-        refreshbutton.onclick = function () {
-            socket.send(JSON.stringify({
-                type: 'room_list'
-            }));
-        };
-        overlay.appendChild(refreshbutton);
-    
-        var y = 25;
+        roomlist.innerHTML = '';
         for (var i = 0; i < rooms.length; i++) {
             var data = rooms[i];
-            
-            var roombutton = document.createElement('input');
-            roombutton.type = 'submit';
-            roombutton.value = '⇨ ' + data.name_full + ' (' + data.user_count + ' ' + data.user_noun + ')';
-            roombutton.className = 'room-button';
-            roombutton.style.top = y + 'px';
-            (function (roomName) {
-                roombutton.onclick = function () {
-                    socket.send(JSON.stringify({
-                        type: 'room_change',
-                        name: roomName
-                    }));
-                };
-            }(data.name));
-            overlay.appendChild(roombutton);
-            y += 25;
+            var option = document.createElement('option');
+            option.value = data.name;
+            option.appendChild(document.createTextNode('⇨ ' + data.name_full + ' (' + data.user_count + ' ' + data.user_noun + ')'));
+            roomlist.appendChild(option);
         }
     }
     
@@ -774,6 +747,28 @@
             }
         };
         overlay.appendChild(fullchatlogbutton);
+
+        refreshbutton = document.createElement('input');
+        refreshbutton.type = 'submit';
+        refreshbutton.value = 'Refresh room list';
+        refreshbutton.id = 'room-refresh-button';
+        refreshbutton.onclick = function () {
+            socket.send(JSON.stringify({
+                type: 'room_list'
+            }));
+        };
+        overlay.appendChild(refreshbutton);
+
+        roomlist = document.createElement('select');
+        roomlist.id = 'room-list';
+        roomlist.onchange = function () {
+            socket.send(JSON.stringify({
+                type: 'room_change',
+                name: roomlist.value
+            }));
+        };
+        roomlist.value = '';
+        overlay.appendChild(roomlist);
         
         function handleChatMessage() {
             // is command
