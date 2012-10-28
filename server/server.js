@@ -512,7 +512,6 @@ wsServer.on('request', function(request) {
     }
 
     // IP ban
-    console.dir(banManager);
     if (banManager.isIPBanned(request.remoteAddress)) {
         request.reject();
         console.log((new Date()) + ' Connection from banned IP ' + request.remoteAddress + ' rejected.');
