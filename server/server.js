@@ -133,26 +133,41 @@ var userManager = {
 };
 
 var banManager = {
-    bannedNicks: [],
     bannedIPs: [],
-    
+
+    init: function () {
+        var that = this;
+        fs.readFile('bans.json', 'utf8', function (err, data) {
+            if (err) {
+                return;
+            }
+            
+            var data = JSON.parse(data);
+            that.bannedIPs = data.IPs;
+            console.log('Loaded banned users info');
+        });
+    },
+    save: function () {
+        fs.writeFile('bans.json', JSON.stringify({
+            IPs: this.bannedIPs
+        }), 'utf-8', function (err) {
+            if (err) {
+                throw err;
+            };
+        });
+    },
     addIPBan: function (IP) {
         if (!this.isIPBanned(IP)) {
             this.bannedIPs.push(IP);
-        }
-    },
-    addNickBan: function (nick) {
-        if (!this.isIPBanned(nick)) {
-            this.bannedIPs.push(nick);
+            this.save();
         }
     },
     isIPBanned: function (IP) {
         return (this.bannedIPs.indexOf(IP) !== -1);
-    },
-    isNickBanned: function (nick) {
-        return (this.bannedNicks.indexOf(nick) !== -1);
     }
 };
+
+banManager.init();
 
 var roomManager = {
     rooms: [
@@ -320,7 +335,7 @@ function handleCommand(cmd, myNick, user) {
             sendMultiLine([
                 'Four moderator commands are available: 1) kick, 2) kickban, 3) broadcast, 4) aliases, 5) move',
                 '1. kick - Takes the nick of someone, they (& any aliases) will be kicked, e.g. /kick sillyfilly',
-                '2. kickban - Like /kick but also bans by name and IP, lasts only until server crash/restart',
+                '2. kickban - Like /kick but also permabans by IP, e.g. /kickban stupidfilly',
                 '3. broadcast - Sends a message to everyone on the server, e.g. /broadcast Hello all!',
                 "4. aliases - Lists someone's aliases (people with same IP address), e.g. /aliases joebloggs",
                 '5. move - Forcibly moves a user to a room, e.g. /move canterlot sillyfilly'
@@ -380,17 +395,16 @@ function handleCommand(cmd, myNick, user) {
         }
         var IP = userManager.get(kickee).conn.remoteAddress;
         banManager.addIPBan(IP);
-        banManager.addNickBan(kickee);
         userManager.kick(kickee, 'ban');
-        console.log('Kickbanned user with nick "' + kickee + '"');
-        sendLine('Kickbanned user with nick "' + kickee + '"');
+        console.log('Banned user with IP ' + IP);
+        sendLine('Banned user with IP ' + IP);
         // Kick other aliases
         userManager.forEach(function (nick, iterUser) {
             if (iterUser.conn.remoteAddress === IP) {
                 // kick
                 userManager.kick(nick, 'ban');
-                console.log('Kicked alias "' + nick + '" of user with nick "' + kickee + '"');
-                sendLine('Kicked alias "' + nick + '" of user with nick "' + kickee + '"');
+                console.log('Kicked alias "' + nick + '" of user with IP ' + IP);
+                sendLine('Kicked alias "' + nick + '" of user with IP ' + IP);
             }
         });
     // kicking
@@ -497,19 +511,21 @@ wsServer.on('request', function(request) {
       return;
     }
 
+    // IP ban
+    console.dir(banManager);
+    if (banManager.isIPBanned(request.remoteAddress)) {
+        request.reject();
+        console.log((new Date()) + ' Connection from banned IP ' + request.remoteAddress + ' rejected.');
+        return;
+    }
+
     try {
         var connection = request.accept('ponyplace-broadcast', request.origin);
     } catch (e) {
         console.log('Caught error: ' + e);
         return;
     }
-    console.log((new Date()) + ' Connection accepted.');    
-    
-    // IP ban
-    if (banManager.isIPBanned(connection.remoteAddress)) {
-        connection.close();
-        return;
-    }
+    console.log((new Date()) + ' Connection accepted from IP ' + connection.remoteAddress);    
     
     // this user
     var user = null, myNick = null;
@@ -632,7 +648,7 @@ wsServer.on('request', function(request) {
         }
         
         // Name banning and prevent nickname dupe
-        if (userManager.has(msg.nick) || banManager.isNickBanned(msg.nick)) {
+        if (userManager.has(msg.nick)) {
             connection.sendUTF(JSON.stringify({
                 type: 'kick',
                 reason: 'nick_in_use'
