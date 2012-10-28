@@ -170,73 +170,20 @@ var banManager = {
 banManager.init();
 
 var roomManager = {
-    rooms: [
-        {
-            name: 'library_es',
-            name_full: 'La biblioteca de Twilight (español)',
-            img: 'media/background-library.png',
-            width: 1173,
-            user_count: 0,
-            user_noun: 'españoles'
-        },
-        {
-            name: 'ponyville',
-            name_full: 'Ponyville',
-            img: 'media/background-ponyville.png',
-            width: 1445,
-            user_count: 0,
-            user_noun: 'ponies'
-        },
-        {
-            name: "library",
-            name_full: "Twilight's Library",
-            img: 'media/background-library.png',
-            width: 1173,
-            user_count: 0,
-            user_noun: 'bright sparks'
-        },
-        {
-            name: 'sugarcube_corner',
-            name_full: 'Sugarcube Corner',
-            img: 'media/background-sugarcubecorner.png',
-            width: 1173,
-            user_count: 0,
-            user_noun: 'party animals'
-        },
-        {
-            name: 'classroom',
-            name_full: "Cheerilee's Classroom",
-            img: 'media/background-classroom.png',
-            width: 1173,
-            user_count: 0,
-            user_noun: 'eager students'
-        },
-        {
-            name: 'everfree_forest',
-            name_full: 'Everfree Forest',
-            img: 'media/background-everfreeforest.png',
-            width: 1173,
-            user_count: 0,
-            user_noun: 'rhyming zebras'
-        },
-        {
-            name: 'cloudsdale',
-            name_full: 'Cloudsdale',
-            img: 'media/background-cloudsdale.png',
-            width: 1213,
-            user_count: 0,
-            user_noun: 'wonderbolts'
-        },
-        {
-            name: 'canterlot',
-            name_full: 'Canterlot',
-            img: 'media/background-canterlot.png',
-            width: 1173,
-            user_count: 0,
-            user_noun: 'posh ponies'
-        }
-    ],
-    
+    rooms: [],
+
+    init: function () {
+        var that = this;
+        fs.readFile('rooms.json', 'utf8', function (err, data) {
+            if (err) {
+                throw err;
+            }
+            
+            var data = JSON.parse(data);
+            that.rooms = data;
+            console.log('Loaded rooms');
+        });
+    },
     has: function (name) {
         for (var i = 0; i < this.rooms.length; i++) {
             // room exists
@@ -260,6 +207,8 @@ var roomManager = {
         }
     }
 };
+
+roomManager.init();
 
 function doRoomChange(myNick, room, user) {
     var oldRoom = user.room;
