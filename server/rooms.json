@@ -32,6 +32,14 @@
         "user_noun": "party animals"
     },
     {
+        "name": "carousel_boutique",
+        "name_full": "Carousel Boutique",
+        "img": "media/background-carousel-boutique.png",
+        "width": 1159,
+        "user_count": 0,
+        "user_noun": "fashionistas"
+    },
+    {
         "name": "classroom",
         "name_full": "Cheerilee's Classroom",
         "img": "media/background-classroom.png",
@@ -44,6 +52,14 @@
         "name_full": "Everfree Forest",
         "img": "media/background-everfreeforest.png",
         "width": 1173,
+        "user_count": 0,
+        "user_noun": "scared fillies"
+    },
+    {
+        "name": "zecoras_house",
+        "name_full": "Zecora's house",
+        "img": "media/background-zecoras-house.png",
+        "width": 1175,
         "user_count": 0,
         "user_noun": "rhyming zebras"
     },
@@ -62,5 +78,13 @@
         "width": 1173,
         "user_count": 0,
         "user_noun": "posh ponies"
+    },
+    {
+        "name": "dungeon",
+        "name_full": "Dungeon",
+        "img": "media/background-dungeon.png",
+        "width": 1176,
+        "user_count": 0,
+        "user_noun": "prisoners"
     }
 ]
