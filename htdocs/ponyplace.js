@@ -581,13 +581,17 @@
     
     function updateRoomList(rooms) {
         roomlist.innerHTML = '';
+        var headcount = 0;
         for (var i = 0; i < rooms.length; i++) {
             var data = rooms[i];
             var option = document.createElement('option');
             option.value = data.name;
             option.appendChild(document.createTextNode('⇨ ' + data.name_full + ' (' + data.user_count + ' ' + data.user_noun + ')'));
             roomlist.appendChild(option);
+            headcount += data.user_count;
         }
+
+        refreshbutton.value = 'Refresh room list (' + headcount + ' users online)';
     }
     
     function changeRoom(room) {
