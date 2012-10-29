@@ -413,7 +413,8 @@
                 elem: {
                     root: elem,
                     chat: chat,
-                    nickTag: nickTag
+                    nickTag: nickTag,
+                    img: null
                 }
             };
             
@@ -430,8 +431,24 @@
             user.elem.root.style.top = obj.y + 'px';
             if (ponies.hasOwnProperty(obj.img)) {
                 user.elem.root.style.backgroundImage = 'url(' + ponies[obj.img] + ')';
+                user.elem.img = document.createElement('img');
+                user.elem.img.src = ponies[obj.img];
+                user.elem.img.onload = function () {
+                    var newHeight = user.elem.img.height;
+
+                    // adjust bounding box height
+                    user.elem.root.style.height = newHeight + 'px';
+
+                    // adjust bounding box margin (translate about image centre)
+                    user.elem.root.style.marginTop = -newHeight/2 + 'px';
+
+                    // adjust positioning of nick tag and chat bubble
+                    user.elem.chat.style.bottom = newHeight + 'px';
+                    user.elem.nickTag.style.top = newHeight + 'px';
+                };
             } else {
                 user.elem.root.style.backgroundImage = 'none';
+                user.elem.root.style.height = PONY_HEIGHT + 'px';
             }
             
             user.elem.chat.innerHTML = '';
@@ -625,10 +642,10 @@
         background.onclick = function (e) {
             var cur = (new Date().getTime());
             if (cur - lastmove > 400) {
-                var newx = e.layerX - PONY_WIDTH / 2;
+                var newx = e.layerX;
                 me.img = (me.img|1) - (me.x<newx ? 0 : 1);
                 me.x = newx;
-                me.y = e.layerY - PONY_HEIGHT / 2;
+                me.y = e.layerY;
                 pushAndUpdateState(me);
                 lastmove = cur;
             } else {

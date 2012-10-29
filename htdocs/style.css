@@ -245,7 +245,10 @@ h1, p {
     position: absolute;
     width: 168px;
     height: 168px;
-    background-position: center bottom;
+    max-height: 168px;
+    margin-left: -84px;
+    margin-top: -84px;
+    background-position: center;
     background-repeat: no-repeat;
     pointer-events: none;
     transition: left 0.25s linear, top 0.25s linear;
@@ -262,9 +265,14 @@ h1, p {
     color: black;
     margin-top: 0;
     margin-bottom: 2px;
-    width: 168px;
     overflow: hidden;
     border-radius: 5px;
+
+    /* position above avatar */
+    position: absolute;
+    width: 100%;
+    left: 0;
+    bottom: 168px;
 }
 
 .chatbubble::not(::empty) {
@@ -280,10 +288,11 @@ h1, p {
     height: 18px;
     overflow: hidden;
 
+    /* position below avatar */
     position: absolute;
     width: 100%;
     left: 0;
-    bottom: 0;
+    top: 168px;
 }
 
 .creator {
