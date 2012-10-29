@@ -245,7 +245,7 @@ h1, p {
     position: absolute;
     width: 168px;
     height: 168px;
-    background-position: center;
+    background-position: center bottom;
     background-repeat: no-repeat;
     pointer-events: none;
     transition: left 0.25s linear, top 0.25s linear;
@@ -279,6 +279,11 @@ h1, p {
     border-radius: 9px;
     height: 18px;
     overflow: hidden;
+
+    position: absolute;
+    width: 100%;
+    left: 0;
+    bottom: 0;
 }
 
 .creator {
