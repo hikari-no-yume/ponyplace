@@ -254,25 +254,28 @@ h1, p {
 }
 
 .chatbubble {
-    background-color: rgba(236, 174, 255, 0.7);
+    background-color: #ECAEFF;
+    -webkit-box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
     font-family: CelestiaRedux, 'Comic Sans MS', sans-serif;
-    font-size: 11pt;
+    font-size: 10pt;
     color: black;
+    margin-top: 0;
     margin-bottom: 2px;
     width: 168px;
     overflow: hidden;
-}
-.chatbubble:not(:empty) {
-    border: 1px solid white;
     border-radius: 5px;
+}
+
+.chatbubble::not(::empty) {
+    padding: 1px;
 }
 
 .nickname {
     font-weight: bold;
-    font-family: monospace;
+    text-shadow: 1px 1px black, -1px -1px black, 1px -1px black, -1px 1px black;
     color: white;
     margin: 0;
-    background-color: rgba(0, 0, 0, 0.4);
     border-radius: 9px;
     height: 18px;
     overflow: hidden;
