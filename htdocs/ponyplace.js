@@ -968,6 +968,10 @@
                         alert('This nickname is password protected.');
                         // erase login details
                         localStorage.setItem('login-details', '');
+                    } else if (msg.reason === 'no_password') {
+                        alert('This nickname has no password set.');
+                        // erase login details
+                        localStorage.setItem('login-details', '');
                     } else if (msg.reason === 'protocol_error') {
                         alert('There was a protocol error. This usually means your client sent a malformed packet. Your client is probably out of date, try clearing your cache and refreshing.');
                     } else if (msg.reason === 'no_such_room') {

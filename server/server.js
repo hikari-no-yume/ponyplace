@@ -85,8 +85,8 @@ var specialManager = {
         return (status === 'moderator' || status === 'creator' || status === 'bot');
     },
     isCorrectPassword: function (nick, password) {
-        if (!this.passwords.hasOwnProperty(nick)) {
-            return true;
+        if (!this.hasPassword(nick)) {
+            return false;
         }
         return (this.passwords[nick] === password);
     },
@@ -97,6 +97,9 @@ var specialManager = {
     removePassword: function (nick) {
         delete this.passwords[nick];
         this.savePasswords();
+    },
+    hasPassword: function (nick) {
+        return this.passwords.hasOwnProperty(nick);
     }
 };
 
@@ -338,7 +341,7 @@ function handleCommand(cmd, myNick, user) {
             '1. whereis - Takes a nick, tells you what room someone is in, e.g. /whereis someguy',
             '2. list - Lists available rooms, e.g. /list',
             '3. join - Takes a room name, joins that room, e.g. /join library',
-            '4. setpass - Sets a password on your nickname, e.g. /setpass opensesame',
+            '4. setpass - Sets or changes a password on your nickname, e.g. /setpass opensesame',
             '5. rmpass - Removes the password on your nickname, e.g. /rmpass'
         ]);
     // where is
@@ -380,15 +383,23 @@ function handleCommand(cmd, myNick, user) {
         var password = cmd.substr(8);
 
         if (password.length > 0) {
+            if (specialManager.hasPassword(myNick)) {
+                sendLine('Changed password');
+            } else {
+                sendLine('Set password');
+            }
             specialManager.setPassword(myNick, password);
-            sendLine('Set password');
         } else {
             sendLine('Password must be at least 1 characters in length');
         }
     // set password
     } else if (cmd.substr(0, 6) === 'rmpass') {
-        specialManager.removePassword(myNick);
-        sendLine('Removed password');
+        if (specialManager.hasPassword(myNick)) {
+            specialManager.removePassword(myNick);
+            sendLine('Removed password');
+        } else {
+            sendLine("You don't have a password set");
+        }
     // kickbanning
     } else if (isMod && cmd.substr(0, 8) === 'kickban ') {
         var kickee = cmd.substr(8);
@@ -644,6 +655,16 @@ wsServer.on('request', function(request) {
         
         // Detect owner/mod/bot status
         var special = specialManager.getSpecialStatus(msg.nick);
+
+        // Prevent stupidity
+        if (msg.password && !specialManager.hasPassword(msg.nick)) {
+            connection.sendUTF(JSON.stringify({
+                type: 'kick',
+                reason: 'no_password'
+            }));
+            connection.close();
+            return;
+        }
         
         // Name banning and prevent nickname dupe
         if (userManager.has(msg.nick)) {
