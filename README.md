@@ -6,20 +6,22 @@ Setup
 Configuration
 -------------
 
-1. Make sure you have a (carefully guarded) `special-users.json` file in the `server` directory. Should be of format:
+1. Make sure you have a `special-users.json` file in the `server` directory. Should be of format:
 
         {
-            "creator": "joe",
-            "moderators": ["fred", "garry"],
-            "bots": [],
-            "passwords": {
-                "joe": "foobar",
-                "fred": "barfoo",
-                "garry": "foofoobarbar"
-            }
+            "joe": "creator",
+            "fred": "moderator",
+            "garry": "moderator",
+            "tomatobot": "bot"
         }
 
-2. Might want to modify `ponyplace.js`'s `specialNicks` map to match `special-users.json`
+2. You'll also need a `passwords.json` file, of this format - should be writeable:
+
+        {
+            "joe": "foobar",
+            "fred": "barfoo",
+            "garry": "foofoobarbar"
+        }
 
 Running Server
 --------------

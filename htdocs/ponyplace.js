@@ -362,15 +362,7 @@
         'media/zecora_right_walk.gif'
     ];
     
-    var specialNicks = {
-        'ajf': 'creator',
-        'swag': 'moderator',
-        'Berry the Drunk': 'moderator',
-        'Berry in Db': 'bot',
-        'Colgate': 'moderator'
-    };
-    
-    var socket, connected = false, ignoreDisconnect = false, me, myNick, myRoom, lastmove = (new Date().getTime());
+    var socket, connected = false, ignoreDisconnect = false, me, myNick, myRoom, mySpecialStatus, lastmove = (new Date().getTime());
     
     var container, loginbox, nickbox, passbox, loginsubmit, overlay, stage, title, creditslink, steamgrouplink, chooser, chooserbutton, roomlist, refreshbutton, background, chatbox, chatbutton, chatlog, fullchatlog, fullchatlogbutton, fullchatlogvisible, music;
     
@@ -605,7 +597,7 @@
         });
         
         // add me
-        userManager.add(myNick, me, specialNicks.hasOwnProperty(myNick) ? specialNicks[myNick] : false);
+        userManager.add(myNick, me, mySpecialStatus);
         
         // go to random position
         me.x = me.x || Math.floor(Math.random() * (room.width - PONY_WIDTH));
@@ -676,19 +668,12 @@
         
         loginbox = document.createElement('div');
         loginbox.id = 'loginbox';
+        loginbox.appendChild(document.createTextNode("Choose a nickname. (You'll only need a password if it has been protected)"));
         overlay.appendChild(loginbox);
 
         nickbox = document.createElement('input');
         nickbox.type = 'text';
         nickbox.placeholder = 'nickname';
-        nickbox.onkeyup = function () {
-            if (specialNicks.hasOwnProperty(nickbox.value)) {
-                passbox.style.display = 'block';
-            } else {
-                passbox.style.display = 'none';
-            }
-            return true;
-        };
         nickbox.onkeypress = function (e) {
             if (e.which === 13) {
                 doLogin();
@@ -700,7 +685,6 @@
         passbox = document.createElement('input');
         passbox.type = 'password';
         passbox.placeholder = 'password';
-        passbox.style.display = 'none';
         passbox.onkeypress = nickbox.onkeypress;
         loginbox.appendChild(passbox);
 
@@ -709,18 +693,13 @@
         if (data) {
             data = JSON.parse(data);
             nickbox.value = data.nick;
-            if (data.pass) {
-                passbox.value = data.pass;
-                passbox.style.display = 'block';
-            }
+            passbox.value = data.pass;
         }
 
         loginsubmit = document.createElement('input');
         loginsubmit.type = 'submit';
         loginsubmit.value = 'connect';
-        loginsubmit.onclick = function () {
-            doLogin();
-        };
+        loginsubmit.onclick = doLogin;
         loginbox.appendChild(loginsubmit);
         
         title = document.createElement('h1');
@@ -923,6 +902,7 @@
             // trim whitespace
             myNick = myNick.replace(/^\s+|\s+$/g, '');
             myRoom = null;
+            mySpecialStatus = false;
             me = {
                 img: Math.floor(Math.random() * ponies.length),
                 x: 0,
@@ -957,6 +937,9 @@
                         userManager.update(msg.nick, msg.obj);
                     }
                 break;
+                case 'are_special':
+                    mySpecialStatus = msg.status;
+                break;
                 case 'broadcast':
                     logBroadcastInChat(msg.msg);
                 break;
@@ -979,6 +962,10 @@
                         alert('Bad nickname - nicknames must be between 1 and 18 characters, and have no trailing or leading whitespace.');
                     } else if (msg.reason === 'wrong_password') {
                         alert('Incorect password.');
+                        // erase login details
+                        localStorage.setItem('login-details', '');
+                    } else if (msg.reason === 'password_required') {
+                        alert('This nickname is password protected.');
                         // erase login details
                         localStorage.setItem('login-details', '');
                     } else if (msg.reason === 'protocol_error') {

@@ -33,21 +33,6 @@ var badRegex = /fuck|shit|milf|bdsm|fag|faggot|nigga|nigger|clop|(\[\]\(\/[a-zA-
 
 var fs = require('fs');
 
-var creatorNick, moderatorNicks, botNicks, passwords;
-
-fs.readFile('special-users.json', 'utf8', function (err, data) {
-    if (err) {
-        throw err;
-    }
-    
-    data = JSON.parse(data);
-    creatorNick = data.creator;
-    moderatorNicks = data.moderators;
-    botNicks = data.bots;
-    passwords = data.passwords;
-    console.log('Loaded special users info');
-});
-
 function sanitise(obj) {
     if (obj.hasOwnProperty('chat')) {
         obj.chat = obj.chat.substr(0, 100);
@@ -58,7 +43,64 @@ function sanitise(obj) {
     return obj;
 }
 
-var users = {};
+var specialManager = {
+    passwords: {},
+    specialNicks: {},
+
+    init: function () {
+        var that = this;
+        fs.readFile('special-users.json', 'utf8', function (err, data) {
+            if (err) {
+                throw err;
+            }
+            
+            that.specialNicks = JSON.parse(data);
+            console.log('Loaded special users info');
+        });
+        fs.readFile('passwords.json', 'utf8', function (err, data) {
+            if (err) {
+                throw err;
+            }
+            
+            that.passwords = JSON.parse(data);
+            console.log('Loaded passwords');
+        });
+    },
+    savePasswords: function () {
+        fs.writeFile('passwords.json', JSON.stringify(this.passwords), 'utf-8', function (err) {
+            if (err) {
+                throw err;
+            };
+        });
+    },
+    
+    getSpecialStatus: function (nick) {
+        if (this.specialNicks.hasOwnProperty(nick)) {
+            return this.specialNicks[nick];
+        }
+        return false;
+    },
+    isModerator: function (nick) {
+        var status = this.specialNicks[nick];
+        return (status === 'moderator' || status === 'creator' || status === 'bot');
+    },
+    isCorrectPassword: function (nick, password) {
+        if (!this.passwords.hasOwnProperty(nick)) {
+            return true;
+        }
+        return (this.passwords[nick] === password);
+    },
+    setPassword: function (nick, password) {
+        this.passwords[nick] = password;
+        this.savePasswords();
+    },
+    removePassword: function (nick) {
+        delete this.passwords[nick];
+        this.savePasswords();
+    }
+};
+
+specialManager.init();
 
 var userManager = {
     users: {},
@@ -276,13 +318,13 @@ function handleCommand(cmd, myNick, user) {
         }
     }
 
-    var isMod = (myNick === creatorNick || moderatorNicks.indexOf(myNick) !== -1 || botNicks.indexOf(myNick) !== -1);
+    var isMod = specialManager.isModerator(myNick);
     
     // help
     if (cmd.substr(0, 4) === 'help') {
         if (isMod) {
             sendMultiLine([
-                'Four moderator commands are available: 1) kick, 2) kickban, 3) broadcast, 4) aliases, 5) move',
+                'Five moderator commands are available: 1) kick, 2) kickban, 3) broadcast, 4) aliases, 5) move',
                 '1. kick - Takes the nick of someone, they (& any aliases) will be kicked, e.g. /kick sillyfilly',
                 '2. kickban - Like /kick but also permabans by IP, e.g. /kickban stupidfilly',
                 '3. broadcast - Sends a message to everyone on the server, e.g. /broadcast Hello all!',
@@ -292,10 +334,12 @@ function handleCommand(cmd, myNick, user) {
             
         }
         sendMultiLine([
-            'Three user commands are available: 1) whereis, 2) list, 3) join',
+            'Five user commands are available: 1) whereis, 2) list, 3) join, 4) setpass, 5) rmpass',
             '1. whereis - Takes a nick, tells you what room someone is in, e.g. /whereis someguy',
             '2. list - Lists available rooms, e.g. /list',
-            '3. join - Takes a room name, joins that room, e.g. /join library'
+            '3. join - Takes a room name, joins that room, e.g. /join library',
+            '4. setpass - Sets a password on your nickname, e.g. /setpass opensesame',
+            '5. rmpass - Removes the password on your nickname, e.g. /rmpass'
         ]);
     // where is
     } else if (cmd.substr(0, 8) === 'whereis ') {
@@ -331,6 +375,20 @@ function handleCommand(cmd, myNick, user) {
             roomCount++;
         });
         sendLine('(' + roomCount + ' rooms total)');
+    // set password
+    } else if (cmd.substr(0, 8) === 'setpass ') {
+        var password = cmd.substr(8);
+
+        if (password.length > 0) {
+            specialManager.setPassword(myNick, password);
+            sendLine('Set password');
+        } else {
+            sendLine('Password must be at least 1 characters in length');
+        }
+    // set password
+    } else if (cmd.substr(0, 6) === 'rmpass') {
+        specialManager.removePassword(myNick);
+        sendLine('Removed password');
     // kickbanning
     } else if (isMod && cmd.substr(0, 8) === 'kickban ') {
         var kickee = cmd.substr(8);
@@ -338,8 +396,8 @@ function handleCommand(cmd, myNick, user) {
             sendLine('There is no user with nick: "' + kickee + '"');
             return;
         }
-        if (kickee === creatorNick || moderatorNicks.indexOf(kickee) !== -1) {
-            sendLine('You cannot kickban other moderators or the creator');
+        if (specialManager.isModerator(kickee)) {
+            sendLine('You cannot kickban other moderators');
             return;
         }
         var IP = userManager.get(kickee).conn.remoteAddress;
@@ -389,8 +447,8 @@ function handleCommand(cmd, myNick, user) {
                 sendLine('There is no room named "' + room + '". Try /list');
                 return;
             }
-            if (movee === creatorNick || moderatorNicks.indexOf(movee) !== -1) {
-                sendLine('You cannot move other moderators or the creator');
+            if (specialManager.isModerator(movee)) {
+                sendLine('You cannot move other moderators');
                 return;
             }
             doRoomChange(movee, roomManager.get(room), userManager.get(movee));
@@ -584,16 +642,8 @@ wsServer.on('request', function(request) {
             return;
         }
         
-        var special = false;
-        
-        // Prevent owner/mod spoofing
-        if (msg.nick === creatorNick) {
-            special = 'creator';
-        } else if (moderatorNicks.indexOf(msg.nick) !== -1) {
-            special = 'moderator';
-        } else if (botNicks.indexOf(msg.nick) !== -1) {
-            special = 'bot';
-        }
+        // Detect owner/mod/bot status
+        var special = specialManager.getSpecialStatus(msg.nick);
         
         // Name banning and prevent nickname dupe
         if (userManager.has(msg.nick)) {
@@ -603,12 +653,19 @@ wsServer.on('request', function(request) {
             }));
             connection.close();
             return;
-        // Prevent moderator/creator spoofing
-        } else if (special && passwords[msg.nick] !== msg.password) {
-            connection.sendUTF(JSON.stringify({
-                type: 'kick',
-                reason: 'wrong_password'
-            }));
+        // Prevent nick spoofing
+        } else if (!specialManager.isCorrectPassword(msg.nick, msg.password)) {
+            if (!msg.password) {
+                connection.sendUTF(JSON.stringify({
+                    type: 'kick',
+                    reason: 'password_required'
+                }));
+            } else {
+                connection.sendUTF(JSON.stringify({
+                    type: 'kick',
+                    reason: 'wrong_password'
+                }));
+            }
             connection.close();
             return;
         // Prefent profane/long/short/additional whitespace nicks
@@ -628,6 +685,14 @@ wsServer.on('request', function(request) {
             type: 'room_list',
             list: roomManager.rooms
         }));
+
+        // tell client they have special status, if they do
+        if (special) {
+            connection.sendUTF(JSON.stringify({
+                type: 'are_special',
+                status: special
+            }));
+        }
         
         myNick = msg.nick;
         user = userManager.add(msg.nick, connection, msg.obj, special, null);
