@@ -675,7 +675,7 @@ wsServer.on('request', function(request) {
             connection.close();
             return;
         // Prevent nick spoofing
-        } else if (!specialManager.isCorrectPassword(msg.nick, msg.password)) {
+        } else if (!specialManager.isCorrectPassword(msg.nick, msg.password) && specialManager.hasPassword(msg.nick)) {
             if (!msg.password) {
                 connection.sendUTF(JSON.stringify({
                     type: 'kick',
