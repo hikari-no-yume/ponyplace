@@ -86,5 +86,13 @@
         "width": 1176,
         "user_count": 0,
         "user_noun": "prisoners"
+    },
+    {
+        "name": "dungeon_de",
+        "name_full": "Verlies (auf Deutsch)",
+        "img": "media/background-dungeon.png",
+        "width": 1176,
+        "user_count": 0,
+        "user_noun": "Deutsch sprechen"
     }
 ]
