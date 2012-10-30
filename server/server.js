@@ -514,6 +514,9 @@ process.stdin.on('keypress', function (chunk, key) {
             userManager.kick(nick, 'update');
             console.log('Update-kicked ' + nick);
         });
+        wsServer.shutDown();
+        console.log('Gracefully shut down server. Exiting.');
+        process.exit();
     } else if (key && key.ctrl && key.name === 'c') {
         process.exit();
     }
