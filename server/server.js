@@ -294,6 +294,7 @@ function doRoomChange(myNick, room, user) {
                 });
                 // tell other clients in room about client
 
+
                 userManager.send(nick, {
                     type: 'appear',
                     obj: user.obj,
@@ -414,10 +415,7 @@ function handleCommand(cmd, myNick, user) {
         }
         var IP = userManager.get(kickee).conn.remoteAddress;
         banManager.addIPBan(IP);
-        userManager.kick(kickee, 'ban');
-        console.log('Banned user with IP ' + IP);
-        sendLine('Banned user with IP ' + IP);
-        // Kick other aliases
+        // Kick aliases
         userManager.forEach(function (nick, iterUser) {
             if (iterUser.conn.remoteAddress === IP) {
                 // kick
@@ -433,16 +431,14 @@ function handleCommand(cmd, myNick, user) {
             sendLine('There is no user with nick: "' + kickee + '"');
             return;
         }
-        userManager.kick(kickee, 'kick');
-        console.log('Kicked user with nick "' + kickee + '"');
-        sendLine('Kicked user with nick "' + kickee + '"');
-        // Kick other aliases
+        var IP = userManager.get(kickee).conn.remoteAddress;
+        // Kick aliases
         userManager.forEach(function (nick, iterUser) {
             if (iterUser.conn.remoteAddress === IP) {
                 // kick
                 userManager.kick(nick, 'kick');
-                console.log('Kicked alias "' + nick + '" of user with nick "' + kickee + '"');
-                sendLine('Kicked alias "' + nick + '" of user with nick "' + kickee + '"');
+                console.log('Kicked alias "' + nick + '" of user with IP ' + IP);
+                sendLine('Kicked alias "' + nick + '" of user with IP ' + IP);
             }
         });
     // forced move
