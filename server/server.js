@@ -293,6 +293,7 @@ function doRoomChange(myNick, room, user) {
                     special: iterUser.special
                 });
                 // tell other clients in room about client
+
                 userManager.send(nick, {
                     type: 'appear',
                     obj: user.obj,
@@ -546,11 +547,17 @@ wsServer.on('request', function(request) {
         return;
     }
     console.log((new Date()) + ' Connection accepted from IP ' + connection.remoteAddress);    
+
+    var amConnected = true;
     
     // this user
     var user = null, myNick = null;
     
     function onMessage(message) {
+        if (!amConnected) {
+            return;
+        }
+
         // handle unexpected packet types
         // we don't use binary frames
         if (message.type !== 'utf8') {
@@ -619,7 +626,10 @@ wsServer.on('request', function(request) {
     }
     
     // Deals with first message
-    connection.once('message', function(message) {    
+    connection.once('message', function(message) {
+        if (!amConnected) {
+            return;
+        }
         // handle unexpected packet types
         // we don't use binary frames
         if (message.type !== 'utf8') {
@@ -726,6 +736,7 @@ wsServer.on('request', function(request) {
     });
     
     connection.on('close', function(reasonCode, description) {
+        amConnected = false;
         console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.');
         if (user !== null && userManager.has(myNick)) {
             // remove from users map
