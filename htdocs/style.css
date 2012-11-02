@@ -77,8 +77,7 @@ h1, p {
     right: 0;
     top: 0;
     bottom: 20px;
-    background-color: black;
-    background-image: url(media/space.png);
+    background-color: gray;
     overflow-y: hidden;
     overflow-x: auto;
     user-select: none;
@@ -89,6 +88,7 @@ h1, p {
 
 #background {
     position: relative;
+    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
 }
 
 #music {
@@ -258,7 +258,6 @@ h1, p {
 
 .chatbubble {
     background-color: #ECAEFF;
-    -webkit-box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
     font-family: CelestiaRedux, 'Comic Sans MS', sans-serif;
     font-size: 10pt;
