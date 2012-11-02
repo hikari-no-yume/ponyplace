@@ -362,7 +362,7 @@
         'media/zecora_right_walk.gif'
     ];
     
-    var socket, connected = false, ignoreDisconnect = false, me, myNick, myRoom = null, mySpecialStatus, lastmove = (new Date().getTime());
+    var socket, connected = false, ignoreDisconnect = false, me, myNick, myRoom = null, mySpecialStatus, lastmove = (new Date().getTime()), globalUserCount = 0;
     
     var container, loginbox, nickbox, passbox, loginsubmit, overlay, stage, title, creditslink, steamgrouplink, chooser, chooserbutton, roomlist, refreshbutton, background, chatbox, chatbutton, chatlog, fullchatlog, fullchatlogbutton, fullchatlogvisible, music;
     
@@ -489,6 +489,8 @@
             } else {
                 this.userCounter.appendChild(document.createTextNode('You are not in a room'));
             }
+            this.userCounter.appendChild(document.createElement('br'));
+            this.userCounter.appendChild(document.createTextNode(globalUserCount + ' users online total'));
         }
     };
     
@@ -587,17 +589,13 @@
     
     function updateRoomList(rooms) {
         roomlist.innerHTML = '';
-        var headcount = 0;
         for (var i = 0; i < rooms.length; i++) {
             var data = rooms[i];
             var option = document.createElement('option');
             option.value = data.name;
             option.appendChild(document.createTextNode('⇨ ' + data.name_full + ' (' + data.user_count + ' ' + data.user_noun + ')'));
             roomlist.appendChild(option);
-            headcount += data.user_count;
         }
-
-        refreshbutton.value = 'Refresh room list (' + headcount + ' users online)';
     }
     
     function changeRoom(room) {
@@ -978,6 +976,8 @@
                 break;
                 case 'room_list':
                     updateRoomList(msg.list);
+                    globalUserCount = msg.user_count;
+                    userManager.updateCounter();
                 break;
                 case 'room_change':
                     changeRoom(msg.data);

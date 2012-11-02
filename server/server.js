@@ -107,6 +107,7 @@ specialManager.init();
 
 var userManager = {
     users: {},
+    userCount: 0,
     
     add: function (nick, conn, obj, special, room) {
         if (this.has(nick)) {
@@ -123,6 +124,8 @@ var userManager = {
         
         // store in users map
         this.users[nick] = user;
+
+        this.userCount++;
         
         return user;
     },
@@ -130,6 +133,8 @@ var userManager = {
         this.hasCheck(nick);
     
         delete this.users[nick];
+
+        this.userCount--;
     },
     send: function (nick, msg) {
         this.hasCheck(nick);
@@ -616,7 +621,8 @@ wsServer.on('request', function(request) {
                 // tell client about rooms
                 userManager.send(myNick, {
                     type: 'room_list',
-                    list: roomManager.getList()
+                    list: roomManager.getList(),
+                    user_count: userManager.userCount
                 });
             break;
             // handle unexpected packet types
@@ -718,7 +724,8 @@ wsServer.on('request', function(request) {
         // tell client about rooms
         connection.sendUTF(JSON.stringify({
             type: 'room_list',
-            list: roomManager.getList()
+            list: roomManager.getList(),
+            user_count: userManager.userCount
         }));
 
         // tell client they have special status, if they do
