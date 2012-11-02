@@ -652,6 +652,9 @@
         } else {
             logEphemeralRoomJoinInChat(room.name);
         }
+
+        // update URL hash
+        window.location.hash = room.name;
     }
     
     function initGUI() {
@@ -972,6 +975,15 @@
                 nick: myNick,
                 password: passbox.value || null
             }));
+
+            // ponyplace.ajf.me/#roomname shortcut
+            if (window.location.hash) {
+                socket.send(JSON.stringify({
+                    type: 'room_change',
+                    name: window.location.hash.substr(1)
+                }));
+            }
+
             chatbox.focus();
         };
         socket.onclose = function (e) {
