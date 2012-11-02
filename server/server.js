@@ -221,6 +221,7 @@ banManager.init();
 
 var roomManager = {
     rooms: [],
+    ephemeralRooms: [],
 
     init: function () {
         var that = this;
@@ -251,15 +252,40 @@ var roomManager = {
         }
         throw new Error('There is no room with the name: "' + name + '"');
     },
+    onEphemeralJoin: function (name) {
+        if (this.ephemeralRooms.hasOwnProperty(name)) {
+            this.ephemeralRooms[name]++;
+        } else {
+            this.ephemeralRooms[name] = 1;
+        }
+    },
+    onEphemeralLeave: function (name) {
+        if (this.ephemeralRooms.hasOwnProperty(name)) {
+            this.ephemeralRooms[name]--;
+            if (this.ephemeralRooms[name] <= 0) {
+                delete this.ephemeralRooms[name];
+            }
+        }
+    },
     getList: function () {
         var list = [];
         for (var i = 0; i < this.rooms.length; i++) {
             if (!this.rooms[i].unlisted) {
                 list.push({
+                    type: this.rooms[i].type,
                     name: this.rooms[i].name,
                     name_full: this.rooms[i].name_full,
                     user_count: this.rooms[i].user_count,
                     user_noun: this.rooms[i].user_noun
+                });
+            }
+        }
+        for (var name in this.ephemeralRooms) {
+            if (this.ephemeralRooms.hasOwnProperty(name)) {
+                list.push({
+                    type: 'ephemeral',
+                    name: name,
+                    user_count: this.ephemeralRooms[name]
                 });
             }
         }
@@ -297,7 +323,9 @@ function doRoomChange(myNick, roomName, user) {
         // decrease user count of old room
         if (roomManager.has(oldRoom)) {
             roomManager.get(oldRoom).user_count--;
-        };
+        } else {
+            roomManager.onEphemeralLeave(oldRoom);
+        }
     }
     
     // set current room to new room
@@ -333,6 +361,8 @@ function doRoomChange(myNick, roomName, user) {
     // increase user count of new room
     if (roomManager.has(room.name)) {
         room.user_count++;
+    } else {
+        roomManager.onEphemeralJoin(room.name);
     }
 }
 
@@ -394,12 +424,20 @@ function handleCommand(cmd, myNick, user) {
     } else if (cmd.substr(0, 5) === 'join ') {
         var roomName = cmd.substr(5);
 
-        doRoomChange(myNick, roomName, user);
+        if (roomName.indexOf(' ') !== -1) {
+            sendLine('Room names cannot contain spaces.');
+        } else {
+            doRoomChange(myNick, roomName, user);
+        }
     // list rooms
     } else if (cmd.substr(0, 4) === 'list') {
         var roomList = roomManager.getList(), roomNames = [];
         for (var i = 0; i < roomList.length; i++) {
-            roomNames.push(roomList[i].name);
+            if (roomList[i].type !== 'ephemeral') {
+                roomNames.push(roomList[i].name);
+            } else {
+                roomNames.push(roomList[i].name + ' (ephemeral)');
+            }
         }
         sendLine(roomList.length + ' rooms available: ' + roomNames.join(', '));
     // set password
@@ -613,9 +651,12 @@ wsServer.on('request', function(request) {
             break;
             case 'room_change':
                 var roomExists = false, room = null;
-                
-                doRoomChange(myNick, msg.name, user);
-                return;
+
+                if (msg.name.indexOf(' ') === -1) {
+                    doRoomChange(myNick, msg.name, user);
+                } else {
+                    userManager.kick(myNick, 'protocol_error');
+                }
             break;
             case 'room_list':
                 // tell client about rooms
@@ -765,6 +806,8 @@ wsServer.on('request', function(request) {
                 // decrease user count of room
                 if (roomManager.has(user.room)) {
                     roomManager.get(user.room).user_count--;
+                } else {
+                    roomManager.onEphemeralLeave(user.room);
                 }
             }
         }

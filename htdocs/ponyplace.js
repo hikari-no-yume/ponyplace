@@ -588,14 +588,32 @@
     }
     
     function updateRoomList(rooms) {
+        var option;
         roomlist.innerHTML = '';
+
+        // special, "blank" option
+        option = document.createElement('option');
+        option.value = '[no choice]';
+        option.appendChild(document.createTextNode('Choose a room...'));
+        roomlist.appendChild(option);
+
         for (var i = 0; i < rooms.length; i++) {
             var data = rooms[i];
-            var option = document.createElement('option');
+            option = document.createElement('option');
             option.value = data.name;
-            option.appendChild(document.createTextNode('⇨ ' + data.name_full + ' (' + data.user_count + ' ' + data.user_noun + ')'));
+            if (data.type !== 'ephemeral') {
+                option.appendChild(document.createTextNode('⇨ ' + data.name_full + ' (' + data.user_count + ' ' + data.user_noun + ')'));
+            } else {
+                option.appendChild(document.createTextNode('⇨ "' + data.name + '" (ephemeral; ' + data.user_count + ' users)'));
+            }
             roomlist.appendChild(option);
         }
+
+        // special, "create new" option
+        option = document.createElement('option');
+        option.value = '[create new]';
+        option.appendChild(document.createTextNode('[create new ephemeral room]'));
+        roomlist.appendChild(option);
     }
     
     function changeRoom(room) {
@@ -789,12 +807,25 @@
         roomlist = document.createElement('select');
         roomlist.id = 'room-list';
         roomlist.onchange = function () {
-            socket.send(JSON.stringify({
-                type: 'room_change',
-                name: roomlist.value
-            }));
+            if (roomlist.value === '[create new]') {
+                var roomName = prompt('Choose a room name (cannot contain spaces)', '');
+                if (roomName.indexOf(' ') === -1) {
+                    socket.send(JSON.stringify({
+                        type: 'room_change',
+                        name: roomName
+                    }));
+                } else {
+                    alert('Room names cannot contain spaces.');
+                }
+            } else if (roomlist.value !== '[no choice]') {
+                socket.send(JSON.stringify({
+                    type: 'room_change',
+                    name: roomlist.value
+                }));
+            }
+            roomlist.value = '[no choice]';
         };
-        roomlist.value = '';
+        roomlist.value = '[no choice]';
         overlay.appendChild(roomlist);
         
         function handleChatMessage() {
