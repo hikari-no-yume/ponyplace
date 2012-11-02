@@ -1,98 +1,122 @@
 [
     {
+        "type": "real",
         "name": "library_es",
         "name_full": "La biblioteca de Twilight (español)",
         "img": "media/background-library.png",
         "width": 1173,
         "user_count": 0,
-        "user_noun": "españoles"
+        "user_noun": "españoles",
+        "unlisted": false
     },
     {
+        "type": "real",
         "name": "ponyville",
         "name_full": "Ponyville",
         "img": "media/background-ponyville.png",
         "width": 1445,
         "user_count": 0,
-        "user_noun": "ponies"
+        "user_noun": "ponies",
+        "unlisted": false
     },
     {
+        "type": "real",
         "name": "library",
         "name_full": "Twilight's Library",
         "img": "media/background-library.png",
         "width": 1173,
         "user_count": 0,
-        "user_noun": "bright sparks"
+        "user_noun": "bright sparks",
+        "unlisted": false
     },
     {
+        "type": "real",
         "name": "sugarcube_corner",
         "name_full": "Sugarcube Corner",
         "img": "media/background-sugarcubecorner.png",
         "width": 1173,
         "user_count": 0,
-        "user_noun": "party animals"
+        "user_noun": "party animals",
+        "unlisted": false
     },
     {
+        "type": "real",
         "name": "carousel_boutique",
         "name_full": "Carousel Boutique",
         "img": "media/background-carousel-boutique.png",
         "width": 1159,
         "user_count": 0,
-        "user_noun": "fashionistas"
+        "user_noun": "fashionistas",
+        "unlisted": false
     },
     {
+        "type": "real",
         "name": "classroom",
         "name_full": "Cheerilee's Classroom",
         "img": "media/background-classroom.png",
         "width": 1173,
         "user_count": 0,
-        "user_noun": "eager students"
+        "user_noun": "eager students",
+        "unlisted": false
     },
     {
+        "type": "real",
         "name": "everfree_forest",
         "name_full": "Everfree Forest",
         "img": "media/background-everfreeforest.png",
         "width": 1173,
         "user_count": 0,
-        "user_noun": "scared fillies"
+        "user_noun": "scared fillies",
+        "unlisted": false
     },
     {
+        "type": "real",
         "name": "zecoras_house",
         "name_full": "Zecora's house",
         "img": "media/background-zecoras-house.png",
         "width": 1175,
         "user_count": 0,
-        "user_noun": "rhyming zebras"
+        "user_noun": "rhyming zebras",
+        "unlisted": false
     },
     {
+        "type": "real",
         "name": "cloudsdale",
         "name_full": "Cloudsdale",
         "img": "media/background-cloudsdale.png",
         "width": 1213,
         "user_count": 0,
-        "user_noun": "wonderbolts"
+        "user_noun": "wonderbolts",
+        "unlisted": false
     },
     {
+        "type": "real",
         "name": "canterlot",
         "name_full": "Canterlot",
         "img": "media/background-canterlot.png",
         "width": 1173,
         "user_count": 0,
-        "user_noun": "posh ponies"
+        "user_noun": "posh ponies",
+        "unlisted": false
     },
     {
+        "type": "real",
         "name": "dungeon",
         "name_full": "Dungeon",
         "img": "media/background-dungeon.png",
         "width": 1176,
         "user_count": 0,
-        "user_noun": "prisoners"
+        "user_noun": "prisoners",
+        "unlisted": false
     },
     {
+        "type": "real",
         "name": "dungeon_de",
         "name_full": "Verlies (auf Deutsch)",
         "img": "media/background-dungeon.png",
         "width": 1176,
         "user_count": 0,
-        "user_noun": "Deutsch sprechen"
+        "user_noun": "Deutsch sprechen",
+        "unlisted": false
     }
 ]

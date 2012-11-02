@@ -362,7 +362,7 @@
         'media/zecora_right_walk.gif'
     ];
     
-    var socket, connected = false, ignoreDisconnect = false, me, myNick, myRoom, mySpecialStatus, lastmove = (new Date().getTime());
+    var socket, connected = false, ignoreDisconnect = false, me, myNick, myRoom = null, mySpecialStatus, lastmove = (new Date().getTime());
     
     var container, loginbox, nickbox, passbox, loginsubmit, overlay, stage, title, creditslink, steamgrouplink, chooser, chooserbutton, roomlist, refreshbutton, background, chatbox, chatbutton, chatlog, fullchatlog, fullchatlogbutton, fullchatlogvisible, music;
     
@@ -478,7 +478,17 @@
         },
         updateCounter: function () {
             this.userCounter.innerHTML = '';
-            this.userCounter.appendChild(document.createTextNode(this.userCount + ' users in room'));
+            if (myRoom !== null) {
+                if (myRoom.type !== 'ephemeral') {
+                    this.userCounter.appendChild(document.createTextNode('You are in ' + myRoom.name + ' ("' + myRoom.name_full + '")'));
+                } else {
+                    this.userCounter.appendChild(document.createTextNode('You are in the ephemeral room "' + myRoom.name + '"'));
+                }
+                this.userCounter.appendChild(document.createElement('br'));
+                this.userCounter.appendChild(document.createTextNode(this.userCount + ' users in room'));
+            } else {
+                this.userCounter.appendChild(document.createTextNode('You are not in a room'));
+            }
         }
     };
     
@@ -570,6 +580,10 @@
     function logRoomJoinInChat(name, name_full) {
         chatPrint('You joined the room ' + name + ' ("' + name_full + '")', false, true);
     }
+
+    function logEphemeralRoomJoinInChat(name) {
+        chatPrint('You joined the ephemeral room "' + name + '"', false, true);
+    }
     
     function updateRoomList(rooms) {
         roomlist.innerHTML = '';
@@ -588,26 +602,40 @@
     
     function changeRoom(room) {
         // change background
-        background.src = room.img;
+        if (room.type !== 'ephemeral') {
+            background.src = room.img;
+        } else {
+            background.src = 'media/background-cave.png';
+        }
         stage.scrollLeft = 0;
         
         // clear users
         userManager.forEach(function (nick) {
             userManager.kill(nick);
         });
+
+        myRoom = room;
         
         // add me
         userManager.add(myNick, me, mySpecialStatus);
-        
+
         // go to random position
-        me.x = me.x || Math.floor(Math.random() * (room.width - PONY_WIDTH));
+        if (room.type !== 'ephemeral') {
+            me.x = me.x || Math.floor(Math.random() * (920 - PONY_WIDTH));
+        } else {
+            me.x = me.x || Math.floor(Math.random() * (room.width - PONY_WIDTH));
+        }
         me.y = me.y || Math.floor(Math.random() * (CV_HEIGHT - PONY_HEIGHT - CHAT_HEIGHT));
         stage.scrollLeft = Math.floor(me.x + PONY_WIDTH / 2 - window.innerWidth / 2);
         
         // push state
         pushAndUpdateState(me);
-        
-        logRoomJoinInChat(room.name, room.name_full);
+
+        if (room.type !== 'ephemeral') {
+            logRoomJoinInChat(room.name, room.name_full);
+        } else {
+            logEphemeralRoomJoinInChat(room.name);
+        }
     }
     
     function initGUI() {
@@ -901,7 +929,6 @@
             myNick = nickbox.value || ('Blank flank #' + Math.floor(Math.random()*100));
             // trim whitespace
             myNick = myNick.replace(/^\s+|\s+$/g, '');
-            myRoom = null;
             mySpecialStatus = false;
             me = {
                 img: Math.floor(Math.random() * ponies.length),

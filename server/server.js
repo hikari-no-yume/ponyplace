@@ -246,16 +246,36 @@ var roomManager = {
         }
         throw new Error('There is no room with the name: "' + name + '"');
     },
-    forEach: function (callback) {
+    getList: function () {
+        var list = [];
         for (var i = 0; i < this.rooms.length; i++) {
-            callback(this.rooms[i].name, this.rooms[i]);
+            if (!this.rooms[i].unlisted) {
+                list.push({
+                    name: this.rooms[i].name,
+                    name_full: this.rooms[i].name_full,
+                    user_count: this.rooms[i].user_count,
+                    user_noun: this.rooms[i].user_noun
+                });
+            }
         }
+        return list;
     }
 };
 
 roomManager.init();
 
-function doRoomChange(myNick, room, user) {
+function doRoomChange(myNick, roomName, user) {
+    var room;
+
+    if (roomManager.has(roomName)) {
+        room = roomManager.get(roomName);
+    } else {
+        room = {
+            type: 'ephemeral',
+            name: roomName
+        };
+    }
+
     var oldRoom = user.room;
 
     // don't if in null room (lobby)
@@ -270,7 +290,9 @@ function doRoomChange(myNick, room, user) {
             }
         });
         // decrease user count of old room
-        roomManager.get(oldRoom).user_count--;
+        if (roomManager.has(oldRoom)) {
+            roomManager.get(oldRoom).user_count--;
+        };
     }
     
     // set current room to new room
@@ -293,8 +315,6 @@ function doRoomChange(myNick, room, user) {
                     special: iterUser.special
                 });
                 // tell other clients in room about client
-
-
                 userManager.send(nick, {
                     type: 'appear',
                     obj: user.obj,
@@ -304,9 +324,11 @@ function doRoomChange(myNick, room, user) {
             }
         }
     });
-    
+
     // increase user count of new room
-    room.user_count++;
+    if (roomManager.has(room.name)) {
+        room.user_count++;
+    }
 }
 
 function handleCommand(cmd, myNick, user) {
@@ -342,7 +364,7 @@ function handleCommand(cmd, myNick, user) {
             'Five user commands are available: 1) whereis, 2) list, 3) join, 4) setpass, 5) rmpass',
             '1. whereis - Takes a nick, tells you what room someone is in, e.g. /whereis someguy',
             '2. list - Lists available rooms, e.g. /list',
-            '3. join - Takes a room name, joins that room, e.g. /join library',
+            "3. join - Joins a room, e.g. /join library - if that room doesn't exist, an ephemeral room will be created",
             '4. setpass - Sets or changes a password on your nickname, e.g. /setpass opensesame',
             '5. rmpass - Removes the password on your nickname, e.g. /rmpass'
         ]);
@@ -357,29 +379,24 @@ function handleCommand(cmd, myNick, user) {
         if (unfoundUser.room === null) {
             sendLine('User "' + unfound + '" is not in a room.');
         } else {
-            sendLine('User "' + unfound + '" is in ' + unfoundUser.room + ' ("' + roomManager.get(unfoundUser.room).name_full + '")');
+            if (roomManager.has(unfoundUser.room)) {
+                sendLine('User "' + unfound + '" is in ' + unfoundUser.room + ' ("' + roomManager.get(unfoundUser.room).name_full + '")');
+            } else {
+                sendLine('User "' + unfound + '" is in the ephemeral room "' + unfoundUser.room + '"');
+            }
         }
     // join room
     } else if (cmd.substr(0, 5) === 'join ') {
         var roomName = cmd.substr(5);
-        
-        // room doesn't exist
-        if (!roomManager.has(roomName)) {
-            sendLine('There is no room named "' + roomName + '". Try /list');
-            return;
-        } else {
-            doRoomChange(myNick, roomManager.get(roomName), user);
-        }
+
+        doRoomChange(myNick, roomName, user);
     // list rooms
     } else if (cmd.substr(0, 4) === 'list') {
-        var roomCount = 0;
-        
-        sendLine('Available rooms:');
-        roomManager.forEach(function (roomName, room) {
-            sendLine('* ' + roomName + ' ("' + room.name_full + '")');
-            roomCount++;
-        });
-        sendLine('(' + roomCount + ' rooms total)');
+        var roomList = roomManager.getList(), roomNames = [];
+        for (var i = 0; i < roomList.length; i++) {
+            roomNames.push(roomList[i].name);
+        }
+        sendLine(roomList.length + ' rooms available: ' + roomNames.join(', '));
     // set password
     } else if (cmd.substr(0, 8) === 'setpass ') {
         var password = cmd.substr(8);
@@ -451,15 +468,11 @@ function handleCommand(cmd, myNick, user) {
                 sendLine('There is no user with nick: "' + movee + '"');
                 return;
             }
-            if (!roomManager.has(room)) {
-                sendLine('There is no room named "' + room + '". Try /list');
-                return;
-            }
             if (specialManager.isModerator(movee)) {
                 sendLine('You cannot move other moderators');
                 return;
             }
-            doRoomChange(movee, roomManager.get(room), userManager.get(movee));
+            doRoomChange(movee, room, userManager.get(movee));
             sendLine('You were forcibly moved room by ' + myNick, movee);
         } else {
             sendLine('/move takes a room and a nickname');
@@ -596,22 +609,14 @@ wsServer.on('request', function(request) {
             case 'room_change':
                 var roomExists = false, room = null;
                 
-                // room doesn't exist
-                if (!roomManager.has(msg.name)) {
-                    userManager.kick(myNick, 'no_such_room');
-                    return;
-                } else {
-                    room = roomManager.get(msg.name);
-                }
-                
-                doRoomChange(myNick, room, user);
+                doRoomChange(myNick, msg.name, user);
                 return;
             break;
             case 'room_list':
                 // tell client about rooms
                 userManager.send(myNick, {
                     type: 'room_list',
-                    list: roomManager.rooms
+                    list: roomManager.getList()
                 });
             break;
             // handle unexpected packet types
@@ -713,7 +718,7 @@ wsServer.on('request', function(request) {
         // tell client about rooms
         connection.sendUTF(JSON.stringify({
             type: 'room_list',
-            list: roomManager.rooms
+            list: roomManager.getList()
         }));
 
         // tell client they have special status, if they do
@@ -747,6 +752,7 @@ wsServer.on('request', function(request) {
                             type: 'die',
                             nick: user.nick
                         });
+
                     }
                 });
                 // decrease user count of room
