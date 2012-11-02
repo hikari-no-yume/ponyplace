@@ -756,7 +756,9 @@ wsServer.on('request', function(request) {
                     }
                 });
                 // decrease user count of room
-                roomManager.get(user.room).user_count--;
+                if (roomManager.has(user.room)) {
+                    roomManager.get(user.room).user_count--;
+                }
             }
         }
     });
