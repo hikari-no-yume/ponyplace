@@ -363,7 +363,7 @@
     
     var socket, connected = false, ignoreDisconnect = false, me, myNick, myRoom = null, mySpecialStatus, lastmove = (new Date().getTime()), globalUserCount = 0;
     
-    var container, loginbox, nickbox, passbox, loginsubmit, overlay, outerstage, stage, title, creditslink, steamgrouplink, chooser, chooserbutton, roomlist, refreshbutton, background, chatbox, chatbutton, chatlog, fullchatlog, fullchatlogbutton, fullchatlogvisible;
+    var container, loginbox, nickbox, passbox, loginsubmit, overlay, outerstage, stage, creditslink, steamgrouplink, chooser, chooserbutton, roomlist, refreshbutton, background, chatbox, chatbutton, chatlog, fullchatlog, fullchatlogbutton, fullchatlogvisible;
     
     var userManager = {
         users: {},
@@ -751,11 +751,6 @@
         loginsubmit.value = 'connect';
         loginsubmit.onclick = doLogin;
         loginbox.appendChild(loginsubmit);
-        
-        title = document.createElement('h1');
-        title.id = 'title';
-        title.appendChild(document.createTextNode('ponyplace'));
-        overlay.appendChild(title);
         
         creditslink = document.createElement('a');
         creditslink.id = 'credits-link';

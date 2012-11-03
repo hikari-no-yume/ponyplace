@@ -22,16 +22,6 @@ h1, p {
     text-align: center;
 }
 
-#title {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 150px;
-    background-color: rgba(255, 255, 255, 0.5);
-    padding-bottom: 5px;
-    border-radius: 5px;
-}
-
 #container {
     position: absolute;
     left: 0;
@@ -105,32 +95,35 @@ h1, p {
 
 #credits-link {
     position: absolute;
-    top: 42px;
+    top: 32px;
     left: 5px;
 }
 
 #steamgroup-link {
     position: absolute;
-    top: 58px;
+    top: 48px;
     left: 5px;
-}
-
-#room-refresh-button {
-    position: absolute;
-    top: 0;
-    left: 160px;
 }
 
 #room-list {
     position: absolute;
-    top: 25px;
-    left: 160px;
+    top: 5px;
+    left: 5px;
+    height: 25px;
+    width: 350px;
+}
+
+#room-refresh-button {
+    position: absolute;
+    top: 5px;
+    left: 355px;
+    height: 25px;
 }
 
 #usercounter {
     position: absolute;
-    left: 0;
-    top: 85px;
+    left: 90px;
+    top: 30px;
     padding: 2px;
     font-weight: bold;
     font-family: monospace;
