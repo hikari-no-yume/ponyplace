@@ -364,7 +364,7 @@
     
     var socket, connected = false, ignoreDisconnect = false, me, myNick, myRoom = null, mySpecialStatus, lastmove = (new Date().getTime()), globalUserCount = 0;
     
-    var container, loginbox, nickbox, passbox, loginsubmit, overlay, outerstage, stage, title, creditslink, steamgrouplink, chooser, chooserbutton, roomlist, refreshbutton, background, chatbox, chatbutton, chatlog, fullchatlog, fullchatlogbutton, fullchatlogvisible, music;
+    var container, loginbox, nickbox, passbox, loginsubmit, overlay, outerstage, stage, title, creditslink, steamgrouplink, chooser, chooserbutton, roomlist, refreshbutton, background, chatbox, chatbutton, chatlog, fullchatlog, fullchatlogbutton, fullchatlogvisible;
     
     var userManager = {
         users: {},
@@ -933,24 +933,6 @@
         overlay.appendChild(chooserbutton);
         
         userManager.initGUI();
-        
-        music = document.createElement('audio');
-        music.id = 'music';
-        music.controls = true;
-        music.loop = true;
-        music.volume = 0.5;
-        
-        var source = document.createElement('source');
-        source.src = 'media/music.ogg';
-        source.type = 'audio/ogg';
-        music.appendChild(source);
-        
-        source = document.createElement('source');
-        source.src = 'media/music.mp3';
-        source.type = 'audio/mpeg';
-        music.appendChild(source);
-        
-        overlay.appendChild(music);
     }
 
     function initNetwork() {
