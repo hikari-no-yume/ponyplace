@@ -43,6 +43,8 @@ function sanitise(obj) {
     return obj;
 }
 
+var User = require('./user.js');
+
 var specialManager = {
     passwords: {},
     specialNicks: {},
@@ -104,83 +106,6 @@ var specialManager = {
 };
 
 specialManager.init();
-
-var userManager = {
-    users: {},
-    userCount: 0,
-    
-    add: function (nick, conn, obj, special, room) {
-        if (this.has(nick)) {
-            throw new Error('There is already a user with the same nick "' + nick + '"');
-        }
-    
-        var user = {
-            conn: conn,
-            obj: obj,
-            nick: nick,
-            room: room,
-            special: special
-        };
-        
-        // store in users map
-        this.users[nick] = user;
-
-        this.userCount++;
-        
-        return user;
-    },
-    remove: function (nick) {
-        this.hasCheck(nick);
-    
-        delete this.users[nick];
-
-        this.userCount--;
-    },
-    send: function (nick, msg) {
-        this.hasCheck(nick);
-        
-        var conn = this.users[nick].conn;
-        conn.sendUTF(JSON.stringify(msg));
-    },
-    disconnect: function (nick) {
-        this.hasCheck(nick);
-        
-        var conn = this.users[nick].conn;
-        conn.close();
-    },
-    kick: function (nick, reason) {
-        this.hasCheck(nick);
-        
-        var conn = this.users[nick].conn;
-        if (reason) {
-            this.send(nick, {
-                type: 'kick',
-                reason: reason
-            });
-        }
-        this.disconnect(nick);
-    },
-    get: function (nick) {
-        this.hasCheck(nick);
-        
-        return this.users[nick];
-    },
-    has: function (nick) {
-        return this.users.hasOwnProperty(nick);
-    },
-    hasCheck: function (nick) {
-        if (!this.has(nick)) {
-            throw new Error('There is no user with the nick: "' + nick + '"');
-        }
-    },
-    forEach: function (callback) {
-        for (var nick in this.users) {
-            if (this.users.hasOwnProperty(nick)) {
-                callback(nick, this.users[nick]);
-            }
-        }
-    }
-};
 
 var banManager = {
     bannedIPs: [],
@@ -295,7 +220,7 @@ var roomManager = {
 
 roomManager.init();
 
-function doRoomChange(myNick, roomName, user) {
+function doRoomChange(roomName, user) {
     var room;
 
     if (roomManager.has(roomName)) {
@@ -312,11 +237,11 @@ function doRoomChange(myNick, roomName, user) {
     // don't if in null room (lobby)
     if (oldRoom !== null) {
         // tell clients in old room that client has left
-        userManager.forEach(function (nick, iterUser) {
-            if (iterUser.room === oldRoom && nick !== myNick) {
-                userManager.send(nick, {
+        User.forEach(function (iterUser) {
+            if (iterUser.room === oldRoom && iterUser.nick !== user.nick) {
+                iterUser.send({
                     type: 'die',
-                    nick: myNick
+                    nick: user.nick
                 });
             }
         });
@@ -332,23 +257,23 @@ function doRoomChange(myNick, roomName, user) {
     user.room = room.name;
     
     // tell client it has changed room and tell room details
-    userManager.send(myNick, {
+    user.send({
         type: 'room_change',
         data: room
     });
     
-    userManager.forEach(function (nick, iterUser) {
+    User.forEach(function (iterUser) {
         if (iterUser.room === user.room) {
-            if (nick !== user.nick) {
+            if (iterUser.nick !== user.nick) {
                 // tell client about other clients in room
-                userManager.send(myNick, {
+                user.send({
                     type: 'appear',
                     obj: iterUser.obj,
-                    nick: nick,
+                    nick: iterUser.nick,
                     special: iterUser.special
                 });
                 // tell other clients in room about client
-                userManager.send(nick, {
+                iterUser.send({
                     type: 'appear',
                     obj: user.obj,
                     nick: user.nick,
@@ -369,7 +294,7 @@ function doRoomChange(myNick, roomName, user) {
 function handleCommand(cmd, myNick, user) {
     function sendLine(line, nick) {
         nick = nick || myNick;
-        userManager.send(nick, {
+        User.get(nick).send({
             type: 'console_msg',
             msg: line
         });
@@ -406,11 +331,11 @@ function handleCommand(cmd, myNick, user) {
     // where is
     } else if (cmd.substr(0, 8) === 'whereis ') {
         var unfound = cmd.substr(8);
-        if (!userManager.has(unfound)) {
+        if (!User.has(unfound)) {
             sendLine('There is no user with nick: "' + unfound + '"');
             return;
         }
-        var unfoundUser = userManager.get(unfound);
+        var unfoundUser = User.get(unfound);
         if (unfoundUser.room === null) {
             sendLine('User "' + unfound + '" is not in a room.');
         } else {
@@ -427,7 +352,7 @@ function handleCommand(cmd, myNick, user) {
         if (roomName.indexOf(' ') !== -1) {
             sendLine('Room names cannot contain spaces.');
         } else {
-            doRoomChange(myNick, roomName, user);
+            doRoomChange(roomName, user);
         }
     // list rooms
     } else if (cmd.substr(0, 4) === 'list') {
@@ -465,7 +390,7 @@ function handleCommand(cmd, myNick, user) {
     // kickbanning
     } else if (isMod && cmd.substr(0, 8) === 'kickban ') {
         var kickee = cmd.substr(8);
-        if (!userManager.has(kickee)) {
+        if (!User.has(kickee)) {
             sendLine('There is no user with nick: "' + kickee + '"');
             return;
         }
@@ -473,32 +398,32 @@ function handleCommand(cmd, myNick, user) {
             sendLine('You cannot kickban other moderators');
             return;
         }
-        var IP = userManager.get(kickee).conn.remoteAddress;
+        var IP = User.get(kickee).conn.remoteAddress;
         banManager.addIPBan(IP);
         // Kick aliases
-        userManager.forEach(function (nick, iterUser) {
+        User.forEach(function (iterUser) {
             if (iterUser.conn.remoteAddress === IP) {
                 // kick
-                userManager.kick(nick, 'ban');
-                console.log('Kicked alias "' + nick + '" of user with IP ' + IP);
-                sendLine('Kicked alias "' + nick + '" of user with IP ' + IP);
+                iterUser.kick('ban');
+                console.log('Kicked alias "' + iterUser.nick + '" of user with IP ' + IP);
+                sendLine('Kicked alias "' + iterUser.nick + '" of user with IP ' + IP);
             }
         });
     // kicking
     } else if (isMod && cmd.substr(0, 5) === 'kick ') {
         var kickee = cmd.substr(5);
-        if (!userManager.has(kickee)) {
+        if (!User.has(kickee)) {
             sendLine('There is no user with nick: "' + kickee + '"');
             return;
         }
-        var IP = userManager.get(kickee).conn.remoteAddress;
+        var IP = User.get(kickee).conn.remoteAddress;
         // Kick aliases
-        userManager.forEach(function (nick, iterUser) {
+        User.forEach(function (iterUser) {
             if (iterUser.conn.remoteAddress === IP) {
                 // kick
-                userManager.kick(nick, 'kick');
-                console.log('Kicked alias "' + nick + '" of user with IP ' + IP);
-                sendLine('Kicked alias "' + nick + '" of user with IP ' + IP);
+                iterUser.kick('kick');
+                console.log('Kicked alias "' + iterUser.nick + '" of user with IP ' + IP);
+                sendLine('Kicked alias "' + iterUser.nick + '" of user with IP ' + IP);
             }
         });
     // forced move
@@ -507,7 +432,7 @@ function handleCommand(cmd, myNick, user) {
         if (pos !== -1) {
             var room = cmd.substr(5, pos-5);
             var movee = cmd.substr(pos+1);
-            if (!userManager.has(movee)) {
+            if (!User.has(movee)) {
                 sendLine('There is no user with nick: "' + movee + '"');
                 return;
             }
@@ -515,7 +440,7 @@ function handleCommand(cmd, myNick, user) {
                 sendLine('You cannot move other moderators');
                 return;
             }
-            doRoomChange(movee, room, userManager.get(movee));
+            doRoomChange(room, User.get(movee));
             sendLine('You were forcibly moved room by ' + myNick, movee);
         } else {
             sendLine('/move takes a room and a nickname');
@@ -524,17 +449,17 @@ function handleCommand(cmd, myNick, user) {
     // check alias
     } else if (isMod && cmd.substr(0, 8) === 'aliases ') {
         var checked = cmd.substr(8);
-        if (!userManager.has(checked)) {
+        if (!User.has(checked)) {
             sendLine('There is no user with nick: "' + checked + '"');
             return;
         }
-        var IP = userManager.get(checked).conn.remoteAddress;
+        var IP = User.get(checked).conn.remoteAddress;
         // Find aliases
         var aliasCount = 0;
         sendLine('User with IP ' + IP + ' has the following aliases:');
-        userManager.forEach(function (nick, iterUser) {
+        User.forEach(function (iterUser) {
             if (iterUser.conn.remoteAddress === IP) {
-                sendLine((aliasCount+1) + '. Alias "' + nick + '"');
+                sendLine((aliasCount+1) + '. Alias "' + iterUser.nick + '"');
                 aliasCount++;
             }
         });
@@ -542,8 +467,8 @@ function handleCommand(cmd, myNick, user) {
     // broadcast message
     } else if (isMod && cmd.substr(0, 10) === 'broadcast ') {
         var broadcast = cmd.substr(10);
-        userManager.forEach(function (nick) {
-            userManager.send(nick, {
+        User.forEach(function (iterUser) {
+            iterUser.send({
                 type: 'broadcast',
                 msg: broadcast
             });
@@ -562,10 +487,10 @@ keypress(process.stdin);
 
 process.stdin.on('keypress', function (chunk, key) {
     if (key && key.name === 'u') {
-        userManager.forEach(function (nick) {
+        User.forEach(function (iterUser) {
             // kick for update
-            userManager.kick(nick, 'update');
-            console.log('Update-kicked ' + nick);
+            iterUser.kick('update');
+            console.log('Update-kicked ' + iterUser.nick);
         });
         wsServer.shutDown();
         console.log('Gracefully shut down server. Exiting.');
@@ -613,7 +538,7 @@ wsServer.on('request', function(request) {
         // handle unexpected packet types
         // we don't use binary frames
         if (message.type !== 'utf8') {
-            userManager.kick(myNick, 'protocol_error');
+            user.kick('protocol_error');
             return;
         }
         
@@ -621,7 +546,7 @@ wsServer.on('request', function(request) {
         try {
             var msg = JSON.parse(message.utf8Data);
         } catch (e) {
-            userManager.kick(myNick, 'protocol_error');
+            user.kick('protocol_error');
             return;
         }
         
@@ -639,9 +564,9 @@ wsServer.on('request', function(request) {
                 user.obj = msg.obj;
                 
                 // broadcast new state to other clients in same room
-                userManager.forEach(function (nick, iterUser) {
+                User.forEach(function (iterUser) {
                     if (iterUser.conn !== connection && iterUser.room === user.room) {
-                        userManager.send(nick, {
+                        iterUser.send({
                             type: 'update',
                             obj: msg.obj,
                             nick: user.nick
@@ -653,22 +578,22 @@ wsServer.on('request', function(request) {
                 var roomExists = false, room = null;
 
                 if (msg.name.indexOf(' ') === -1) {
-                    doRoomChange(myNick, msg.name, user);
+                    doRoomChange(msg.name, user);
                 } else {
-                    userManager.kick(myNick, 'protocol_error');
+                    user.kick('protocol_error');
                 }
             break;
             case 'room_list':
                 // tell client about rooms
-                userManager.send(myNick, {
+                user.send({
                     type: 'room_list',
                     list: roomManager.getList(),
-                    user_count: userManager.userCount
+                    user_count: User.userCount
                 });
             break;
             // handle unexpected packet types
             default:
-                userManager.kick(myNick, 'protocol_error');
+                User.kick('protocol_error');
             break;
         }
     }
@@ -728,7 +653,7 @@ wsServer.on('request', function(request) {
         }
         
         // Name banning and prevent nickname dupe
-        if (userManager.has(msg.nick)) {
+        if (User.has(msg.nick)) {
             connection.sendUTF(JSON.stringify({
                 type: 'kick',
                 reason: 'nick_in_use'
@@ -766,7 +691,7 @@ wsServer.on('request', function(request) {
         connection.sendUTF(JSON.stringify({
             type: 'room_list',
             list: roomManager.getList(),
-            user_count: userManager.userCount
+            user_count: User.userCount
         }));
 
         // tell client they have special status, if they do
@@ -778,7 +703,7 @@ wsServer.on('request', function(request) {
         }
         
         myNick = msg.nick;
-        user = userManager.add(msg.nick, connection, msg.obj, special, null);
+        user = new User(msg.nick, connection, msg.obj, special, null);
         
         // call onMessage for subsequent messages
         connection.on('message', onMessage);
@@ -787,16 +712,16 @@ wsServer.on('request', function(request) {
     connection.on('close', function(reasonCode, description) {
         amConnected = false;
         console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.');
-        if (user !== null && userManager.has(myNick)) {
+        if (user !== null && User.has(myNick)) {
             // remove from users map
-            userManager.remove(myNick);
+            user.remove();
             
             // don't if in null room (lobby)
             if (user.room !== null) {
                 // broadcast user leave to other clients
-                userManager.forEach(function (nick, iterUser) {
+                User.forEach(function (iterUser) {
                     if (iterUser.room === user.room) {
-                        userManager.send(nick, {
+                        iterUser.send({
                             type: 'die',
                             nick: user.nick
                         });
