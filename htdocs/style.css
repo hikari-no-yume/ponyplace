@@ -228,9 +228,12 @@ h1, p {
     font-family: monospace;
 }
 
-.chat-link {
+a {
     color: orange;
     text-decoration: underline;
+}
+
+.chat-link {
     pointer-events: auto;
 }
 
