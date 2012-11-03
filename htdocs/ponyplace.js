@@ -376,13 +376,21 @@
             this.updateCounter();
             overlay.appendChild(this.userCounter);
         },
-        add: function (nick, obj, special) {
+        add: function (nick, obj, special, me) {
             if (this.has(nick)) {
                 throw new Error("There is already a user with the same nick.");
             }
-        
+
             var elem = document.createElement('div');
             elem.className = 'pony';
+            if (me) {
+                elem.className += ' my-pony';
+            } else {
+                elem.onclick = function () {
+                    chatbox.value += nick;
+                    chatbox.focus();
+                };
+            }
             
             var chat = document.createElement('p');
             chat.className = 'chatbubble';
@@ -635,7 +643,7 @@
         myRoom = room;
         
         // add me
-        userManager.add(myNick, me, mySpecialStatus);
+        userManager.add(myNick, me, mySpecialStatus, true);
 
         // go to random position
         if (room.type !== 'ephemeral') {
@@ -978,7 +986,7 @@
             var msg = JSON.parse(e.data);
             switch (msg.type) {
                 case 'appear':
-                    userManager.add(msg.nick, msg.obj, msg.special);
+                    userManager.add(msg.nick, msg.obj, msg.special, false);
                 break;
                 case 'update':
                     if (msg.nick !== myNick) {

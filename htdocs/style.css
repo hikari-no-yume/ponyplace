@@ -258,10 +258,20 @@ a {
     margin-top: -84px;
     background-position: center;
     background-repeat: no-repeat;
-    pointer-events: none;
+    pointer-events: auto;
     transition: left 0.25s linear, top 0.25s linear;
     -webkit-transition: left 0.25s linear, top 0.25s linear;
     -o-transition: left 0.25s linear, top 0.25s linear;
+}
+.pony:hover {
+    cursor: pointer;
+}
+
+.my-pony {
+    pointer-events: none;
+}
+.my-pony:hover {
+    cursor: auto;
 }
 
 .chatbubble {
