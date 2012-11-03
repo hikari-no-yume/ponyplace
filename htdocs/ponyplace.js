@@ -7,8 +7,7 @@
         return;
     }
     
-    var CV_HEIGHT = 680;
-    var CHAT_HEIGHT = 20;
+    var ROOM_HEIGHT = 660;
     var PONY_WIDTH = 168, PONY_HEIGHT = 168;
     
     var ponies = [
@@ -644,7 +643,7 @@
         } else {
             me.x = me.x || Math.floor(Math.random() * (room.width - PONY_WIDTH));
         }
-        me.y = me.y || Math.floor(Math.random() * (CV_HEIGHT - PONY_HEIGHT - CHAT_HEIGHT));
+        me.y = me.y || Math.floor(Math.random() * (ROOM_HEIGHT - PONY_HEIGHT));
         outerstage.scrollLeft = Math.floor(me.x + PONY_WIDTH / 2 - window.innerWidth / 2);
         
         // push state
