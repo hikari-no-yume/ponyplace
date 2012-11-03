@@ -67,7 +67,7 @@ h1, p {
     right: 0;
     top: 0;
     bottom: 24px;
-    background-color: gray;
+    background-color: rgb(230, 230, 230);
     overflow: auto;
     user-select: none;
     -webkit-user-select: none;
