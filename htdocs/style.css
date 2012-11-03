@@ -216,6 +216,7 @@ h1, p {
 .chat-link {
     color: orange;
     text-decoration: underline;
+    pointer-events: auto;
 }
 
 .chatline, .offscreen-chatline {

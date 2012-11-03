@@ -507,6 +507,31 @@
         userManager.update(myNick, newState);
         pushState();
     }
+
+    function chatPopulateLine(line, parent) {
+        var pos;
+        while (((pos = line.indexOf('http://')) !== -1) || ((pos = line.indexOf('https://')) !== -1)) {
+            var pos2 = line.indexOf(' ', pos);
+            var anchor = document.createElement('a');
+            anchor.className = 'chat-link';
+            anchor.target = '_blank';
+            if (pos2 === -1) {
+                parent.appendChild(document.createTextNode(line.substr(0, pos)));
+
+                anchor.href = line.substr(pos);
+                anchor.appendChild(document.createTextNode(line.substr(pos)));
+                line = '';
+            } else {
+                parent.appendChild(document.createTextNode(line.substr(0, pos)));
+                anchor.href = line.substr(pos, pos2 - pos);
+                anchor.appendChild(document.createTextNode(line.substr(pos, pos2 - pos)));
+                line = line.substr(pos2);
+            }
+            parent.appendChild(anchor);
+        }
+        parent.appendChild(document.createTextNode(line));
+        parent.appendChild(document.createElement('br'));
+    }
     
     function chatPrint(line, highlight, showInShortLog) {
         function digitPad(n) {
@@ -522,37 +547,14 @@
             if (highlight) {
                 span.className += ' highlight';
             }
-            span.appendChild(document.createTextNode(line));
-            span.appendChild(document.createElement('br'));
+            chatPopulateLine(line, span);
             chatlog.appendChild(span);
             while (chatlog.children.length > 12) {
                 chatlog.removeChild(chatlog.firstChild);
             }
         }
-        
-        // clickable links
-        var pos;
-        while (((pos = line.indexOf('http://')) !== -1) || ((pos = line.indexOf('https://')) !== -1)) {
-            var pos2 = line.indexOf(' ', pos);
-            var anchor = document.createElement('a');
-            anchor.className = 'chat-link';
-            anchor.target = '_blank';
-            if (pos2 === -1) {
-                fullchatlog.appendChild(document.createTextNode(line.substr(0, pos)));
-                anchor.href = line.substr(pos);
-                anchor.appendChild(document.createTextNode(line.substr(pos)));
-                line = '';
-            } else {
-                fullchatlog.appendChild(document.createTextNode(line.substr(0, pos)));
-                anchor.href = line.substr(pos, pos2 - pos);
-                anchor.appendChild(document.createTextNode(line.substr(pos, pos2 - pos)));
-                line = line.substr(pos2);
-            }
-            fullchatlog.appendChild(anchor);
-        }
 
-        fullchatlog.appendChild(document.createTextNode(line));
-        fullchatlog.appendChild(document.createElement('br'));
+        chatPopulateLine(line, fullchatlog);
     }
     
     function highlightCheck(msg) {
