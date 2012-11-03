@@ -364,7 +364,7 @@
     
     var socket, connected = false, ignoreDisconnect = false, me, myNick, myRoom = null, mySpecialStatus, lastmove = (new Date().getTime()), globalUserCount = 0;
     
-    var container, loginbox, nickbox, passbox, loginsubmit, overlay, stage, title, creditslink, steamgrouplink, chooser, chooserbutton, roomlist, refreshbutton, background, chatbox, chatbutton, chatlog, fullchatlog, fullchatlogbutton, fullchatlogvisible, music;
+    var container, loginbox, nickbox, passbox, loginsubmit, overlay, outerstage, stage, title, creditslink, steamgrouplink, chooser, chooserbutton, roomlist, refreshbutton, background, chatbox, chatbutton, chatlog, fullchatlog, fullchatlogbutton, fullchatlogvisible, music;
     
     var userManager = {
         users: {},
@@ -622,10 +622,11 @@
         // change background
         if (room.type !== 'ephemeral') {
             background.src = room.img;
+            stage.width = room.width = 'px';
         } else {
             background.src = 'media/background-cave.png';
+            stage.width = '960px';
         }
-        stage.scrollLeft = 0;
         
         // clear users
         userManager.forEach(function (nick) {
@@ -644,7 +645,7 @@
             me.x = me.x || Math.floor(Math.random() * (room.width - PONY_WIDTH));
         }
         me.y = me.y || Math.floor(Math.random() * (CV_HEIGHT - PONY_HEIGHT - CHAT_HEIGHT));
-        stage.scrollLeft = Math.floor(me.x + PONY_WIDTH / 2 - window.innerWidth / 2);
+        outerstage.scrollLeft = Math.floor(me.x + PONY_WIDTH / 2 - window.innerWidth / 2);
         
         // push state
         pushAndUpdateState(me);
@@ -673,14 +674,15 @@
         container = document.createElement('div');
         container.id = 'container';
         document.body.appendChild(container);
-        
+
+        outerstage = document.createElement('div');
+        outerstage.id = 'outer-stage';
+        container.appendChild(outerstage);
+
         stage = document.createElement('div');
         stage.id = 'stage';
-        stage.onscroll = function () {
-            userManager.updateCounter();
-        };
-        container.appendChild(stage);
-        
+        outerstage.appendChild(stage);
+
         background = document.createElement('img');
         background.id = 'background';
         background.src = 'media/background-noroom.png';
