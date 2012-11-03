@@ -621,7 +621,7 @@
         // change background
         if (room.type !== 'ephemeral') {
             background.src = room.img;
-            stage.width = room.width = 'px';
+            stage.width = room.width + 'px';
         } else {
             background.src = 'media/background-cave.png';
             stage.width = '960px';
