@@ -33,6 +33,8 @@
         'media/octavia_right_walk.gif',
         'media/octavia_left_cello.gif',
         'media/octavia_right_cello.gif',
+        'media/discord_left.gif',
+        'media/discord_right.gif',
         'media/maredowell_left.gif',
         'media/maredowell_right.gif',
         'media/maredowell_left_walk.gif',
