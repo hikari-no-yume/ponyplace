@@ -29,6 +29,8 @@
         'vinylscratch_right_dance.gif',
         'octavia_left.gif',
         'octavia_right.gif',
+        'octavia_left_shades.gif',
+        'octavia_right_shades.gif',
         'octavia_left_walk.gif',
         'octavia_right_walk.gif',
         'octavia_left_cello.gif',
