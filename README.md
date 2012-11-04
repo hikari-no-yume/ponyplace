@@ -6,7 +6,7 @@ Setup
 Configuration
 -------------
 
-1. Make sure you have a `special-users.json` file in the `server/db` directory. Should be of format:
+1. Make sure you have a `special-users.json` file in the `server/data` directory. Should be of format:
 
         {
             "joe": "creator",
@@ -15,7 +15,7 @@ Configuration
             "tomatobot": "bot"
         }
 
-2. You'll also need a `passwords.json` file in the `server/config` directory, of this format - should be writeable:
+2. You'll also need a `passwords.json` file in the `server/data` directory, of this format, should be writeable:
 
         {
             "joe": "foobar",
