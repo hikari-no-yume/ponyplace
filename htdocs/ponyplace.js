@@ -399,7 +399,7 @@
     
     var socket, connected = false, ignoreDisconnect = false, me, myNick, myRoom = null, mySpecialStatus, lastmove = (new Date().getTime()), globalUserCount = 0;
     
-    var container, loginbox, nickbox, passbox, loginsubmit, overlay, outerstage, stage, creditslink, steamgrouplink, chooser, chooserbutton, roomlist, refreshbutton, background, chatbox, chatbutton, chatlog, fullchatlog, fullchatlogbutton, fullchatlogvisible;
+    var container, loginbox, nickbox, passbox, loginsubmit, overlay, outerstage, stage, creditslink, steamgrouplink, chooser, chooserbutton, roomlist, refreshbutton, background, chatbox, chatboxholder, chatbutton, chatlog, fullchatlog, fullchatlogbutton, fullchatlogvisible;
     
     var userManager = {
         users: {},
@@ -797,12 +797,13 @@
 
         loginsubmit = document.createElement('input');
         loginsubmit.type = 'submit';
-        loginsubmit.value = 'connect';
+        loginsubmit.value = 'Connect';
         loginsubmit.onclick = doLogin;
         loginbox.appendChild(loginsubmit);
         
         creditslink = document.createElement('a');
         creditslink.id = 'credits-link';
+        creditslink.className = 'button';
         creditslink.href = 'credits.html';
         creditslink.target = '_blank';
         creditslink.appendChild(document.createTextNode('Credits'));
@@ -810,6 +811,7 @@
         
         steamgrouplink = document.createElement('a');
         steamgrouplink.id = 'steamgroup-link';
+        steamgrouplink.className = 'button';
         steamgrouplink.href = 'http://steamcommunity.com/groups/ponyplace';
         steamgrouplink.target = '_blank';
         steamgrouplink.appendChild(document.createTextNode('Steam Group'));
@@ -828,24 +830,22 @@
         fullchatlogbutton = document.createElement('input');
         fullchatlogbutton.id = 'fullchatlog-button';
         fullchatlogbutton.type = 'submit';
-        fullchatlogbutton.value = 'Show full chatlog';
+        fullchatlogbutton.value = 'Full chatlog';
         fullchatlogbutton.onclick = function () {
             if (fullchatlogvisible) {
                 fullchatlog.style.display = 'none';
                 fullchatlogvisible = false;
-                fullchatlogbutton.value = 'Show full chatlog';
             } else {
                 fullchatlog.style.display = 'block'
                 fullchatlogvisible = true;
                 fullchatlog.scrollTop = fullchatlog.scrollHeight;
-                fullchatlogbutton.value = 'Hide full chatlog';
             }
         };
         overlay.appendChild(fullchatlogbutton);
 
         refreshbutton = document.createElement('input');
         refreshbutton.type = 'submit';
-        refreshbutton.value = 'Refresh room list';
+        refreshbutton.value = 'Refresh list';
         refreshbutton.id = 'room-refresh-button';
         refreshbutton.onclick = function () {
             socket.send(JSON.stringify({
@@ -895,6 +895,10 @@
             }
             chatbox.value = '';
         }
+
+        chatboxholder = document.createElement('div');
+        chatboxholder.id = 'chatbox-holder';
+        container.appendChild(chatboxholder);
         
         chatbox = document.createElement('input');
         chatbox.type = 'text';
@@ -905,7 +909,7 @@
                 handleChatMessage();
             }
         };
-        container.appendChild(chatbox);
+        chatboxholder.appendChild(chatbox);
         
         chatbutton = document.createElement('input');
         chatbutton.type = 'submit';
