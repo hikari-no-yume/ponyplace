@@ -51,7 +51,7 @@ var specialManager = {
 
     init: function () {
         var that = this;
-        fs.readFile('config/special-users.json', 'utf8', function (err, data) {
+        fs.readFile('data/special-users.json', 'utf8', function (err, data) {
             if (err) {
                 throw err;
             }
@@ -59,7 +59,7 @@ var specialManager = {
             that.specialNicks = JSON.parse(data);
             console.log('Loaded special users info');
         });
-        fs.readFile('db/passwords.json', 'utf8', function (err, data) {
+        fs.readFile('data/passwords.json', 'utf8', function (err, data) {
             if (err) {
                 throw err;
             }
@@ -69,7 +69,7 @@ var specialManager = {
         });
     },
     savePasswords: function () {
-        fs.writeFile('db/passwords.json', JSON.stringify(this.passwords), 'utf-8', function (err) {
+        fs.writeFile('data/passwords.json', JSON.stringify(this.passwords), 'utf-8', function (err) {
             if (err) {
                 throw err;
             };
@@ -112,7 +112,7 @@ var banManager = {
 
     init: function () {
         var that = this;
-        fs.readFile('db/bans.json', 'utf8', function (err, data) {
+        fs.readFile('data/bans.json', 'utf8', function (err, data) {
             if (err) {
                 return;
             }
@@ -123,7 +123,7 @@ var banManager = {
         });
     },
     save: function () {
-        fs.writeFile('db/bans.json', JSON.stringify({
+        fs.writeFile('data/bans.json', JSON.stringify({
             IPs: this.bannedIPs
         }), 'utf-8', function (err) {
             if (err) {
