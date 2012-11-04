@@ -263,6 +263,8 @@
         'pinkiepie_right_hover2.gif',
         'pinkiepie_left_bounce.gif',
         'pinkiepie_right_bounce.gif',
+        'pinkiepie_left_bounce_happy.gif',
+        'pinkiepie_right_bounce_happy.gif',
         'pinkiepie_left_dance.gif',
         'pinkiepie_right_dance.gif',
         'crazypie_left.gif',
