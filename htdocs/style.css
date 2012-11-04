@@ -230,8 +230,7 @@ input[type=submit]:hover, .button:hover {
 #chatlog {
     position: absolute;
     left: 5px;
-    bottom: 50px;
-    height: 220px;
+    bottom: 58px;
     width: 100%;
     color: white;
     pointer-events: none;
