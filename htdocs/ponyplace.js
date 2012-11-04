@@ -440,16 +440,21 @@
                 user.elem.img.src = ponies[obj.img];
                 user.elem.img.onload = function () {
                     var newHeight = user.elem.img.height;
+                    var newWidth = user.elem.img.width;
 
-                    // adjust bounding box height
+                    // adjust bounding box size
+                    user.elem.root.style.width = newWidth + 'px';
                     user.elem.root.style.height = newHeight + 'px';
 
                     // adjust bounding box margin (translate about image centre)
+                    user.elem.root.style.marginLeft = -newWidth/2 + 'px';
                     user.elem.root.style.marginTop = -newHeight/2 + 'px';
 
                     // adjust positioning of nick tag and chat bubble
                     user.elem.chat.style.bottom = newHeight + 'px';
+                    user.elem.chat.style.marginLeft = (newWidth - 168) / 2 + 'px';
                     user.elem.nickTag.style.top = newHeight + 'px';
+                    user.elem.nickTag.style.marginLeft = (newWidth - 168) / 2 + 'px';
                 };
             } else {
                 user.elem.root.style.backgroundImage = 'none';
@@ -653,12 +658,12 @@
 
         // go to random position
         if (room.type !== 'ephemeral') {
-            me.x = me.x || Math.floor(Math.random() * (920 - PONY_WIDTH));
+            me.x = me.x || Math.floor(Math.random() * 920);
         } else {
-            me.x = me.x || Math.floor(Math.random() * (room.width - PONY_WIDTH));
+            me.x = me.x || Math.floor(Math.random() * room.width);
         }
-        me.y = me.y || Math.floor(Math.random() * (ROOM_HEIGHT - PONY_HEIGHT));
-        outerstage.scrollLeft = Math.floor(me.x + PONY_WIDTH / 2 - window.innerWidth / 2);
+        me.y = me.y || Math.floor(Math.random() * ROOM_HEIGHT);
+        outerstage.scrollLeft = Math.floor(me.x + window.innerWidth / 2);
         
         // push state
         pushAndUpdateState(me);

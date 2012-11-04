@@ -287,7 +287,7 @@ a {
 
     /* position above avatar */
     position: absolute;
-    width: 100%;
+    width: 168px;
     left: 0;
     bottom: 168px;
 }
@@ -307,7 +307,7 @@ a {
 
     /* position below avatar */
     position: absolute;
-    width: 100%;
+    width: 168px;
     left: 0;
     top: 168px;
 }
