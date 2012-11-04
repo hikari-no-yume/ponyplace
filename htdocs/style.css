@@ -114,28 +114,20 @@ input[type=submit]:hover, .button:hover {
     cursor: pointer;
 }
 
-#room-refresh-button {
+#room-refresh-button, #credits-link, #steamgroup-link {
     position: absolute;
     top: 6px;
-    left: 310px;
 }
-#credits-link {
-    position: absolute;
-    top: 6px;
-    left: 430px;
-}
-#steamgroup-link {
-    position: absolute;
-    top: 6px;
-    left: 540px;
-}
+#room-refresh-button { left: 160px; }
+#credits-link { left: 280px; }
+#steamgroup-link { left: 390px; }
 
 #room-list {
     position: absolute;
     top: 6px;
     left: 5px;
     height: 25px;
-    width: 300px;
+    width: 150px;
 }
 
 #usercounter {
