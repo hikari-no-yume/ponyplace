@@ -284,6 +284,7 @@ a {
     margin-bottom: 2px;
     overflow: hidden;
     border-radius: 5px;
+    pointer-events: none;
 
     /* position above avatar */
     position: absolute;
@@ -304,6 +305,7 @@ a {
     border-radius: 9px;
     height: 18px;
     overflow: hidden;
+    pointer-events: none;
 
     /* position below avatar */
     position: absolute;
