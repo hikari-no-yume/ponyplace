@@ -52,6 +52,7 @@ var banManager = {
         try {
             var data = JSON.parse(fs.readFileSync('data/bans.json'));
         } catch (e) {
+            console.log('Error loading banned users info, skipped');
             return;
         }
         this.bannedIPs = data.IPs;
@@ -61,6 +62,7 @@ var banManager = {
         fs.writeFileSync('data/bans.json', JSON.stringify({
             IPs: this.bannedIPs
         }));
+        console.log('Saved banned users info');
     },
     addIPBan: function (IP) {
         if (!this.isIPBanned(IP)) {
@@ -249,8 +251,8 @@ function handleCommand(cmd, myNick, user) {
             '1. whereis - Takes a nick, tells you what room someone is in, e.g. /whereis someguy',
             '2. list - Lists available rooms, e.g. /list',
             "3. join - Joins a room, e.g. /join library - if that room doesn't exist, an ephemeral room will be created",
-            '4. setpass - Sets or changes a password on your nickname, e.g. /setpass opensesame',
-            '5. rmpass - Removes the password on your nickname, e.g. /rmpass'
+            '4. setpass - Creates an account with given password or changes the password, e.g. /setpass opensesame',
+            '5. rmpass - Deletes your account, e.g. /rmpass'
         ]);
     // where is
     } else if (cmd.substr(0, 8) === 'whereis ') {
@@ -289,7 +291,7 @@ function handleCommand(cmd, myNick, user) {
             }
         }
         sendLine(roomList.length + ' rooms available: ' + roomNames.join(', '));
-    // set password
+    // create account
     } else if (cmd.substr(0, 8) === 'setpass ') {
         var password = cmd.substr(8);
 
@@ -297,19 +299,43 @@ function handleCommand(cmd, myNick, user) {
             if (User.hasPassword(myNick)) {
                 sendLine('Changed password');
             } else {
-                sendLine('Set password');
+                sendLine('Created account');
             }
             User.setPassword(myNick, password);
+            user.send({
+                type: 'have_bits',
+                amount: User.hasBits(user.nick)
+            });
         } else {
             sendLine('Password must be at least 1 characters in length');
         }
-    // set password
+    // remove account
+    } else if (cmd.substr(0, 10) === 'rmpass yes') {
+        if (user.didConfirm) {
+            User.removePassword(myNick);
+            sendLine("Your account was deleted.");
+            user.didConfirm = false;
+            user.send({
+                type: 'have_bits',
+                amount: User.hasBits(user.nick)
+            });
+        } else {
+            sendLine("You need to do /rmpass first to delete your account.");
+        }
+    // don't remove account
+    } else if (cmd.substr(0, 9) === 'rmpass no') {
+        user.didConfirm = false;
+        sendLine("Your account was not deleted.");
+    // remove account confirm
     } else if (cmd.substr(0, 6) === 'rmpass') {
         if (User.hasPassword(myNick)) {
-            User.removePassword(myNick);
-            sendLine('Removed password');
+            sendLine("Are you sure you want to delete your account?");
+            sendLine("You'll lose all your bits and items, and your nickname will be unprotected.");
+            sendLine("If you're sure, do: /rmpass yes");
+            sendLine("Otherwise, do: /rmpass no");
+            user.didConfirm = true;
         } else {
-            sendLine("You don't have a password set");
+            sendLine("You don't have an account");
         }
     // kickbanning
     } else if (isMod && cmd.substr(0, 8) === 'kickban ') {
@@ -623,6 +649,12 @@ wsServer.on('request', function(request) {
                 status: special
             }));
         }
+
+        // tell client how many bits they have
+        connection.sendUTF(JSON.stringify({
+            type: 'have_bits',
+            amount: User.hasBits(msg.nick)
+        }));
         
         myNick = msg.nick;
         user = new User(msg.nick, connection, msg.obj, null);

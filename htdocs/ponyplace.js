@@ -1001,14 +1001,25 @@
 
         rmpassbutton = document.createElement('input');
         rmpassbutton.type = 'submit';
-        rmpassbutton.value = 'Remove password';
+        rmpassbutton.value = 'Delete account';
         rmpassbutton.onclick = function () {
             socket.send(JSON.stringify({
                 type: 'console_command',
                 cmd: 'rmpass'
             }));
-            accountsettings.style.display = 'none';
-            accountsettingsvisible = false;
+            if (confirm("Are you sure you want to delete your account?\nYou'll lose all your bits and items, and your nickname will be unprotected.")) {
+                socket.send(JSON.stringify({
+                    type: 'console_command',
+                    cmd: 'rmpass yes'
+                }));
+                accountsettings.style.display = 'none';
+                accountsettingsvisible = false;
+            } else {
+                socket.send(JSON.stringify({
+                    type: 'console_command',
+                    cmd: 'rmpass no'
+                }));
+            }
         };
         accountsettings.appendChild(rmpassbutton);
 
@@ -1019,7 +1030,7 @@
 
         changepassbutton = document.createElement('input');
         changepassbutton.type = 'submit';
-        changepassbutton.value = 'Set/change password';
+        changepassbutton.value = 'Create account/change password';
         changepassbutton.onclick = function () {
             if (changepassbox.value.length > 0) {
                 socket.send(JSON.stringify({
@@ -1172,6 +1183,14 @@
                 break;
                 case 'are_special':
                     mySpecialStatus = msg.status;
+                break;
+                case 'have_bits':
+                    bitcount.innerHTML = '';
+                    if (msg.amount !== null) {
+                        bitcount.appendChild(document.createTextNode(msg.amount));
+                    } else {
+                        bitcount.appendChild(document.createTextNode('???'));
+                    }
                 break;
                 case 'broadcast':
                     logBroadcastInChat(msg.msg);

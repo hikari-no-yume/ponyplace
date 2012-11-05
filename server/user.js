@@ -34,16 +34,26 @@ User.users = [];
 User.userCount = 0;
 User.passwords = {};
 User.specialUsers = {};
+User.userData = {};
 
 User.init = function () {
     this.passwords = JSON.parse(fs.readFileSync('data/passwords.json'));
-    console.log('Loaded account details');
+    console.log('Loaded passwords');
     this.specialUsers = JSON.parse(fs.readFileSync('data/special-users.json'));
     console.log('Loaded special users info');
-
+    try {
+        this.userData = JSON.parse(fs.readFileSync('data/user-data.json'));
+    } catch (e) {
+        console.log('Error loading user data, skipped');
+        return;
+    }
+    console.log('Loaded user data');
 };
 User.save = function () {
     fs.writeFileSync('data/passwords.json', JSON.stringify(this.passwords));
+    console.log('Saved passwords');
+    fs.writeFileSync('data/user-data.json', JSON.stringify(this.userData));
+    console.log('Saved user data');
 };
 User.getSpecialStatus = function (nick) {
     if (this.specialUsers.hasOwnProperty(nick)) {
@@ -63,14 +73,46 @@ User.isCorrectPassword = function (nick, password) {
 };
 User.setPassword = function (nick, password) {
     this.passwords[nick] = password;
+    if (!this.userData.hasOwnProperty(nick)) {
+        this.userData[nick] = {
+            bits: 0
+        };
+    }
     this.save();
 };
 User.removePassword = function (nick) {
     delete this.passwords[nick];
+    delete this.userData[nick];
     this.save();
 };
 User.hasPassword = function (nick) {
     return this.passwords.hasOwnProperty(nick);
+};
+
+User.hasBits = function (nick) {
+    if (this.hasPassword(nick)) {
+        if (this.specialUsers.hasOwnProperty(nick)) {
+            return this.specialUsers[nick].bits;
+        } else {
+            return 0;
+        }
+    } else {
+        return null;
+    }
+};
+User.changeBits = function (nick, amount) {
+    if (this.hasPassword(nick)) {
+        if (this.specialUsers.hasOwnProperty(nick)) {
+            this.specialUsers[nick].bits += amount;
+        } else {
+            this.specialUsers[nick] = {
+                bits: amount
+            }
+        }
+        this.save();
+    } else {
+        return false;
+    }
 };
 
 User.get = function (nick) {
