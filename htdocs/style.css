@@ -154,6 +154,24 @@ input[type=submit]:hover, .button:hover {
     width: 150px;
 }
 
+#bit-count {
+    color: white;
+    background-color: #FF67D5;
+    font-weight: bold;
+    font-family: 'Consolas', monospace;
+    font-size: 14pt;
+    position: absolute;
+    top: 6px;
+    right: 170px;
+    padding: 2px;
+    height: 20px;
+    vertical-align: middle;
+}
+#bit-count::after {
+    margin-left: 4px;
+    content: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAASCAYAAABit09LAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAXklEQVQoz2NkgIKP9/P/w9gf7u+EMRnknW4wMjAwMDCiK8KlmAmbBDbAxEAkYMJmLQMDA4OAojuc/XCfxn8mmLXIEpRZPXIVCii6E45CfsWJjBRZjTP1EIpCRmITLgDj5Skiz9Zq8QAAAABJRU5ErkJggg==);
+}
+
 #usercounter {
     position: absolute;
     left: 5px;

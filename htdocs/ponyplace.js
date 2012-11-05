@@ -405,6 +405,7 @@
         accountsettings, accountsettingsbutton, accountsettingsvisible, changepassbox, changepassbutton, rmpassbutton,
         outerstage, stage,
         steamgrouplink,
+        bitcount,
         chooser, chooserbutton, chooservisible,
         roomlist, refreshbutton,
         background, backgroundIframe,
@@ -673,6 +674,10 @@
         option.value = '[create new]';
         option.appendChild(document.createTextNode('[create new ephemeral room]'));
         roomlist.appendChild(option);
+
+        // show list and refresh button
+        refreshbutton.style.display = 'inline-block';
+        roomlist.style.display = 'inline-block';
     }
     
     function changeRoom(room) {
@@ -740,9 +745,8 @@
         chatboxholder.style.display = 'block';
         chatbutton.style.display = 'block';
         fullchatlogbutton.style.display = 'inline-block';
-        refreshbutton.style.display = 'inline-block';
-        roomlist.style.display = 'inline-block';
         chooserbutton.style.display = 'inline-block';
+        bitcount.style.display = 'block';
         
         stage.style.display = 'block';
     }
@@ -966,13 +970,17 @@
         steamgrouplink.appendChild(document.createTextNode('Steam Group'));
         overlay.appendChild(steamgrouplink);
 
+        bitcount = document.createElement('div');
+        bitcount.id = 'bit-count';
+        bitcount.title = 'bits';
+        bitcount.appendChild(document.createTextNode('???'));
+        bitcount.style.display = 'none';
+        overlay.appendChild(bitcount);
+
         accountsettingsbutton = document.createElement('input');
         accountsettingsbutton.id = 'account-settings-button';
         accountsettingsbutton.type = 'submit';
         accountsettingsbutton.value = 'Account Settings';
-        accountsettingsbutton.onclick = function () {
-            accountsettings.style.display = 'block';
-        };
         accountsettingsbutton.onclick = function () {
             if (accountsettingsvisible) {
                 accountsettings.style.display = 'none';
@@ -1000,6 +1008,7 @@
                 cmd: 'rmpass'
             }));
             accountsettings.style.display = 'none';
+            accountsettingsvisible = false;
         };
         accountsettings.appendChild(rmpassbutton);
 
@@ -1019,6 +1028,7 @@
                 }));
                 changepassbox.value = '';
                 accountsettings.style.display = 'none';
+                accountsettingsvisible = false;
             }
         };
         accountsettings.appendChild(changepassbutton);

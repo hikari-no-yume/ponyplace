@@ -45,91 +45,22 @@ function sanitise(obj) {
 
 var User = require('./user.js');
 
-var specialManager = {
-    passwords: {},
-    specialNicks: {},
-
-    init: function () {
-        var that = this;
-        fs.readFile('data/special-users.json', 'utf8', function (err, data) {
-            if (err) {
-                throw err;
-            }
-            
-            that.specialNicks = JSON.parse(data);
-            console.log('Loaded special users info');
-        });
-        fs.readFile('data/passwords.json', 'utf8', function (err, data) {
-            if (err) {
-                throw err;
-            }
-            
-            that.passwords = JSON.parse(data);
-            console.log('Loaded passwords');
-        });
-    },
-    savePasswords: function () {
-        fs.writeFile('data/passwords.json', JSON.stringify(this.passwords), 'utf-8', function (err) {
-            if (err) {
-                throw err;
-            };
-        });
-    },
-    
-    getSpecialStatus: function (nick) {
-        if (this.specialNicks.hasOwnProperty(nick)) {
-            return this.specialNicks[nick];
-        }
-        return false;
-    },
-    isModerator: function (nick) {
-        var status = this.specialNicks[nick];
-        return (status === 'moderator' || status === 'creator' || status === 'bot');
-    },
-    isCorrectPassword: function (nick, password) {
-        if (!this.hasPassword(nick)) {
-            return false;
-        }
-        return (this.passwords[nick] === password);
-    },
-    setPassword: function (nick, password) {
-        this.passwords[nick] = password;
-        this.savePasswords();
-    },
-    removePassword: function (nick) {
-        delete this.passwords[nick];
-        this.savePasswords();
-    },
-    hasPassword: function (nick) {
-        return this.passwords.hasOwnProperty(nick);
-    }
-};
-
-specialManager.init();
-
 var banManager = {
     bannedIPs: [],
 
     init: function () {
-        var that = this;
-        fs.readFile('data/bans.json', 'utf8', function (err, data) {
-            if (err) {
-                return;
-            }
-            
-            var data = JSON.parse(data);
-            that.bannedIPs = data.IPs;
-            console.log('Loaded banned users info');
-        });
+        try {
+            var data = JSON.parse(fs.readFileSync('data/bans.json'));
+        } catch (e) {
+            return;
+        }
+        this.bannedIPs = data.IPs;
+        console.log('Loaded banned users info');
     },
     save: function () {
-        fs.writeFile('data/bans.json', JSON.stringify({
+        fs.writeFileSync('data/bans.json', JSON.stringify({
             IPs: this.bannedIPs
-        }), 'utf-8', function (err) {
-            if (err) {
-                throw err;
-            };
-        });
+        }));
     },
     addIPBan: function (IP) {
         if (!this.isIPBanned(IP)) {
@@ -149,16 +80,9 @@ var roomManager = {
     ephemeralRooms: [],
 
     init: function () {
-        var that = this;
-        fs.readFile('data/rooms.json', 'utf8', function (err, data) {
-            if (err) {
-                throw err;
-            }
-            
-            var data = JSON.parse(data);
-            that.rooms = data;
-            console.log('Loaded rooms');
-        });
+        var data = JSON.parse(fs.readFileSync('data/rooms.json'));
+        this.rooms = data;
+        console.log('Loaded rooms');
     },
     has: function (name) {
         for (var i = 0; i < this.rooms.length; i++) {
@@ -305,7 +229,7 @@ function handleCommand(cmd, myNick, user) {
         }
     }
 
-    var isMod = specialManager.isModerator(myNick);
+    var isMod = User.isModerator(myNick);
     
     // help
     if (cmd.substr(0, 4) === 'help') {
@@ -370,19 +294,19 @@ function handleCommand(cmd, myNick, user) {
         var password = cmd.substr(8);
 
         if (password.length > 0) {
-            if (specialManager.hasPassword(myNick)) {
+            if (User.hasPassword(myNick)) {
                 sendLine('Changed password');
             } else {
                 sendLine('Set password');
             }
-            specialManager.setPassword(myNick, password);
+            User.setPassword(myNick, password);
         } else {
             sendLine('Password must be at least 1 characters in length');
         }
     // set password
     } else if (cmd.substr(0, 6) === 'rmpass') {
-        if (specialManager.hasPassword(myNick)) {
-            specialManager.removePassword(myNick);
+        if (User.hasPassword(myNick)) {
+            User.removePassword(myNick);
             sendLine('Removed password');
         } else {
             sendLine("You don't have a password set");
@@ -394,7 +318,7 @@ function handleCommand(cmd, myNick, user) {
             sendLine('There is no user with nick: "' + kickee + '"');
             return;
         }
-        if (specialManager.isModerator(kickee)) {
+        if (User.isModerator(kickee)) {
             sendLine('You cannot kickban other moderators');
             return;
         }
@@ -436,7 +360,7 @@ function handleCommand(cmd, myNick, user) {
                 sendLine('There is no user with nick: "' + movee + '"');
                 return;
             }
-            if (specialManager.isModerator(movee)) {
+            if (User.isModerator(movee)) {
                 sendLine('You cannot move other moderators');
                 return;
             }
@@ -640,10 +564,10 @@ wsServer.on('request', function(request) {
         }
         
         // Detect owner/mod/bot status
-        var special = specialManager.getSpecialStatus(msg.nick);
+        var special = User.getSpecialStatus(msg.nick);
 
         // Prevent stupidity
-        if (msg.password && !specialManager.hasPassword(msg.nick)) {
+        if (msg.password && !User.hasPassword(msg.nick)) {
             connection.sendUTF(JSON.stringify({
                 type: 'kick',
                 reason: 'no_password'
@@ -661,7 +585,7 @@ wsServer.on('request', function(request) {
             connection.close();
             return;
         // Prevent nick spoofing
-        } else if (!specialManager.isCorrectPassword(msg.nick, msg.password) && specialManager.hasPassword(msg.nick)) {
+        } else if (!User.isCorrectPassword(msg.nick, msg.password) && User.hasPassword(msg.nick)) {
             if (!msg.password) {
                 connection.sendUTF(JSON.stringify({
                     type: 'kick',
