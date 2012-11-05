@@ -87,6 +87,12 @@ h1, p {
     position: relative;
 }
 
+#background-iframe {
+    border: 0;
+    position: absolute;
+    background-color: white;
+}
+
 #music {
     position: absolute;
     right: 0;
@@ -114,13 +120,12 @@ input[type=submit]:hover, .button:hover {
     cursor: pointer;
 }
 
-#room-refresh-button, #credits-link, #steamgroup-link {
+#room-refresh-button, #steamgroup-link {
     position: absolute;
     top: 6px;
 }
 #room-refresh-button { left: 160px; }
-#credits-link { left: 280px; }
-#steamgroup-link { left: 390px; }
+#steamgroup-link { left: 280px; }
 
 #room-list {
     position: absolute;

@@ -399,7 +399,7 @@
     
     var socket, connected = false, ignoreDisconnect = false, me, myNick, myRoom = null, mySpecialStatus, lastmove = (new Date().getTime()), globalUserCount = 0;
     
-    var container, loginbox, nickbox, passbox, loginsubmit, overlay, outerstage, stage, creditslink, steamgrouplink, chooser, chooserbutton, roomlist, refreshbutton, background, chatbox, chatboxholder, chatbutton, chatlog, fullchatlog, fullchatlogbutton, fullchatlogvisible;
+    var container, loginbox, nickbox, passbox, loginsubmit, overlay, outerstage, stage, steamgrouplink, chooser, chooserbutton, roomlist, refreshbutton, background, backgroundIframe, chatbox, chatboxholder, chatbutton, chatlog, fullchatlog, fullchatlogbutton, fullchatlogvisible;
     
     var userManager = {
         users: {},
@@ -669,11 +669,26 @@
     function changeRoom(room) {
         // change background
         if (room.type !== 'ephemeral') {
-            background.src = room.img;
-            stage.style.width = room.width + 'px';
+            background.src = room.background.data;
+            stage.style.width = room.background.width + 'px';
+            stage.style.height = room.background.height + 'px';
+            if (room.background.iframe) {
+                backgroundIframe.src = room.background.iframe.src;
+                backgroundIframe.width = room.background.iframe.width;
+                backgroundIframe.height = room.background.iframe.height;
+                backgroundIframe.style.left = room.background.iframe.left + 'px';
+                backgroundIframe.style.top = room.background.iframe.top + 'px';
+                backgroundIframe.style.display = 'block';
+            } else {
+                backgroundIframe.src = 'about:blank';
+                backgroundIframe.style.display = 'none';
+            }
         } else {
             background.src = 'media/background-cave.png';
             stage.style.width = '960px';
+            stage.style.height = '660px';
+            backgroundIframe.src = 'about:blank';
+            backgroundIframe.style.display = 'none';
         }
         
         // clear users
@@ -690,7 +705,7 @@
         if (room.type !== 'ephemeral') {
             me.x = me.x || Math.floor(Math.random() * 920);
         } else {
-            me.x = me.x || Math.floor(Math.random() * room.width);
+            me.x = me.x || Math.floor(Math.random() * room.background.width);
         }
         me.y = me.y || Math.floor(Math.random() * ROOM_HEIGHT);
         outerstage.scrollLeft = Math.floor(me.x + window.innerWidth / 2);
@@ -751,6 +766,12 @@
             return false;
         };
         stage.appendChild(background);
+
+        backgroundIframe = document.createElement('iframe');
+        backgroundIframe.id = 'background-iframe';
+        backgroundIframe.src = 'about:blank';
+        backgroundIframe.style.display = 'none';
+        stage.appendChild(backgroundIframe);
         
         overlay = document.createElement('div');
         overlay.id = 'overlay';
@@ -800,14 +821,6 @@
         loginsubmit.value = 'Connect';
         loginsubmit.onclick = doLogin;
         loginbox.appendChild(loginsubmit);
-        
-        creditslink = document.createElement('a');
-        creditslink.id = 'credits-link';
-        creditslink.className = 'button';
-        creditslink.href = 'credits.html';
-        creditslink.target = '_blank';
-        creditslink.appendChild(document.createTextNode('Credits'));
-        overlay.appendChild(creditslink);
         
         steamgrouplink = document.createElement('a');
         steamgrouplink.id = 'steamgroup-link';
@@ -1082,6 +1095,7 @@
                     } else if (msg.reason === 'kick') {
                         alert('You were kicked!');
                     } else if (msg.reason === 'ban') {
+
                         alert('You were banned!');
                     } else if (msg.reason === 'update') {
                         ignoreDisconnect = true;
