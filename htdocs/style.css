@@ -170,14 +170,12 @@ input[type=submit]:hover, .button:hover {
     position: absolute;
     left: 0;
     right: 0;
-    top: 0;
+    top: 36px;
     width: 100%;
     height: 120px;
     white-space: nowrap;
     overflow-y: auto;
     background-color: pink;
-    border-bottom-left-radius: 10px;
-    border-bottom-right-radius: 10px;
 }
 
 .chooser-preview {
