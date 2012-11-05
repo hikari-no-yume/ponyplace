@@ -746,22 +746,8 @@
         
         stage.style.display = 'block';
     }
-    
-    function initGUI() {
-        document.body.innerHTML = '';
-    
-        document.body.onkeypress = function (e) {
-            if (e.which == 13) {
-                chatbox.focus();
-                e.preventDefault();
-                return false;
-            }
-        };
-    
-        container = document.createElement('div');
-        container.id = 'container';
-        document.body.appendChild(container);
 
+    function initGUI_stage() {
         outerstage = document.createElement('div');
         outerstage.id = 'outer-stage';
         container.appendChild(outerstage);
@@ -797,121 +783,27 @@
         backgroundIframe.src = 'about:blank';
         backgroundIframe.style.display = 'none';
         stage.appendChild(backgroundIframe);
-        
-        overlay = document.createElement('div');
-        overlay.id = 'overlay';
-        container.appendChild(overlay);
+    }
 
-        function doLogin() {
-            loginbox.style.display = 'none';
-            localStorage.setItem('login-details', JSON.stringify({
-                nick: nickbox.value,
-                pass: passbox.value
-            }));
-            initNetwork();
-        }
-        
-        loginbox = document.createElement('div');
-        loginbox.id = 'loginbox';
-        loginbox.appendChild(document.createTextNode("Choose a nickname. (You'll only need a password if that nickname is protected)"));
-        overlay.appendChild(loginbox);
-
-        nickbox = document.createElement('input');
-        nickbox.type = 'text';
-        nickbox.placeholder = 'nickname';
-        nickbox.onkeypress = function (e) {
-            if (e.which === 13) {
-                doLogin();
-            }
-        };
-        loginbox.appendChild(nickbox);
-        nickbox.focus();
-
-        passbox = document.createElement('input');
-        passbox.type = 'password';
-        passbox.placeholder = 'password';
-        passbox.onkeypress = nickbox.onkeypress;
-        loginbox.appendChild(passbox);
-
-        // prepopulate from local storage
-        var data = localStorage.getItem('login-details');
-        if (data) {
-            data = JSON.parse(data);
-            nickbox.value = data.nick;
-            passbox.value = data.pass;
-        }
-
-        loginsubmit = document.createElement('input');
-        loginsubmit.type = 'submit';
-        loginsubmit.value = 'Connect';
-        loginsubmit.onclick = doLogin;
-        loginbox.appendChild(loginsubmit);
-
-        accountsettings = document.createElement('div');
-        accountsettings.id = 'account-settings';
-        accountsettings.style.display = 'none';
-        accountsettingsvisible = false;
-        overlay.appendChild(accountsettings);
-
-        rmpassbutton = document.createElement('input');
-        rmpassbutton.type = 'submit';
-        rmpassbutton.value = 'Remove password';
-        rmpassbutton.onclick = function () {
+    function handleChatMessage() {
+        // is command
+        if (chatbox.value[0] === '/') {
             socket.send(JSON.stringify({
                 type: 'console_command',
-                cmd: 'rmpass'
+                cmd: chatbox.value.substr(1)
             }));
-            accountsettings.style.display = 'none';
-        };
-        accountsettings.appendChild(rmpassbutton);
-
-        changepassbox = document.createElement('input');
-        changepassbox.type = 'password';
-        changepassbox.placeholder = 'new password';
-        accountsettings.appendChild(changepassbox);
-
-        changepassbutton = document.createElement('input');
-        changepassbutton.type = 'submit';
-        changepassbutton.value = 'Set/change password';
-        changepassbutton.onclick = function () {
-            if (changepassbox.value.length > 0) {
-                socket.send(JSON.stringify({
-                    type: 'console_command',
-                    cmd: 'setpass ' + changepassbox.value
-                }));
-                changepassbox.value = '';
-                accountsettings.style.display = 'none';
+        // is chat message
+        } else {
+            me.chat = chatbox.value;
+            if (me.chat !== '') {
+                logInChat(myNick, me.chat, true);
             }
-        };
-        accountsettings.appendChild(changepassbutton);
+            pushAndUpdateState(me);
+        }
+        chatbox.value = '';
+    }
 
-        accountsettingsbutton = document.createElement('input');
-        accountsettingsbutton.id = 'account-settings-button';
-        accountsettingsbutton.type = 'submit';
-        accountsettingsbutton.value = 'Account Settings';
-        accountsettingsbutton.onclick = function () {
-            accountsettings.style.display = 'block';
-        };
-        accountsettingsbutton.onclick = function () {
-            if (accountsettingsvisible) {
-                accountsettings.style.display = 'none';
-                accountsettingsvisible = false;
-            } else {
-                accountsettings.style.display = 'block'
-                accountsettingsvisible = true;
-            }
-        };
-        accountsettingsbutton.style.display = 'none';
-        overlay.appendChild(accountsettingsbutton);
-        
-        steamgrouplink = document.createElement('a');
-        steamgrouplink.id = 'steamgroup-link';
-        steamgrouplink.className = 'button';
-        steamgrouplink.href = 'http://steamcommunity.com/groups/ponyplace';
-        steamgrouplink.target = '_blank';
-        steamgrouplink.appendChild(document.createTextNode('Steam Group'));
-        overlay.appendChild(steamgrouplink);
-        
+    function initGUI_chatbar() {
         chatlog = document.createElement('div');
         chatlog.id = 'chatlog';
         overlay.appendChild(chatlog);
@@ -921,83 +813,11 @@
         fullchatlog.style.display = 'none';
         fullchatlogvisible = false;
         overlay.appendChild(fullchatlog);
-        
-        fullchatlogbutton = document.createElement('input');
-        fullchatlogbutton.id = 'fullchatlog-button';
-        fullchatlogbutton.type = 'submit';
-        fullchatlogbutton.value = 'Full chatlog';
-        fullchatlogbutton.onclick = function () {
-            if (fullchatlogvisible) {
-                fullchatlog.style.display = 'none';
-                fullchatlogvisible = false;
-            } else {
-                fullchatlog.style.display = 'block'
-                fullchatlogvisible = true;
-                fullchatlog.scrollTop = fullchatlog.scrollHeight;
-            }
-        };
-        fullchatlogbutton.style.display = 'none';
-        overlay.appendChild(fullchatlogbutton);
-
-        refreshbutton = document.createElement('input');
-        refreshbutton.type = 'submit';
-        refreshbutton.value = 'Refresh list';
-        refreshbutton.id = 'room-refresh-button';
-        refreshbutton.onclick = function () {
-            socket.send(JSON.stringify({
-                type: 'room_list'
-            }));
-        };
-        refreshbutton.style.display = 'none';
-        overlay.appendChild(refreshbutton);
-
-        roomlist = document.createElement('select');
-        roomlist.id = 'room-list';
-        roomlist.onchange = function () {
-            if (roomlist.value === '[create new]') {
-                var roomName = prompt('Choose a room name (cannot contain spaces)', '');
-                if (roomName.indexOf(' ') === -1) {
-                    socket.send(JSON.stringify({
-                        type: 'room_change',
-                        name: roomName
-                    }));
-                } else {
-                    alert('Room names cannot contain spaces.');
-                }
-            } else if (roomlist.value !== '[no choice]') {
-                socket.send(JSON.stringify({
-                    type: 'room_change',
-                    name: roomlist.value
-                }));
-            }
-            roomlist.value = '[no choice]';
-        };
-        roomlist.value = '[no choice]';
-        roomlist.style.display = 'none';
-        overlay.appendChild(roomlist);
-        
-        function handleChatMessage() {
-            // is command
-            if (chatbox.value[0] === '/') {
-                socket.send(JSON.stringify({
-                    type: 'console_command',
-                    cmd: chatbox.value.substr(1)
-                }));
-            // is chat message
-            } else {
-                me.chat = chatbox.value;
-                if (me.chat !== '') {
-                    logInChat(myNick, me.chat, true);
-                }
-                pushAndUpdateState(me);
-            }
-            chatbox.value = '';
-        }
 
         chatboxholder = document.createElement('div');
         chatboxholder.id = 'chatbox-holder';
         chatboxholder.style.display = 'none';
-        container.appendChild(chatboxholder);
+        overlay.appendChild(chatboxholder);
         
         chatbox = document.createElement('input');
         chatbox.type = 'text';
@@ -1020,10 +840,22 @@
         chatbutton.style.display = 'none';
         container.appendChild(chatbutton);
 
-        chooser = document.createElement('div');
-        chooser.id = 'chooser';
-        chooservisible = false;
-        chooser.style.display = 'none';
+        fullchatlogbutton = document.createElement('input');
+        fullchatlogbutton.id = 'fullchatlog-button';
+        fullchatlogbutton.type = 'submit';
+        fullchatlogbutton.value = 'Full chatlog';
+        fullchatlogbutton.onclick = function () {
+            if (fullchatlogvisible) {
+                fullchatlog.style.display = 'none';
+                fullchatlogvisible = false;
+            } else {
+                fullchatlog.style.display = 'block'
+                fullchatlogvisible = true;
+                fullchatlog.scrollTop = fullchatlog.scrollHeight;
+            }
+        };
+        fullchatlogbutton.style.display = 'none';
+        overlay.appendChild(fullchatlogbutton);
         
         chooserbutton = document.createElement('input');
         chooserbutton.id = 'chooser-button';
@@ -1083,12 +915,193 @@
                     chooser.appendChild(preview);
                 }
             }
-            container.appendChild(chooser);
         };
         chooserbutton.style.display = 'none';
         overlay.appendChild(chooserbutton);
+    }
+
+    function initGUI_topbar() {
+        roomlist = document.createElement('select');
+        roomlist.id = 'room-list';
+        roomlist.onchange = function () {
+            if (roomlist.value === '[create new]') {
+                var roomName = prompt('Choose a room name (cannot contain spaces)', '');
+                if (roomName.indexOf(' ') === -1) {
+                    socket.send(JSON.stringify({
+                        type: 'room_change',
+                        name: roomName
+                    }));
+                } else {
+                    alert('Room names cannot contain spaces.');
+                }
+            } else if (roomlist.value !== '[no choice]') {
+                socket.send(JSON.stringify({
+                    type: 'room_change',
+                    name: roomlist.value
+                }));
+            }
+            roomlist.value = '[no choice]';
+        };
+        roomlist.value = '[no choice]';
+        roomlist.style.display = 'none';
+        overlay.appendChild(roomlist);
+
+        refreshbutton = document.createElement('input');
+        refreshbutton.type = 'submit';
+        refreshbutton.value = 'Refresh list';
+        refreshbutton.id = 'room-refresh-button';
+        refreshbutton.onclick = function () {
+            socket.send(JSON.stringify({
+                type: 'room_list'
+            }));
+        };
+        refreshbutton.style.display = 'none';
+        overlay.appendChild(refreshbutton);
+
+        steamgrouplink = document.createElement('a');
+        steamgrouplink.id = 'steamgroup-link';
+        steamgrouplink.className = 'button';
+        steamgrouplink.href = 'http://steamcommunity.com/groups/ponyplace';
+        steamgrouplink.target = '_blank';
+        steamgrouplink.appendChild(document.createTextNode('Steam Group'));
+        overlay.appendChild(steamgrouplink);
+
+        accountsettingsbutton = document.createElement('input');
+        accountsettingsbutton.id = 'account-settings-button';
+        accountsettingsbutton.type = 'submit';
+        accountsettingsbutton.value = 'Account Settings';
+        accountsettingsbutton.onclick = function () {
+            accountsettings.style.display = 'block';
+        };
+        accountsettingsbutton.onclick = function () {
+            if (accountsettingsvisible) {
+                accountsettings.style.display = 'none';
+                accountsettingsvisible = false;
+            } else {
+                accountsettings.style.display = 'block'
+                accountsettingsvisible = true;
+            }
+        };
+        accountsettingsbutton.style.display = 'none';
+        overlay.appendChild(accountsettingsbutton);
+
+        accountsettings = document.createElement('div');
+        accountsettings.id = 'account-settings';
+        accountsettings.style.display = 'none';
+        accountsettingsvisible = false;
+        overlay.appendChild(accountsettings);
+
+        rmpassbutton = document.createElement('input');
+        rmpassbutton.type = 'submit';
+        rmpassbutton.value = 'Remove password';
+        rmpassbutton.onclick = function () {
+            socket.send(JSON.stringify({
+                type: 'console_command',
+                cmd: 'rmpass'
+            }));
+            accountsettings.style.display = 'none';
+        };
+        accountsettings.appendChild(rmpassbutton);
+
+        changepassbox = document.createElement('input');
+        changepassbox.type = 'password';
+        changepassbox.placeholder = 'new password';
+        accountsettings.appendChild(changepassbox);
+
+        changepassbutton = document.createElement('input');
+        changepassbutton.type = 'submit';
+        changepassbutton.value = 'Set/change password';
+        changepassbutton.onclick = function () {
+            if (changepassbox.value.length > 0) {
+                socket.send(JSON.stringify({
+                    type: 'console_command',
+                    cmd: 'setpass ' + changepassbox.value
+                }));
+                changepassbox.value = '';
+                accountsettings.style.display = 'none';
+            }
+        };
+        accountsettings.appendChild(changepassbutton);
+
+        chooser = document.createElement('div');
+        chooser.id = 'chooser';
+        chooservisible = false;
+        chooser.style.display = 'none';
+        overlay.appendChild(chooser);
+    }
+
+    function doLogin() {
+        loginbox.style.display = 'none';
+        localStorage.setItem('login-details', JSON.stringify({
+            nick: nickbox.value,
+            pass: passbox.value
+        }));
+        initNetwork();
+    }
+
+    function initGUI_loginbox() {
+        loginbox = document.createElement('div');
+        loginbox.id = 'loginbox';
+        loginbox.appendChild(document.createTextNode("Choose a nickname. (You'll only need a password if that nickname is protected)"));
+        overlay.appendChild(loginbox);
+
+        nickbox = document.createElement('input');
+        nickbox.type = 'text';
+        nickbox.placeholder = 'nickname';
+        nickbox.onkeypress = function (e) {
+            if (e.which === 13) {
+                doLogin();
+            }
+        };
+        loginbox.appendChild(nickbox);
+        nickbox.focus();
+
+        passbox = document.createElement('input');
+        passbox.type = 'password';
+        passbox.placeholder = 'password';
+        passbox.onkeypress = nickbox.onkeypress;
+        loginbox.appendChild(passbox);
+
+        // prepopulate from local storage
+        var data = localStorage.getItem('login-details');
+        if (data) {
+            data = JSON.parse(data);
+            nickbox.value = data.nick;
+            passbox.value = data.pass;
+        }
+
+        loginsubmit = document.createElement('input');
+        loginsubmit.type = 'submit';
+        loginsubmit.value = 'Connect';
+        loginsubmit.onclick = doLogin;
+        loginbox.appendChild(loginsubmit);
+    }
+    
+    function initGUI() {
+        document.body.innerHTML = '';
+        document.body.onkeypress = function (e) {
+            if (e.which == 13) {
+                chatbox.focus();
+                e.preventDefault();
+                return false;
+            }
+        };
+    
+        container = document.createElement('div');
+        container.id = 'container';
+        document.body.appendChild(container);
+
+        initGUI_stage();
         
+        overlay = document.createElement('div');
+        overlay.id = 'overlay';
+        container.appendChild(overlay);
+
         userManager.initGUI();
+
+        initGUI_topbar();
+        initGUI_chatbar();
+        initGUI_loginbox();
     }
 
     function initNetwork() {
