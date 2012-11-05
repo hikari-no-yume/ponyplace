@@ -332,12 +332,13 @@ function handleCommand(cmd, myNick, user) {
     // mod help
     } else if (isMod && cmd.substr(0, 7) === 'modhelp') {
         sendMultiLine([
-            'Five user commands are available: 1) whereis, 2) list, 3) join, 4) setpass, 5) rmpass',
-            '1. whereis - Takes a nick, tells you what room someone is in, e.g. /whereis someguy',
-            '2. list - Lists available rooms, e.g. /list',
-            "3. join - Joins a room, e.g. /join library - if that room doesn't exist, an ephemeral room will be created",
-            '4. setpass - Creates an account with given password or changes the password, e.g. /setpass opensesame',
-            '5. rmpass - Deletes your account, e.g. /rmpass',
+            'Five mod commands available: 1) kick, 2) kickban, 3) broadcast, 4) aliases, 5) move, 6) bits',
+            '1. kick - Takes the nick of someone, they (& any aliases) will be kicked, e.g. /kick sillyfilly',
+            '2. kickban - Like /kick but also permabans by IP, e.g. /kickban stupidfilly',
+            '3. broadcast - Sends a message to everyone on the server, e.g. /broadcast Hello all!',
+            "4. aliases - Lists someone's aliases (people with same IP address), e.g. /aliases joebloggs",
+            '5. move - Forcibly moves a user to a room, e.g. /move canterlot sillyfilly',
+            "6. bits - Adds to or removes from someone's bits balance, e.g. /bits 20 ajf, /bits -10 otherguy",
             'See also: /help'
         ]);
     // kickbanning
@@ -428,6 +429,35 @@ function handleCommand(cmd, myNick, user) {
         });
         console.log('Broadcasted message "' + broadcast + '" from user "' + myNick + '"');
         sendLine('Broadcasted message');
+    // change bits
+    } else if (isMod && cmd.substr(0, 5) === 'bits ') {
+        var pos = cmd.indexOf(' ', 5);
+        if (pos !== -1) {
+            var amount = cmd.substr(5, pos-5);
+            var receiver = cmd.substr(pos+1);
+            if (!User.has(receiver)) {
+                sendLine('There is no user with nick: "' + receiver + '"');
+                return;
+            }
+            if (User.hasBits(receiver) === null) {
+                sendLine('The user with nick: "' + receiver + '" does not have an account.');
+                return;
+            }
+            amount = parseInt(amount);
+            if (Number.isNaN(amount) || !Number.isFinite(amount)) {
+                sendLine('Amount is not valid');
+                return;
+            }
+            if (User.changeBits(receiver, amount)) {
+                sendLine('Changed balance of user with nick: "' + receiver + '" by ' + amount + ' bits ');
+                sendLine('Your bits balance was changed by the amount ' + amount + ' bits by user with nick: "' + user.nick + '"', receiver);
+            } else {
+                sendLine("Failed to change user's bits balance");
+            }
+        } else {
+            sendLine('/move takes a room and a nickname');
+            return;
+        }
     // unknown
     } else {
         sendLine('Unknown command');

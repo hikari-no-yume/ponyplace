@@ -103,16 +103,28 @@ User.hasBits = function (nick) {
 User.changeBits = function (nick, amount) {
     if (this.hasPassword(nick)) {
         if (this.userData.hasOwnProperty(nick)) {
+            if (this.userData[nick].bits + amount < 0) {
+                return false;
+            }
             this.userData[nick].bits += amount;
         } else {
+            if (amount < 0) {
+                return false;
+            }
             this.userData[nick] = {
                 bits: amount
             }
         }
         this.save();
-    } else {
-        return false;
+        if (User.has(nick)) {
+            User.get(nick).send({
+                'type': 'have_bits',
+                'amount': this.hasBits(nick)
+            });
+        }
+        return true;
     }
+    return false;
 };
 
 User.get = function (nick) {
