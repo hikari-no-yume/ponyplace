@@ -12,6 +12,11 @@ body {
     overflow: hidden;
 }
 
+#credits {
+    color: white;
+    background-color: black;
+}
+
 h1 {
     margin: 0;
     color: rgb(253, 143, 162);
@@ -90,7 +95,6 @@ h1, p {
 #background-iframe {
     border: 0;
     position: absolute;
-    background-color: white;
 }
 
 #music {
