@@ -91,8 +91,8 @@ User.hasPassword = function (nick) {
 
 User.hasBits = function (nick) {
     if (this.hasPassword(nick)) {
-        if (this.specialUsers.hasOwnProperty(nick)) {
-            return this.specialUsers[nick].bits;
+        if (this.userData.hasOwnProperty(nick)) {
+            return this.userData[nick].bits;
         } else {
             return 0;
         }
@@ -102,10 +102,10 @@ User.hasBits = function (nick) {
 };
 User.changeBits = function (nick, amount) {
     if (this.hasPassword(nick)) {
-        if (this.specialUsers.hasOwnProperty(nick)) {
-            this.specialUsers[nick].bits += amount;
+        if (this.userData.hasOwnProperty(nick)) {
+            this.userData[nick].bits += amount;
         } else {
-            this.specialUsers[nick] = {
+            this.userData[nick] = {
                 bits: amount
             }
         }

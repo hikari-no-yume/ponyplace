@@ -235,17 +235,6 @@ function handleCommand(cmd, myNick, user) {
     
     // help
     if (cmd.substr(0, 4) === 'help') {
-        if (isMod) {
-            sendMultiLine([
-                'Five moderator commands are available: 1) kick, 2) kickban, 3) broadcast, 4) aliases, 5) move',
-                '1. kick - Takes the nick of someone, they (& any aliases) will be kicked, e.g. /kick sillyfilly',
-                '2. kickban - Like /kick but also permabans by IP, e.g. /kickban stupidfilly',
-                '3. broadcast - Sends a message to everyone on the server, e.g. /broadcast Hello all!',
-                "4. aliases - Lists someone's aliases (people with same IP address), e.g. /aliases joebloggs",
-                '5. move - Forcibly moves a user to a room, e.g. /move canterlot sillyfilly'
-            ]);
-            
-        }
         sendMultiLine([
             'Five user commands are available: 1) whereis, 2) list, 3) join, 4) setpass, 5) rmpass',
             '1. whereis - Takes a nick, tells you what room someone is in, e.g. /whereis someguy',
@@ -254,6 +243,9 @@ function handleCommand(cmd, myNick, user) {
             '4. setpass - Creates an account with given password or changes the password, e.g. /setpass opensesame',
             '5. rmpass - Deletes your account, e.g. /rmpass'
         ]);
+        if (isMod) {
+            sendLine('See also: /modhelp');
+        }
     // where is
     } else if (cmd.substr(0, 8) === 'whereis ') {
         var unfound = cmd.substr(8);
@@ -337,6 +329,17 @@ function handleCommand(cmd, myNick, user) {
         } else {
             sendLine("You don't have an account");
         }
+    // mod help
+    } else if (isMod && cmd.substr(0, 7) === 'modhelp') {
+        sendMultiLine([
+            'Five user commands are available: 1) whereis, 2) list, 3) join, 4) setpass, 5) rmpass',
+            '1. whereis - Takes a nick, tells you what room someone is in, e.g. /whereis someguy',
+            '2. list - Lists available rooms, e.g. /list',
+            "3. join - Joins a room, e.g. /join library - if that room doesn't exist, an ephemeral room will be created",
+            '4. setpass - Creates an account with given password or changes the password, e.g. /setpass opensesame',
+            '5. rmpass - Deletes your account, e.g. /rmpass',
+            'See also: /help'
+        ]);
     // kickbanning
     } else if (isMod && cmd.substr(0, 8) === 'kickban ') {
         var kickee = cmd.substr(8);
