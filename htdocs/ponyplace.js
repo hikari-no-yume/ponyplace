@@ -402,7 +402,7 @@
     var container,
         overlay,
         loginbox, nickbox, passbox, loginsubmit,
-        accountsettings, accountsettingsbutton, changepassbox, changepassbutton, rmpassbutton,
+        accountsettings, accountsettingsbutton, accountsettingsvisible, changepassbox, changepassbutton, rmpassbutton,
         outerstage, stage,
         steamgrouplink,
         chooser, chooserbutton,
@@ -850,6 +850,7 @@
         accountsettings = document.createElement('div');
         accountsettings.id = 'account-settings';
         accountsettings.style.display = 'none';
+        accountsettingsvisible = false;
         overlay.appendChild(accountsettings);
 
         rmpassbutton = document.createElement('input');
@@ -890,6 +891,15 @@
         accountsettingsbutton.value = 'Account Settings';
         accountsettingsbutton.onclick = function () {
             accountsettings.style.display = 'block';
+        };
+        accountsettingsbutton.onclick = function () {
+            if (accountsettingsvisible) {
+                accountsettings.style.display = 'none';
+                accountsettingsvisible = false;
+            } else {
+                accountsettings.style.display = 'block'
+                accountsettingsvisible = true;
+            }
         };
         accountsettingsbutton.style.display = 'none';
         overlay.appendChild(accountsettingsbutton);
