@@ -636,7 +636,7 @@ wsServer.on('request', function(request) {
         console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.');
         if (user !== null && User.has(myNick)) {
             // remove from users map
-            user.remove();
+            user.kill();
             
             // don't if in null room (lobby)
             if (user.room !== null) {

@@ -14,7 +14,7 @@ function User (nick, conn, obj, special, room) {
     User.users[nick] = this;
     User.userCount++;
 }
-User.prototype.remove = function () {
+User.prototype.kill = function () {
     delete User.users[this.nick];
 
     User.userCount--;
