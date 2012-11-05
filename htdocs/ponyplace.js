@@ -399,7 +399,16 @@
     
     var socket, connected = false, ignoreDisconnect = false, me, myNick, myRoom = null, mySpecialStatus, lastmove = (new Date().getTime()), globalUserCount = 0;
     
-    var container, loginbox, nickbox, passbox, loginsubmit, overlay, outerstage, stage, steamgrouplink, chooser, chooserbutton, roomlist, refreshbutton, background, backgroundIframe, chatbox, chatboxholder, chatbutton, chatlog, fullchatlog, fullchatlogbutton, fullchatlogvisible;
+    var container,
+        overlay,
+        loginbox, nickbox, passbox, loginsubmit,
+        accountsettings, accountsettingsbutton, changepassbox, changepassbutton, rmpassbutton,
+        outerstage, stage,
+        steamgrouplink,
+        chooser, chooserbutton,
+        roomlist, refreshbutton,
+        background, backgroundIframe,
+        chatbox, chatboxholder, chatbutton, chatlog, fullchatlog, fullchatlogbutton, fullchatlogvisible;
     
     var userManager = {
         users: {},
@@ -722,6 +731,21 @@
         // update URL hash
         window.location.hash = room.name;
     }
+
+    // show GUI elements hidden pre-connection
+    function onConnect() {
+        chatbox.focus();
+
+        accountsettingsbutton.style.display = 'block';
+        chatboxholder.style.display = 'block';
+        chatbutton.style.display = 'block';
+        fullchatlogbutton.style.display = 'inline-block';
+        refreshbutton.style.display = 'inline-block';
+        roomlist.style.display = 'inline-block';
+        chooserbutton.style.display = 'inline-block';
+        
+        stage.style.display = 'block';
+    }
     
     function initGUI() {
         document.body.innerHTML = '';
@@ -744,6 +768,7 @@
 
         stage = document.createElement('div');
         stage.id = 'stage';
+        stage.style.display = 'none';
         outerstage.appendChild(stage);
 
         background = document.createElement('img');
@@ -788,7 +813,7 @@
         
         loginbox = document.createElement('div');
         loginbox.id = 'loginbox';
-        loginbox.appendChild(document.createTextNode("Choose a nickname. (You'll only need a password if it has been protected)"));
+        loginbox.appendChild(document.createTextNode("Choose a nickname. (You'll only need a password if that nickname is protected)"));
         overlay.appendChild(loginbox);
 
         nickbox = document.createElement('input');
@@ -821,6 +846,53 @@
         loginsubmit.value = 'Connect';
         loginsubmit.onclick = doLogin;
         loginbox.appendChild(loginsubmit);
+
+        accountsettings = document.createElement('div');
+        accountsettings.id = 'account-settings';
+        accountsettings.style.display = 'none';
+        overlay.appendChild(accountsettings);
+
+        rmpassbutton = document.createElement('input');
+        rmpassbutton.type = 'submit';
+        rmpassbutton.value = 'Remove password';
+        rmpassbutton.onclick = function () {
+            socket.send(JSON.stringify({
+                type: 'console_command',
+                cmd: 'rmpass'
+            }));
+            accountsettings.style.display = 'none';
+        };
+        accountsettings.appendChild(rmpassbutton);
+
+        changepassbox = document.createElement('input');
+        changepassbox.type = 'password';
+        changepassbox.placeholder = 'new password';
+        accountsettings.appendChild(changepassbox);
+
+        changepassbutton = document.createElement('input');
+        changepassbutton.type = 'submit';
+        changepassbutton.value = 'Set/change password';
+        changepassbutton.onclick = function () {
+            if (changepassbox.value.length > 0) {
+                socket.send(JSON.stringify({
+                    type: 'console_command',
+                    cmd: 'setpass ' + changepassbox.value
+                }));
+                changepassbox.value = '';
+                accountsettings.style.display = 'none';
+            }
+        };
+        accountsettings.appendChild(changepassbutton);
+
+        accountsettingsbutton = document.createElement('input');
+        accountsettingsbutton.id = 'account-settings-button';
+        accountsettingsbutton.type = 'submit';
+        accountsettingsbutton.value = 'Account Settings';
+        accountsettingsbutton.onclick = function () {
+            accountsettings.style.display = 'block';
+        };
+        accountsettingsbutton.style.display = 'none';
+        overlay.appendChild(accountsettingsbutton);
         
         steamgrouplink = document.createElement('a');
         steamgrouplink.id = 'steamgroup-link';
@@ -854,6 +926,7 @@
                 fullchatlog.scrollTop = fullchatlog.scrollHeight;
             }
         };
+        fullchatlogbutton.style.display = 'none';
         overlay.appendChild(fullchatlogbutton);
 
         refreshbutton = document.createElement('input');
@@ -865,6 +938,7 @@
                 type: 'room_list'
             }));
         };
+        refreshbutton.style.display = 'none';
         overlay.appendChild(refreshbutton);
 
         roomlist = document.createElement('select');
@@ -889,6 +963,7 @@
             roomlist.value = '[no choice]';
         };
         roomlist.value = '[no choice]';
+        roomlist.style.display = 'none';
         overlay.appendChild(roomlist);
         
         function handleChatMessage() {
@@ -911,6 +986,7 @@
 
         chatboxholder = document.createElement('div');
         chatboxholder.id = 'chatbox-holder';
+        chatboxholder.style.display = 'none';
         container.appendChild(chatboxholder);
         
         chatbox = document.createElement('input');
@@ -931,6 +1007,7 @@
         chatbutton.onclick = function (e) {
             handleChatMessage();
         };
+        chatbutton.style.display = 'none';
         container.appendChild(chatbutton);
 
         chooser = document.createElement('div');
@@ -990,6 +1067,7 @@
             }
             container.appendChild(chooser);
         };
+        chooserbutton.style.display = 'none';
         overlay.appendChild(chooserbutton);
         
         userManager.initGUI();
@@ -1030,7 +1108,7 @@
                 }));
             }
 
-            chatbox.focus();
+            onConnect();
         };
         socket.onclose = function (e) {
             connected = false;
