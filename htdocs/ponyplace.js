@@ -405,7 +405,7 @@
         accountsettings, accountsettingsbutton, accountsettingsvisible, changepassbox, changepassbutton, rmpassbutton,
         outerstage, stage,
         steamgrouplink,
-        chooser, chooserbutton,
+        chooser, chooserbutton, chooservisible,
         roomlist, refreshbutton,
         background, backgroundIframe,
         chatbox, chatboxholder, chatbutton, chatlog, fullchatlog, fullchatlogbutton, fullchatlogvisible;
@@ -1022,6 +1022,7 @@
 
         chooser = document.createElement('div');
         chooser.id = 'chooser';
+        chooservisible = false;
         chooser.style.display = 'none';
         
         chooserbutton = document.createElement('input');
@@ -1029,51 +1030,58 @@
         chooserbutton.type = 'submit';
         chooserbutton.value = 'Change Avatar';
         chooserbutton.onclick = function () {
-            chooser.style.display = 'block';
-            chooser.innerHTML = '';
-            var last = '', cur = '';
-            for (var i = 0; i < ponies.length; i++) {
-                // split pony name prefix
-                cur = ponies[i].split('_', 1)[0];
-                if (cur === last) {
-                    // only show first avatar
-                    continue;
-                } else {
-                    last = cur;
-                }
+            if (chooservisible) {
+                chooser.style.display = 'none';
+                chooservisible = false;
+            } else {
+                chooservisible = true;
+                chooser.style.display = 'block';
+                chooser.innerHTML = '';
+                var last = '', cur = '';
+                for (var i = 0; i < ponies.length; i++) {
+                    // split pony name prefix
+                    cur = ponies[i].split('_', 1)[0];
+                    if (cur === last) {
+                        // only show first avatar
+                        continue;
+                    } else {
+                        last = cur;
+                    }
 
-                var preview = document.createElement('img');
-                preview.src = 'media/' + ponies[i];
-                preview.className = 'chooser-preview';
-                (function (imgid, prefix) {
-                    preview.onclick = function () {
-                        chooser.innerHTML = '';
-                        for (var i = imgid; i < ponies.length; i++) {
-                            // split pony name prefix
-                            if (ponies[i].split('_', 1)[0] !== prefix) {
-                                // only show avatars for that pony
-                                break;
+                    var preview = document.createElement('img');
+                    preview.src = 'media/' + ponies[i];
+                    preview.className = 'chooser-preview';
+                    (function (imgid, prefix) {
+                        preview.onclick = function () {
+                            chooser.innerHTML = '';
+                            for (var i = imgid; i < ponies.length; i++) {
+                                // split pony name prefix
+                                if (ponies[i].split('_', 1)[0] !== prefix) {
+                                    // only show avatars for that pony
+                                    break;
+                                }
+                                var preview = document.createElement('img');
+                                preview.src = 'media/' + ponies[i];
+                                preview.className = 'chooser-preview';
+                                (function (imgid) {
+                                    preview.onclick = function () {
+                                        me.img = imgid;
+                                        pushAndUpdateState(me);
+                                        chooser.style.display = 'none';
+                                        chooservisible = false;
+                                        if (ponies[imgid].indexOf('_upsidedown') !== -1) {
+                                            container.className = 'upside-down';
+                                        } else {
+                                            container.className = '';
+                                        }
+                                    };
+                                }(i));
+                                chooser.appendChild(preview);
                             }
-                            var preview = document.createElement('img');
-                            preview.src = 'media/' + ponies[i];
-                            preview.className = 'chooser-preview';
-                            (function (imgid) {
-                                preview.onclick = function () {
-                                    me.img = imgid;
-                                    pushAndUpdateState(me);
-                                    chooser.style.display = 'none';
-                                    if (ponies[imgid].indexOf('_upsidedown') !== -1) {
-                                        container.className = 'upside-down';
-                                    } else {
-                                        container.className = '';
-                                    }
-                                };
-                            }(i));
-                            chooser.appendChild(preview);
-                        }
-                    };
-                }(i, cur));
-                chooser.appendChild(preview);
+                        };
+                    }(i, cur));
+                    chooser.appendChild(preview);
+                }
             }
             container.appendChild(chooser);
         };
