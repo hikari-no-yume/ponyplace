@@ -562,9 +562,6 @@ wsServer.on('request', function(request) {
             connection.close();
             return;
         }
-        
-        // Detect owner/mod/bot status
-        var special = User.getSpecialStatus(msg.nick);
 
         // Prevent stupidity
         if (msg.password && !User.hasPassword(msg.nick)) {
@@ -619,6 +616,7 @@ wsServer.on('request', function(request) {
         }));
 
         // tell client they have special status, if they do
+        var special = User.getSpecialStatus(msg.nick);
         if (special) {
             connection.sendUTF(JSON.stringify({
                 type: 'are_special',
@@ -627,7 +625,7 @@ wsServer.on('request', function(request) {
         }
         
         myNick = msg.nick;
-        user = new User(msg.nick, connection, msg.obj, special, null);
+        user = new User(msg.nick, connection, msg.obj, null);
         
         // call onMessage for subsequent messages
         connection.on('message', onMessage);

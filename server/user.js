@@ -9,7 +9,7 @@ function User (nick, conn, obj, special, room) {
     this.conn = conn;
     this.obj = obj;
     this.room = room;
-    this.special = special;
+    this.special = User.getSpecialStatus(nick);
 
     User.users[nick] = this;
     User.userCount++;
