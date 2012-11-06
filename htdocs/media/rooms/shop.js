@@ -14,16 +14,21 @@
             for (var i = 0; i < catalogue.length; i++) {
                 var item = catalogue[i];
 
-                var have = 0;
+                var total = item.items.length;
+                var alreadyHave = 0;
                 for (var j = 0; j < item.items.length; j++) {
-                    if (item.items[0].type === 'avatar' && ponyplace.hasAvatar(item.items[0].avatar_name)) {
-                        have++;
+                    if (item.items[j].type === 'avatar'
+                        && ponyplace.hasAvatar(item.items[j].avatar_name)) {
+                        alreadyHave++;
+                    } else if (item.items[j].type === 'inventory_item'
+                        && ponyplace.hasInventoryItem(item.items[j].item_name)) {
+                        alreadyHave++;
                     }
                 }
 
                 var catalogueitem = document.createElement('div');
                 catalogueitem.className = 'catalogue-item';
-                if (have) {
+                if (alreadyHave) {
                     catalogueitem.className += ' catalogue-item-have';
                 }
 
@@ -36,13 +41,13 @@
                 h2.appendChild(document.createTextNode(item.name_full));
                 catalogueitem.appendChild(h2);
 
-                if (have) {
+                if (alreadyHave) {
                     var p = document.createElement('p');
-                    p.appendChild(document.createTextNode('You already have: ' + have + '/' + item.items.length + ' items of this product'));
+                    p.appendChild(document.createTextNode('You already have: ' + alreadyHave + '/' + total + ' items of this product'));
                     catalogueitem.appendChild(p);
                 }
 
-                if (have !== item.items.length) {
+                if (alreadyHave !== total || total === 0) {
                     var buy = document.createElement('input');
                     buy.type = 'submit';
                     buy.value = 'Buy for ' + item.price + ' bits';

@@ -20,6 +20,7 @@ User.prototype.sendAccountState = function () {
         special: User.getSpecialStatus(this.nick),
         bits: User.hasBits(this.nick),
         avatar_inventory: User.getAvatarInventory(this.nick),
+        inventory: User.getInventory(this.nick),
         have_account: User.hasPassword(this.nick)
     });
 };
@@ -157,6 +158,19 @@ User.giveAvatar = function (nick, avatar) {
     }
     this.setUserData(nick, 'avatarInventory', inventory);
 };
+User.getInventory = function (nick) {
+    return this.getUserData(nick, 'inventory', []);
+};
+User.hasInventoryItem = function (nick, item) {
+    return this.getInventory(nick).indexOf(item) !== -1;
+};
+User.giveInventoryItem = function (nick, item) {
+    inventory = this.getInventory(nick);
+    if (inventory.indexOf(item) === -1) {
+        inventory.push(item);
+    }
+    this.setUserData(nick, 'inventory', inventory);
+};
 User.getCatalogue = function (name) {
     if (this.catalogues.hasOwnProperty(name)) {
         return this.catalogues[name];
@@ -169,12 +183,27 @@ User.buyFromCatalogue = function (nick, name, index) {
         if (catalogue.hasOwnProperty(index)) {
             var product = catalogue[index];
             if (this.changeBits(nick, -product.price)) {
+                var total = product.items.length;
+                var alreadyHave = 0;
                 for (var i = 0; i < product.items.length; i++) {
-                    var item = product.items[0];
+                    var item = product.items[i];
+                    if (product.items[0].type === 'avatar'
+                        && this.hasAvatar(nick, item.avatar_name)) {
+                        alreadyHave++;
+                    } else if (product.items[0].type === 'inventory_item'
+                        && this.hasInventoryItem(nick, item.item_name)) {
+                        alreadyHave++;
+                    }
+                }
+                if (alreadyHave === total && total !== 0) {
+                    return false;
+                }
+                for (var i = 0; i < product.items.length; i++) {
+                    var item = product.items[i];
                     if (item.type === 'avatar') {
-                        if (!this.hasAvatar(nick, item.avatar_name)) {
-                            this.giveAvatar(nick, item.avatar_name);
-                        }
+                        this.giveAvatar(nick, item.avatar_name);
+                    } else if (item.type === 'inventory_item') {
+                        this.giveInventoryItem(nick, item.item_name);
                     } else {
                         console.log('Unknown product item type: "' + item.type + '"!');
                     }

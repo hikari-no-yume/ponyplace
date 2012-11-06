@@ -1,4 +1,17 @@
 {
+    "free_money": [
+        {
+            "name_full": "3000 bits, free",
+            "items": [
+                {
+                    "type": "inventory_item",
+                    "item_name": "3000_bits_free"
+                }
+            ],
+            "price": -3000,
+            "img": "/media/store/buy-more.png"
+        }
+    ],
     "carousel_boutique": [
         {
             "items": [
@@ -327,11 +340,11 @@
             "items": [
                 {
                     "type": "avatar",
-                    "name": "fillypinkiepie"
+                    "avatar_name": "fillypinkiepie"
                 },
                 {
                     "type": "avatar",
-                    "name": "fillypinkiepie2"
+                    "avatar_name": "fillypinkiepie2"
                 }
             ],
             "name_full": "Filly Pinkie Pie",

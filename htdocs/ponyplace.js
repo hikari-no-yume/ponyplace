@@ -13,7 +13,7 @@
     var avatars = [];
     
     var socket, connected = false, ignoreDisconnect = false,
-        me, myNick, myRoom = null, mySpecialStatus, avatarInventory, haveAccount = false,
+        me, myNick, myRoom = null, mySpecialStatus, avatarInventory, inventory = [], haveAccount = false,
         lastmove = (new Date().getTime()), 
         globalUserCount = 0,
         catalogueCallback = null;
@@ -767,6 +767,9 @@
             hasAvatar: function (name) {
                 return (avatarInventory.indexOf(name) !== -1);
             },
+            hasInventoryItem: function (name) {
+                return (inventory.indexOf(name) !== -1);
+            },
             hasAccount: function () {
                 return haveAccount;
             }
@@ -840,6 +843,7 @@
                         bitcount.appendChild(document.createTextNode('???'));
                     }
                     avatarInventory = msg.avatar_inventory;
+                    inventory = msg.inventory;
                     chooserbutton.style.display = 'inline-block';
                     haveAccount = msg.have_account;
                     accountsettingsbutton.style.display = 'block';

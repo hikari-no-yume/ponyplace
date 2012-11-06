@@ -594,7 +594,7 @@ wsServer.on('request', function(request) {
                 } else {
                     user.send({
                         type: 'console_msg',
-                        msg: 'Buying item failed - do you have enough money?'
+                        msg: 'Buying product failed - do you have enough money, or already have the product?'
                     });
                 }
             break;

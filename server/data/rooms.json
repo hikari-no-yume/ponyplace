@@ -153,7 +153,13 @@
             "data": "media/background-dungeon.png",
             "width": 1176,
             "height": 660,
-            "iframe": false
+            "iframe": {
+                "src": "media/rooms/free-money.html",
+                "left": 483,
+                "top": 45,
+                "width": 260,
+                "height": 140
+            }
         },
         "user_count": 0,
         "user_noun": "prisoners",
