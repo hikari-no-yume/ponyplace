@@ -14,6 +14,14 @@ function User (nick, conn, obj, special, room) {
     User.users[nick] = this;
     User.userCount++;
 }
+User.prototype.sendAccountState = function () {
+    this.send({
+        type: 'account_state',
+        special: User.getSpecialStatus(this.nick),
+        bits: User.hasBits(this.nick),
+        have_avatars: User.avatars
+    });
+};
 User.prototype.kill = function () {
     delete User.users[this.nick];
 
@@ -35,8 +43,11 @@ User.userCount = 0;
 User.passwords = {};
 User.specialUsers = {};
 User.userData = {};
+User.avatars = {};
 
 User.init = function () {
+    this.avatars = JSON.parse(fs.readFileSync('data/avatars.json'));
+    console.log('Loaded avatars list');
     this.passwords = JSON.parse(fs.readFileSync('data/passwords.json'));
     console.log('Loaded passwords');
     this.specialUsers = JSON.parse(fs.readFileSync('data/special-users.json'));
@@ -117,10 +128,7 @@ User.changeBits = function (nick, amount) {
         }
         this.save();
         if (User.has(nick)) {
-            User.get(nick).send({
-                'type': 'have_bits',
-                'amount': this.hasBits(nick)
-            });
+            User.get(nick).sendAccountState();
         }
         return true;
     }

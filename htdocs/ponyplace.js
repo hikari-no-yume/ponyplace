@@ -10,392 +10,7 @@
     var ROOM_HEIGHT = 660;
     var PONY_WIDTH = 168, PONY_HEIGHT = 168;
     
-    var ponies = [
-        'derpy_left.gif',
-        'derpy_right.gif',
-        'derpy_left_walk.gif',
-        'derpy_right_walk.gif',
-        'derpy_left_hover.gif',
-        'derpy_right_hover.gif',
-        'derpy_left_hover_upsidedown.gif',
-        'derpy_right_hover_upsidedown.gif',
-        'derpy_left_sleep.gif',
-        'derpy_right_sleep.gif',
-        'vinylscratch_left.gif',
-        'vinylscratch_right.gif',
-        'vinylscratch_left_walk.gif',
-        'vinylscratch_right_walk.gif',
-        'vinylscratch_left_dance.gif',
-        'vinylscratch_right_dance.gif',
-        'octavia_left.gif',
-        'octavia_right.gif',
-        'octavia_left_shades.gif',
-        'octavia_right_shades.gif',
-        'octavia_left_walk.gif',
-        'octavia_right_walk.gif',
-        'octavia_left_cello.gif',
-        'octavia_right_cello.gif',
-        'discord_left.gif',
-        'discord_right.gif',
-        'maredowell_left.gif',
-        'maredowell_right.gif',
-        'maredowell_left_walk.gif',
-        'maredowell_right_walk.gif',
-        'maredowell_left_run.gif',
-        'maredowell_right_run.gif',
-        'maredowell_left_hover.gif',
-        'maredowell_right_hover.gif',
-        'maredowell_left_fly.gif',
-        'maredowell_right_fly.gif',
-        'spike_left.gif',
-        'spike_right.gif',
-        'spike_left_walk.gif',
-        'spike_right_walk.gif',
-        'spike_left_float.gif',
-        'spike_right_float.gif',
-        'carrottop_left.gif',
-        'carrottop_right.gif',
-        'carrottop_left_walk.gif',
-        'carrottop_right_walk.gif',
-        'colgate_left.gif',
-        'colgate_right.gif',
-        'colgate_left_walk.gif',
-        'colgate_right_walk.gif',
-        'colgate_left_sit.gif',
-        'colgate_right_sit.gif',
-        'doctorwhooves_left.gif',
-        'doctorwhooves_right.gif',
-        'doctorwhooves_left_walk.gif',
-        'doctorwhooves_right_walk.gif',
-        'rainbowdash_left.gif',
-        'rainbowdash_right.gif',
-        'rainbowdash_left_walk.gif',
-        'rainbowdash_right_walk.gif',
-        'rainbowdash_left_conga.gif',
-        'rainbowdash_right_conga.gif',
-        'rainbowdash_left_dinosaur.gif',
-        'rainbowdash_right_dinosaur.gif',
-        'rainbowdash_left_run.gif',
-        'rainbowdash_right_run.gif',
-        'rainbowdash_left_hover.gif',
-        'rainbowdash_right_hover.gif',
-        'rainbowdash_left_hover_dizzy.gif',
-        'rainbowdash_right_hover_dizzy.gif',
-        'rainbowdash_left_fly.gif',
-        'rainbowdash_right_fly.gif',
-        'rainbowdash_left_sleep.gif',
-        'rainbowdash_right_sleep.gif',
-        'fillyrainbowdash_left.gif',
-        'fillyrainbowdash_right.gif',
-        'fillyrainbowdash_left_walk.gif',
-        'fillyrainbowdash_right_walk.gif',
-        'fillyrainbowdash_left_hover.gif',
-        'fillyrainbowdash_right_hover.gif',
-        'fillyrainbowdash_left_fly.gif',
-        'fillyrainbowdash_right_fly.gif',
-        'tank_left_hover.gif',
-        'tank_right_hover.gif',
-        'daringdo_left.gif',
-        'daringdo_right.gif',
-        'daringdo_left_walk.gif',
-        'daringdo_right_walk.gif',
-        'ironwill_left_walk.gif',
-        'ironwill_right_walk.gif',
-        'fluttershy_left.gif',
-        'fluttershy_right.gif',
-        'fluttershy_left_walk.gif',
-        'fluttershy_right_walk.gif',
-        'fluttershy_left_conga.gif',
-        'fluttershy_right_conga.gif',
-        'fluttershy_left_hover.gif',
-        'fluttershy_right_hover.gif',
-        'fluttershy_left_sleep.gif',
-        'fluttershy_right_sleep.gif',
-        'fillyfluttershy_left.gif',
-        'fillyfluttershy_right.gif',
-        'fillyfluttershy_left_walk.gif',
-        'fillyfluttershy_right_walk.gif',
-        'fillyfluttershy_left_hover.gif',
-        'fillyfluttershy_right_hover.gif',
-        'fillyfluttershy_left_sit.gif',
-        'fillyfluttershy_right_sit.gif',
-        'fillyfluttershy_left_sleep.gif',
-        'fillyfluttershy_right_sleep.gif',
-        'angel_left.gif',
-        'angel_right.gif',
-        'angel_left_hop.gif',
-        'angel_right_hop.gif',
-        'angel_left_happy.gif',
-        'angel_right_happy.gif',
-        'photofinish_left.png',
-        'photofinish_right.png',
-        'photofinish_left_walk.gif',
-        'photofinish_right_walk.gif',
-        'photofinish_left_run.gif',
-        'photofinish_right_run.gif',
-        'spitfire_left.gif',
-        'spitfire_right.gif',
-        'spitfire_left_walk.gif',
-        'spitfire_right_walk.gif',
-        'spitfire_left_hover.gif',
-        'spitfire_right_hover.gif',
-        'spitfire_left_fly.gif',
-        'spitfire_right_fly.gif',
-        'spitfire2_left.gif',
-        'spitfire2_right.gif',
-        'spitfire2_left_walk.gif',
-        'spitfire2_right_walk.gif',
-        'spitfire2_left_hover.gif',
-        'spitfire2_right_hover.gif',
-        'soarin_left.gif',
-        'soarin_right.gif',
-        'soarin_left_walk.gif',
-        'soarin_right_walk.gif',
-        'soarin_left_hover.gif',
-        'soarin_right_hover.gif',
-        'soarin_left_pie.gif',
-        'soarin_right_pie.gif',
-        'bigcelestia_left.gif',
-        'bigcelestia_right.gif',
-        'bigcelestia_left_walk.gif',
-        'bigcelestia_right_walk.gif',
-        'bigcelestia_left_hover.gif',
-        'bigcelestia_right_hover.gif',
-        'celestia_left.gif',
-        'celestia_right.gif',
-        'celestia_left_walk.gif',
-        'celestia_right_walk.gif',
-        'celestia_left_walk_troll.gif',
-        'celestia_right_walk_troll.gif',
-        'celestia_left_hover.gif',
-        'celestia_right_hover.gif',
-        'celestia_left_sleep.gif',
-        'celestia_right_sleep.gif',
-        'fillycelestia_left.gif',
-        'fillycelestia_right.gif',
-        'fillycelestia_left_walk.gif',
-        'fillycelestia_right_walk.gif',
-        'fillycelestia_left_sit.gif',
-        'fillycelestia_right_sit.gif',
-        'fillycelestia_left_sleep.gif',
-        'fillycelestia_right_sleep.gif',
-        'nightmaremoon_left.gif',
-        'nightmaremoon_right.gif',
-        'nightmaremoon_left_walk.gif',
-        'nightmaremoon_right_walk.gif',
-        'luna2_left.gif',
-        'luna2_right.gif',
-        'luna2_left_walk.gif',
-        'luna2_right_walk.gif',
-        'luna_left.gif',
-        'luna_right.gif',
-        'luna_left_walk.gif',
-        'luna_right_walk.gif',
-        'luna_left_hover.gif',
-        'luna_right_hover.gif',
-        'luna_left_jump.gif',
-        'luna_right_jump.gif',
-        'luna_left_sleep.gif',
-        'luna_right_sleep.gif',
-        'fillyluna_left.gif',
-        'fillyluna_right.gif',
-        'fillyluna_left_walk.gif',
-        'fillyluna_right_walk.gif',
-        'fillyluna_left_hover.gif',
-        'fillyluna_right_hover.gif',
-        'fillyluna_left_sleep.gif',
-        'fillyluna_right_sleep.gif',
-        'twilight_left.gif',
-        'twilight_right.gif',
-        'twilight_left_walk.gif',
-        'twilight_right_walk.gif',
-        'twilight_left_conga.gif',
-        'twilight_right_conga.gif',
-        'twilight_left_run.gif',
-        'twilight_right_run.gif',
-        'twilight_left_crazy.gif',
-        'twilight_right_crazy.gif',
-        'fillytwilight_left.gif',
-        'fillytwilight_right.gif',
-        'fillytwilight_left_walk.gif',
-        'fillytwilight_right_walk.gif',
-        'fillytwilight_left_dance.gif',
-        'fillytwilight_right_dance.gif',
-        'rarity_left.gif',
-        'rarity_right.gif',
-        'rarity_left_walk.gif',
-        'rarity_right_walk.gif',
-        'rarity_left_conga.gif',
-        'rarity_right_conga.gif',
-        'rarity_left_hover.gif',
-        'rarity_right_hover.gif',
-        'rarity_left_sleep.gif',
-        'rarity_right_sleep.gif',
-        'fillyrarity_left.gif',
-        'fillyrarity_right.gif',
-        'fillyrarity_left_walk.gif',
-        'fillyrarity_right_walk.gif',
-        'fillyrarity_left_sleep.gif',
-        'fillyrarity_right_sleep.gif',
-        'opalescence_left.gif',
-        'opalescence_right.gif',
-        'opalescence_left_walk.gif',
-        'opalescence_right_walk.gif',
-        'opalescence_left_roll.gif',
-        'opalescence_right_roll.gif',
-        'royalguard_left.gif',
-        'royalguard_right.gif',
-        'royalguard_left_walk.gif',
-        'royalguard_right_walk.gif',
-        'royalguard_left_hover.gif',
-        'royalguard_right_hover.gif',
-        'pinkiepie_left.gif',
-        'pinkiepie_right.gif',
-        'pinkiepie_left_walk.gif',
-        'pinkiepie_right_walk.gif',
-        'pinkiepie_left_walk_mask.gif',
-        'pinkiepie_right_walk_mask.gif',
-        'pinkiepie_left_conga.gif',
-        'pinkiepie_right_conga.gif',
-        'pinkiepie_left_run.gif',
-        'pinkiepie_right_run.gif',
-        'pinkiepie_left_hover.gif',
-        'pinkiepie_right_hover.gif',
-        'pinkiepie_left_hover2.gif',
-        'pinkiepie_right_hover2.gif',
-        'pinkiepie_left_bounce.gif',
-        'pinkiepie_right_bounce.gif',
-        'pinkiepie_left_bounce_happy.gif',
-        'pinkiepie_right_bounce_happy.gif',
-        'pinkiepie_left_dance.gif',
-        'pinkiepie_right_dance.gif',
-        'crazypie_left.gif',
-        'crazypie_right.gif',
-        'crazypie_left_walk.gif',
-        'crazypie_right_walk.gif',
-        'fillypinkiepie_left.gif',
-        'fillypinkiepie_right.gif',
-        'fillypinkiepie_left_walk.gif',
-        'fillypinkiepie_right_walk.gif',
-        'fillypinkiepie2_left.gif',
-        'fillypinkiepie2_right.gif',
-        'fillypinkiepie2_left_walk.gif',
-        'fillypinkiepie2_right_walk.gif',
-        'fillypinkiepie2_left_dance.gif',
-        'fillypinkiepie2_right_dance.gif',
-        'gummy_left.gif',
-        'gummy_right.gif',
-        'gummy_left_walk.gif',
-        'gummy_right_walk.gif',
-        'gummy_left_bounce.gif',
-        'gummy_right_bounce.gif',
-        'berrypunch_left.gif',
-        'berrypunch_right.gif',
-        'berrypunch_left_walk.gif',
-        'berrypunch_right_walk.gif',
-        'berrypunch_left_sit.gif',
-        'berrypunch_right_sit.gif',
-        'berrypunch_left_sleep.gif',
-        'berrypunch_right_sleep.gif',
-        'bigmacintosh_left.gif',
-        'bigmacintosh_right.gif',
-        'bigmacintosh_left_walk.gif',
-        'bigmacintosh_right_walk.gif',
-        'bigmacintosh_left_sleep.gif',
-        'bigmacintosh_right_sleep.gif',
-        'grannysmith_left.gif',
-        'grannysmith_right.gif',
-        'grannysmith_left_walk.gif',
-        'grannysmith_right_walk.gif',
-        'grannysmith_left_sleep.gif',
-        'grannysmith_right_sleep.gif',
-        'grannysmith_left_chair.gif',
-        'grannysmith_right_chair.gif',
-        'braeburn_left.gif',
-        'braeburn_right.gif',
-        'braeburn_left_walk.gif',
-        'braeburn_right_walk.gif',
-        'applejack_left.gif',
-        'applejack_right.gif',
-        'applejack_left_walk.gif',
-        'applejack_right_walk.gif',
-        'applejack_left_conga.gif',
-        'applejack_right_conga.gif',
-        'applejack_left_gallop.gif',
-        'applejack_right_gallop.gif',
-        'fillyapplejack_left.gif',
-        'fillyapplejack_right.gif',
-        'fillyapplejack_left_walk.gif',
-        'fillyapplejack_right_walk.gif',
-        'fillyapplejack_left_travel.gif',
-        'fillyapplejack_right_travel.gif',
-        'winona_left.gif',
-        'winona_right.gif',
-        'winona_left_run.gif',
-        'winona_right_run.gif',
-        'applebloom_left.gif',
-        'applebloom_right.gif',
-        'applebloom_left_walk.gif',
-        'applebloom_right_walk.gif',
-        'applebloom_left_skip.gif',
-        'applebloom_right_skip.gif',
-        'scootaloo_left.gif',
-        'scootaloo_right.gif',
-        'scootaloo_left_walk.gif',
-        'scootaloo_right_walk.gif',
-        'scootaloo_left_skip.gif',
-        'scootaloo_right_skip.gif',
-        'scootaloo_left_scoot.gif',
-        'scootaloo_right_scoot.gif',
-        'scootaloo_left_basket.gif',
-        'scootaloo_right_basket.gif',
-        'sweetiebelle_left.gif',
-        'sweetiebelle_right.gif',
-        'sweetiebelle_left_walk.gif',
-        'sweetiebelle_right_walk.gif',
-        'sweetiebelle_left_sit.gif',
-        'sweetiebelle_right_sit.gif',
-        'sweetiebelle_left_jump.gif',
-        'sweetiebelle_right_jump.gif',
-        'sweetiebelle_left_skip.gif',
-        'sweetiebelle_right_skip.gif',
-        'sweetiebelle_left_scoot.gif',
-        'sweetiebelle_right_scoot.gif',
-        'sweetiebelle_left_cloud.gif',
-        'sweetiebelle_right_cloud.gif',
-        'cheerilee_left.gif',
-        'cheerilee_right.gif',
-        'cheerilee_left_walk.gif',
-        'cheerilee_right_walk.gif',
-        'bonbon_left.gif',
-        'bonbon_right.gif',
-        'bonbon_left_walk.gif',
-        'bonbon_right_walk.gif',
-        'bonbon_left_sleep.gif',
-        'bonbon_right_sleep.gif',        
-        'lyra_left.gif',
-        'lyra_right.gif',
-        'lyra_left_walk.gif',
-        'lyra_right_walk.gif',
-        'lyra_left_jump.gif',
-        'lyra_right_jump.gif',
-        'lyra_left_sit.gif',
-        'lyra_right_sit.gif',
-        'lyra_left_sleep.gif',
-        'lyra_right_sleep.gif',
-        'trixie_left.gif',
-        'trixie_right.gif',
-        'trixie_left_walk.gif',
-        'trixie_right_walk.gif',
-        'trixie2_left.gif',
-        'trixie2_right.gif',
-        'trixie2_left_walk.gif',
-        'trixie2_right_walk.gif',
-        'zecora_left.gif',
-        'zecora_right.gif',
-        'zecora_left_walk.gif',
-        'zecora_right_walk.gif'
-    ];
+    var avatars = [];
     
     var socket, connected = false, ignoreDisconnect = false, me, myNick, myRoom = null, mySpecialStatus, lastmove = (new Date().getTime()), globalUserCount = 0;
     
@@ -474,28 +89,31 @@
             var user = this.users[nick];
             user.elem.root.style.left = obj.x + 'px';
             user.elem.root.style.top = obj.y + 'px';
-            if (ponies.hasOwnProperty(obj.img)) {
-                user.elem.root.style.backgroundImage = 'url(media/' + ponies[obj.img] + ')';
-                user.elem.img = document.createElement('img');
-                user.elem.img.src = 'media/' + ponies[obj.img];
-                user.elem.img.onload = function () {
-                    var newHeight = user.elem.img.height;
-                    var newWidth = user.elem.img.width;
+            if (avatars.hasOwnProperty(obj.img_name)) {
+                if (avatars[obj.img_name].hasOwnProperty(obj.img_index)) {
+                    var imgURL = 'media/' + avatars[obj.img_name][obj.img_index];
+                    user.elem.root.style.backgroundImage = 'url(' + imgURL + ')';
+                    user.elem.img = document.createElement('img');
+                    user.elem.img.src = imgURL;
+                    user.elem.img.onload = function () {
+                        var newHeight = user.elem.img.height;
+                        var newWidth = user.elem.img.width;
 
-                    // adjust bounding box size
-                    user.elem.root.style.width = newWidth + 'px';
-                    user.elem.root.style.height = newHeight + 'px';
+                        // adjust bounding box size
+                        user.elem.root.style.width = newWidth + 'px';
+                        user.elem.root.style.height = newHeight + 'px';
 
-                    // adjust bounding box margin (translate about image centre)
-                    user.elem.root.style.marginLeft = -newWidth/2 + 'px';
-                    user.elem.root.style.marginTop = -newHeight/2 + 'px';
+                        // adjust bounding box margin (translate about image centre)
+                        user.elem.root.style.marginLeft = -newWidth/2 + 'px';
+                        user.elem.root.style.marginTop = -newHeight/2 + 'px';
 
-                    // adjust positioning of nick tag and chat bubble
-                    user.elem.chat.style.bottom = newHeight + 'px';
-                    user.elem.chat.style.marginLeft = (newWidth - 168) / 2 + 'px';
-                    user.elem.nickTag.style.top = newHeight + 'px';
-                    user.elem.nickTag.style.marginLeft = (newWidth - 168) / 2 + 'px';
-                };
+                        // adjust positioning of nick tag and chat bubble
+                        user.elem.chat.style.bottom = newHeight + 'px';
+                        user.elem.chat.style.marginLeft = (newWidth - 168) / 2 + 'px';
+                        user.elem.nickTag.style.top = newHeight + 'px';
+                        user.elem.nickTag.style.marginLeft = (newWidth - 168) / 2 + 'px';
+                    };
+                }
             } else {
                 user.elem.root.style.backgroundImage = 'none';
                 user.elem.root.style.height = PONY_HEIGHT + 'px';
@@ -745,7 +363,6 @@
         chatboxholder.style.display = 'block';
         chatbutton.style.display = 'block';
         fullchatlogbutton.style.display = 'inline-block';
-        chooserbutton.style.display = 'inline-block';
         bitcount.style.display = 'block';
         
         stage.style.display = 'block';
@@ -768,7 +385,7 @@
             var cur = (new Date().getTime());
             if (cur - lastmove > 400) {
                 var newx = e.layerX;
-                me.img = (me.img|1) - (me.x<newx ? 0 : 1);
+                me.img_index = (me.img_index | 1) - (me.x < newx ? 0 : 1);
                 me.x = newx;
                 me.y = e.layerY;
                 pushAndUpdateState(me);
@@ -874,49 +491,38 @@
                 chooser.style.display = 'block';
                 chooser.innerHTML = '';
                 var last = '', cur = '';
-                for (var i = 0; i < ponies.length; i++) {
-                    // split pony name prefix
-                    cur = ponies[i].split('_', 1)[0];
-                    if (cur === last) {
-                        // only show first avatar
-                        continue;
-                    } else {
-                        last = cur;
-                    }
-
-                    var preview = document.createElement('img');
-                    preview.src = 'media/' + ponies[i];
-                    preview.className = 'chooser-preview';
-                    (function (imgid, prefix) {
-                        preview.onclick = function () {
-                            chooser.innerHTML = '';
-                            for (var i = imgid; i < ponies.length; i++) {
-                                // split pony name prefix
-                                if (ponies[i].split('_', 1)[0] !== prefix) {
-                                    // only show avatars for that pony
-                                    break;
+                for (var name in avatars) {
+                    if (avatars.hasOwnProperty(name)) {
+                        var preview = document.createElement('img');
+                        preview.src = 'media/' + avatars[name][0];
+                        preview.className = 'chooser-preview';
+                        (function (images, name) {
+                            preview.onclick = function () {
+                                chooser.innerHTML = '';
+                                for (var i = 0; i < images.length; i++) {
+                                    var preview = document.createElement('img');
+                                    preview.src = 'media/' + images[i];
+                                    preview.className = 'chooser-preview';
+                                    (function (imgid) {
+                                        preview.onclick = function () {
+                                            me.img_name = name;
+                                            me.img_index = imgid;
+                                            pushAndUpdateState(me);
+                                            chooser.style.display = 'none';
+                                            chooservisible = false;
+                                            if (images[imgid].indexOf('_upsidedown') !== -1) {
+                                                container.className = 'upside-down';
+                                            } else {
+                                                container.className = '';
+                                            }
+                                        };
+                                    }(i));
+                                    chooser.appendChild(preview);
                                 }
-                                var preview = document.createElement('img');
-                                preview.src = 'media/' + ponies[i];
-                                preview.className = 'chooser-preview';
-                                (function (imgid) {
-                                    preview.onclick = function () {
-                                        me.img = imgid;
-                                        pushAndUpdateState(me);
-                                        chooser.style.display = 'none';
-                                        chooservisible = false;
-                                        if (ponies[imgid].indexOf('_upsidedown') !== -1) {
-                                            container.className = 'upside-down';
-                                        } else {
-                                            container.className = '';
-                                        }
-                                    };
-                                }(i));
-                                chooser.appendChild(preview);
-                            }
-                        };
-                    }(i, cur));
-                    chooser.appendChild(preview);
+                            };
+                        }(avatars[name], name));
+                        chooser.appendChild(preview);
+                    }
                 }
             }
         };
@@ -1139,7 +745,8 @@
             myNick = myNick.replace(/^\s+|\s+$/g, '');
             mySpecialStatus = false;
             me = {
-                img: Math.floor(Math.random() * ponies.length),
+                img_name: 'derpy',
+                img_index: 0,
                 x: 0,
                 y: 0,
                 chat: ''
@@ -1181,13 +788,11 @@
                         userManager.update(msg.nick, msg.obj);
                     }
                 break;
-                case 'are_special':
+                case 'account_state':
                     mySpecialStatus = msg.status;
-                break;
-                case 'have_bits':
                     bitcount.innerHTML = '';
-                    if (msg.amount !== null) {
-                        bitcount.appendChild(document.createTextNode(msg.amount));
+                    if (msg.bits !== null) {
+                        bitcount.appendChild(document.createTextNode(msg.bits));
                     } else {
                         bitcount.appendChild(document.createTextNode('???'));
                     }
@@ -1205,6 +810,10 @@
                     updateRoomList(msg.list);
                     globalUserCount = msg.user_count;
                     userManager.updateCounter();
+                break;
+                case 'avatar_list':
+                    avatars = msg.list;
+                    chooserbutton.style.display = 'inline-block';
                 break;
                 case 'room_change':
                     changeRoom(msg.data);

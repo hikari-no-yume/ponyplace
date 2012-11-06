@@ -263,6 +263,7 @@ function handleCommand(cmd, myNick, user) {
                 sendLine('User "' + unfound + '" is in the ephemeral room "' + unfoundUser.room + '"');
             }
         }
+
     // join room
     } else if (cmd.substr(0, 5) === 'join ') {
         var roomName = cmd.substr(5);
@@ -294,10 +295,7 @@ function handleCommand(cmd, myNick, user) {
                 sendLine('Created account');
             }
             User.setPassword(myNick, password);
-            user.send({
-                type: 'have_bits',
-                amount: User.hasBits(user.nick)
-            });
+            user.sendAccountState();
         } else {
             sendLine('Password must be at least 1 characters in length');
         }
@@ -307,10 +305,7 @@ function handleCommand(cmd, myNick, user) {
             User.removePassword(myNick);
             sendLine("Your account was deleted.");
             user.didConfirm = false;
-            user.send({
-                type: 'have_bits',
-                amount: User.hasBits(user.nick)
-            });
+            user.sendAccountState();
         } else {
             sendLine("You need to do /rmpass first to delete your account.");
         }
@@ -674,23 +669,15 @@ wsServer.on('request', function(request) {
             user_count: User.userCount
         }));
 
-        // tell client they have special status, if they do
-        var special = User.getSpecialStatus(msg.nick);
-        if (special) {
-            connection.sendUTF(JSON.stringify({
-                type: 'are_special',
-                status: special
-            }));
-        }
-
-        // tell client how many bits they have
+        // tell client about avatars
         connection.sendUTF(JSON.stringify({
-            type: 'have_bits',
-            amount: User.hasBits(msg.nick)
+            type: 'avatar_list',
+            list: User.avatars
         }));
         
         myNick = msg.nick;
         user = new User(msg.nick, connection, msg.obj, null);
+        user.sendAccountState();
         
         // call onMessage for subsequent messages
         connection.on('message', onMessage);
