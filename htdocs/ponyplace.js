@@ -12,7 +12,11 @@
     
     var avatars = [];
     
-    var socket, connected = false, ignoreDisconnect = false, me, myNick, myRoom = null, mySpecialStatus, lastmove = (new Date().getTime()), globalUserCount = 0;
+    var socket, connected = false, ignoreDisconnect = false,
+        me, myNick, myRoom = null, mySpecialStatus, avatarInventory, haveAccount = false,
+        lastmove = (new Date().getTime()), 
+        globalUserCount = 0,
+        catalogueCallback = null;
     
     var container,
         overlay,
@@ -359,11 +363,9 @@
     function onConnect() {
         chatbox.focus();
 
-        accountsettingsbutton.style.display = 'block';
         chatboxholder.style.display = 'block';
         chatbutton.style.display = 'block';
         fullchatlogbutton.style.display = 'inline-block';
-        bitcount.style.display = 'block';
         
         stage.style.display = 'block';
     }
@@ -490,8 +492,21 @@
                 chooservisible = true;
                 chooser.style.display = 'block';
                 chooser.innerHTML = '';
-                var last = '', cur = '';
-                for (var name in avatars) {
+                var ad = document.createElement('img');
+                ad.src = 'media/store/buy-more.png';
+                ad.className = 'chooser-preview';
+                ad.title = 'Buy some avatars!';
+                ad.onclick = function () {
+                    socket.send(JSON.stringify({
+                        type: 'room_change',
+                        name: 'carousel_boutique'
+                    }));
+                    chooser.style.display = 'none';
+                    chooservisible = false;
+                };
+                chooser.appendChild(ad);
+                for (var i = 0; i < avatarInventory.length; i++) {
+                    var name = avatarInventory[i];
                     if (avatars.hasOwnProperty(name)) {
                         var preview = document.createElement('img');
                         preview.src = 'media/' + avatars[name][0];
@@ -731,6 +746,33 @@
         initGUI_loginbox();
     }
 
+    function initGlobals() {
+        window.ponyplace = {
+            buy: function (catalogueName, itemIndex, itemName, itemPrice) {
+                if (confirm('Do you want to buy the product "' + itemName + '" for ' + itemPrice + ' bits?')) {
+                    socket.send(JSON.stringify({
+                        type: 'buy_from_catalogue',
+                        name: catalogueName,
+                        index: itemIndex
+                    }));
+                }
+            },
+            getCatalogue: function (name, callback) {
+                socket.send(JSON.stringify({
+                    type: 'get_catalogue',
+                    name: name
+                }));
+                catalogueCallback = callback;
+            },
+            hasAvatar: function (name) {
+                return (avatarInventory.indexOf(name) !== -1);
+            },
+            hasAccount: function () {
+                return haveAccount;
+            }
+        };
+    }
+
     function initNetwork() {
         if (window.location.hostname === 'localhost') {
             socket = new WebSocket('ws://localhost:9001', 'ponyplace-broadcast');
@@ -790,12 +832,25 @@
                 break;
                 case 'account_state':
                     mySpecialStatus = msg.special;
+                    bitcount.style.display = 'block';
                     bitcount.innerHTML = '';
                     if (msg.bits !== null) {
                         bitcount.appendChild(document.createTextNode(msg.bits));
                     } else {
                         bitcount.appendChild(document.createTextNode('???'));
                     }
+                    avatarInventory = msg.avatar_inventory;
+                    chooserbutton.style.display = 'inline-block';
+                    haveAccount = msg.have_account;
+                    accountsettingsbutton.style.display = 'block';
+                    if (haveAccount) {
+                        rmpassbutton.style.display = 'block';
+                        changepassbutton.value = 'Change password';
+                    } else {
+                        rmpassbutton.style.display = 'none';
+                        changepassbutton.value = 'Create account';
+                    }
+                    backgroundIframe.contentDocument.location.reload(true);
                 break;
                 case 'broadcast':
                     logBroadcastInChat(msg.msg);
@@ -813,10 +868,15 @@
                 break;
                 case 'avatar_list':
                     avatars = msg.list;
-                    chooserbutton.style.display = 'inline-block';
                 break;
                 case 'room_change':
                     changeRoom(msg.data);
+                break;
+                case 'catalogue_content':
+                    if (catalogueCallback) {
+                        catalogueCallback(msg.data);
+                        catalogueCallback = null;
+                    }
                 break;
                 case 'kick':
                     if (msg.reason === 'nick_in_use') {
@@ -839,10 +899,11 @@
                         alert('There was a protocol error. This usually means your client sent a malformed packet. Your client is probably out of date, try clearing your cache and refreshing.');
                     } else if (msg.reason === 'no_such_room') {
                         alert("No such room. You tried to join a room that doesn't exist.");
+                    } else if (msg.reason === 'dont_have_avatar') {
+                        alert("You do not have the avatar you tried to wear. This is probably a bug.");
                     } else if (msg.reason === 'kick') {
                         alert('You were kicked!');
                     } else if (msg.reason === 'ban') {
-
                         alert('You were banned!');
                     } else if (msg.reason === 'update') {
                         ignoreDisconnect = true;
@@ -850,6 +911,8 @@
                             alert('ponyplace update happening - page will reload');
                             window.location.reload();
                         }, (5+Math.floor(Math.random() * 5)) * 1000);
+                    } else {
+                        alert('You were kicked for an unrecognised reason: "' + msg.reason + '"');
                     }
                 break;
                 default:
@@ -862,5 +925,6 @@
 
     window.onload = function () {
         initGUI();
+        initGlobals();
     };
 }());

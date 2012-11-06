@@ -1,0 +1,511 @@
+{
+    "carousel_boutique": [
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "vinylscratch"
+                }
+            ],
+            "name_full": "Vinyl Scratch",
+            "price": 50,
+            "img": "/media/vinylscratch_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "octavia"
+                }
+            ],
+            "name_full": "Octavia",
+            "price": 50,
+            "img": "/media/octavia_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "discord"
+                }
+            ],
+            "name_full": "Discord",
+            "price": 50,
+            "img": "/media/discord_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "maredowell"
+                }
+            ],
+            "name_full": "Mare-do-well",
+            "price": 50,
+            "img": "/media/maredowell_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "spike"
+                }
+            ],
+            "name_full": "Spike",
+            "price": 50,
+            "img": "/media/spike_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "carrottop"
+                }
+            ],
+            "name_full": "Carrot Top",
+            "price": 50,
+            "img": "/media/carrottop_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "colgate"
+                }
+            ],
+            "name_full": "Colgate",
+            "price": 50,
+            "img": "/media/colgate_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "doctorwhooves"
+                }
+            ],
+            "name_full": "Doctor Whooves",
+            "price": 50,
+            "img": "/media/doctorwhooves_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "fillyrainbowdash"
+                }
+            ],
+            "name_full": "Filly Rainbow Dash",
+            "price": 50,
+            "img": "/media/fillyrainbowdash_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "tank"
+                }
+            ],
+            "name_full": "Tank",
+            "price": 50,
+            "img": "/media/tank_right_hover.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "daringdo"
+                }
+            ],
+            "name_full": "Daring Do",
+            "price": 50,
+            "img": "/media/daringdo_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "ironwill"
+                }
+            ],
+            "name_full": "Iron Will",
+            "price": 50,
+            "img": "/media/ironwill_right_walk.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "fillyfluttershy"
+                }
+            ],
+            "name_full": "Filly Fluttershy",
+            "price": 50,
+            "img": "/media/fillyfluttershy_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "angel"
+                }
+            ],
+            "name_full": "Angel",
+            "price": 50,
+            "img": "/media/angel_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "photofinish"
+                }
+            ],
+            "name_full": "Photo Finish",
+            "price": 50,
+            "img": "/media/photofinish_right.png"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "spitfire"
+                }
+            ],
+            "name_full": "Spitfire",
+            "price": 50,
+            "img": "/media/spitfire_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "spitfire2"
+                }
+            ],
+            "name_full": "Spitfire (without suit)",
+            "price": 50,
+            "img": "/media/spitfire2_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "soarin"
+                }
+            ],
+            "name_full": "Soarin'",
+            "price": 50,
+            "img": "/media/soarin_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "bigcelestia"
+                }
+            ],
+            "name_full": "Big Princess Celestia",
+            "price": 50,
+            "img": "/media/bigcelestia_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "celestia"
+                }
+            ],
+            "name_full": "Princess Celestia",
+            "price": 50,
+            "img": "/media/celestia_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "fillycelestia"
+                }
+            ],
+            "name_full": "Filly Princess Celestia",
+            "price": 50,
+            "img": "/media/fillycelestia_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "nightmaremoon"
+                }
+            ],
+            "name_full": "Nightmare Moon",
+            "price": 50,
+            "img": "/media/nightmaremoon_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "luna2"
+                },
+                {
+                    "type": "avatar",
+                    "avatar_name": "luna"
+                }
+            ],
+            "name_full": "Princess Luna (Seasons 1 and 2)",
+            "price": 50,
+            "img": "/media/luna2_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "fillyluna"
+                }
+            ],
+            "name_full": "Filly Princess Luna",
+            "price": 50,
+            "img": "/media/fillyluna_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "fillytwilight"
+                }
+            ],
+            "name_full": "Filly Twilight Sparkle",
+            "price": 50,
+            "img": "/media/fillytwilight_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "fillyrarity"
+                }
+            ],
+            "name_full": "Filly Rarity",
+            "price": 50,
+            "img": "/media/fillyrarity_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "opalescence"
+                }
+            ],
+            "name_full": "Opalescence",
+            "price": 50,
+            "img": "/media/opalescence_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "royalguard"
+                }
+            ],
+            "name_full": "Royal Guard",
+            "price": 50,
+            "img": "/media/royalguard_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "crazypie"
+                }
+            ],
+            "name_full": "Pinkamena Diane Pie",
+            "price": 50,
+            "img": "/media/crazypie_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "name": "fillypinkiepie"
+                },
+                {
+                    "type": "avatar",
+                    "name": "fillypinkiepie2"
+                }
+            ],
+            "name_full": "Filly Pinkie Pie",
+            "price": 50,
+            "img": "/media/fillypinkiepie_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "gummy"
+                }
+            ],
+            "name_full": "Gummy",
+            "price": 50,
+            "img": "/media/gummy_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "berrypunch"
+                }
+            ],
+            "name_full": "Berry Punch",
+            "price": 50,
+            "img": "/media/berrypunch_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "bigmacintosh"
+                }
+            ],
+            "name_full": "Big Macintosh",
+            "price": 50,
+            "img": "/media/bigmacintosh_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "grannysmith"
+                }
+            ],
+            "name_full": "Granny Smith",
+            "price": 50,
+            "img": "/media/grannysmith_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "braeburn"
+                }
+            ],
+            "name_full": "Braeburn",
+            "price": 50,
+            "img": "/media/braeburn_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "fillyapplejack"
+                }
+            ],
+            "name_full": "Filly Applejack",
+            "price": 50,
+            "img": "/media/fillyapplejack_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "winona"
+                }
+            ],
+            "name_full": "Winona",
+            "price": 50,
+            "img": "/media/winona_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "applebloom"
+                }
+            ],
+            "name_full": "Applebloom",
+            "price": 50,
+            "img": "/media/applebloom_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "scootaloo"
+                }
+            ],
+            "name_full": "Scootaloo",
+            "price": 50,
+            "img": "/media/scootaloo_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "sweetiebelle"
+                }
+            ],
+            "name_full": "Sweetie Belle",
+            "price": 50,
+            "img": "/media/sweetiebelle_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "cheerilee"
+                }
+            ],
+            "name_full": "Cheerilee",
+            "price": 50,
+            "img": "/media/cheerilee_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "bonbon"
+                }
+            ],
+            "name_full": "Bonbon",
+            "price": 50,
+            "img": "/media/bonbon_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "lyra"
+                }
+            ],
+            "name_full": "Lyra Heartstrings",
+            "price": 50,
+            "img": "/media/lyra_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "trixie"
+                },
+                {
+                    "type": "avatar",
+                    "avatar_name": "trixie2"
+                }
+            ],
+            "name_full": "The Great and Powerful Trixie (with and without robes)",
+            "price": 50,
+            "img": "/media/trixie_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "zecora"
+                }
+            ],
+            "name_full": "Zecora",
+            "price": 50,
+            "img": "/media/zecora_right.gif"
+        }
+    ]
+}

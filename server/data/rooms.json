@@ -63,7 +63,13 @@
             "data": "media/background-carousel-boutique.png",
             "width": 1159,
             "height": 660,
-            "iframe": false
+            "iframe": {
+                "src": "media/rooms/boutique-shop.html",
+                "left": 114,
+                "top": 180,
+                "width": 260,
+                "height": 260
+            }
         },
         "user_count": 0,
         "user_noun": "fashionistas",

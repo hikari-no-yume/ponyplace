@@ -19,7 +19,8 @@ User.prototype.sendAccountState = function () {
         type: 'account_state',
         special: User.getSpecialStatus(this.nick),
         bits: User.hasBits(this.nick),
-        have_avatars: User.avatars
+        avatar_inventory: User.getAvatarInventory(this.nick),
+        have_account: User.hasPassword(this.nick)
     });
 };
 User.prototype.kill = function () {
@@ -44,10 +45,13 @@ User.passwords = {};
 User.specialUsers = {};
 User.userData = {};
 User.avatars = {};
+User.catalogues = {};
 
 User.init = function () {
     this.avatars = JSON.parse(fs.readFileSync('data/avatars.json'));
     console.log('Loaded avatars list');
+    this.catalogues = JSON.parse(fs.readFileSync('data/catalogues.json'));
+    console.log('Loaded catalogues');
     this.passwords = JSON.parse(fs.readFileSync('data/passwords.json'));
     console.log('Loaded passwords');
     this.specialUsers = JSON.parse(fs.readFileSync('data/special-users.json'));
@@ -102,35 +106,88 @@ User.hasPassword = function (nick) {
 
 User.hasBits = function (nick) {
     if (this.hasPassword(nick)) {
-        if (this.userData.hasOwnProperty(nick)) {
-            return this.userData[nick].bits;
-        } else {
-            return 0;
-        }
+        return this.getUserData(nick, 'bits', 0);
     } else {
         return null;
     }
 };
+User.getUserData = function (nick, property, defaultValue) {
+    if (this.userData.hasOwnProperty(nick)) {
+        if (this.userData[nick].hasOwnProperty(property)) {
+            return this.userData[nick][property];
+        }
+    }
+    return defaultValue;
+};
+User.setUserData = function (nick, property, value) {
+    if (!this.userData.hasOwnProperty(nick)) {
+        this.userData[nick] = {};
+    }
+    this.userData[nick][property] = value;
+    this.save();
+};
 User.changeBits = function (nick, amount) {
     if (this.hasPassword(nick)) {
-        if (this.userData.hasOwnProperty(nick)) {
-            if (this.userData[nick].bits + amount < 0) {
-                return false;
+        var bits = this.getUserData(nick, 'bits', 0);
+        
+        bits += amount;
+
+        if (bits >= 0 && Number.isFinite(bits) && !Number.isNaN(bits)) {
+            this.setUserData(nick, 'bits', bits);
+
+            if (User.has(nick)) {
+                User.get(nick).sendAccountState();
             }
-            this.userData[nick].bits += amount;
-        } else {
-            if (amount < 0) {
-                return false;
-            }
-            this.userData[nick] = {
-                bits: amount
+            return true;
+        }
+    }
+    return false;
+};
+
+User.getAvatarInventory = function (nick) {
+    return this.getUserData(nick, 'avatarInventory', ['derpy', 'applejack', 'fluttershy', 'pinkiepie', 'rainbowdash', 'rarity', 'twilight']);
+};
+User.hasAvatar = function (nick, avatar) {
+    return this.getAvatarInventory(nick).indexOf(avatar) !== -1;
+};
+User.giveAvatar = function (nick, avatar) {
+    inventory = this.getAvatarInventory(nick);
+    if (inventory.indexOf(avatar) === -1) {
+        inventory.push(avatar);
+    }
+    this.setUserData(nick, 'avatarInventory', inventory);
+};
+User.getCatalogue = function (name) {
+    if (this.catalogues.hasOwnProperty(name)) {
+        return this.catalogues[name];
+    }
+    return false;
+};
+User.buyFromCatalogue = function (nick, name, index) {
+    var catalogue = this.getCatalogue(name);
+    if (catalogue !== null) {
+        if (catalogue.hasOwnProperty(index)) {
+            var product = catalogue[index];
+            if (this.changeBits(nick, -product.price)) {
+                for (var i = 0; i < product.items.length; i++) {
+                    var item = product.items[0];
+                    if (item.type === 'avatar') {
+                        if (!this.hasAvatar(nick, item.avatar_name)) {
+                            this.giveAvatar(nick, item.avatar_name);
+                        }
+                    } else {
+                        console.log('Unknown product item type: "' + item.type + '"!');
+                    }
+                }
+                if (User.has(nick)) {
+                    User.get(nick).sendAccountState();
+                }
+                return {
+                    name_full: product.name_full,
+                    price: product.price
+                };
             }
         }
-        this.save();
-        if (User.has(nick)) {
-            User.get(nick).sendAccountState();
-        }
-        return true;
     }
     return false;
 };

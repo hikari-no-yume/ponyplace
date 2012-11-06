@@ -33,14 +33,12 @@ var badRegex = /fuck|shit|milf|bdsm|fag|faggot|nigga|nigger|clop|(\[\]\(\/[a-zA-
 
 var fs = require('fs');
 
-function sanitise(obj) {
-    if (obj.hasOwnProperty('chat')) {
-        obj.chat = obj.chat.substr(0, 100);
-        obj.chat = obj.chat.replace(badRegex, 'pony');
-        // trim whitespace
-        obj.chat = obj.chat.replace(/^\s+|\s+$/g, '');
-    }
-    return obj;
+function sanitiseChat(chat) {
+    chat = chat.substr(0, 100);
+    chat = chat.replace(badRegex, 'pony');
+    // trim whitespace
+    chat = chat.replace(/^\s+|\s+$/g, '');
+    return chat;
 }
 
 var User = require('./user.js');
@@ -536,7 +534,18 @@ wsServer.on('request', function(request) {
                 }
             break;
             case 'update':
-                msg.obj = sanitise(msg.obj);
+                // sanitise chat message
+                if (msg.obj.hasOwnProperty('chat')) {
+                    msg.obj.chat = sanitiseChat(msg.obj.chat);
+                }
+
+                // check avatar
+                if (msg.obj.hasOwnProperty('img_name')) {
+                    if (!User.hasAvatar(user.nick, msg.obj.img_name)) {
+                        user.kick('dont_have_avatar');
+                        return;
+                    }
+                }
                 
                 // update their stored state
                 user.obj = msg.obj;
@@ -568,6 +577,26 @@ wsServer.on('request', function(request) {
                     list: roomManager.getList(),
                     user_count: User.userCount
                 });
+            break;
+            case 'get_catalogue':
+                user.send({
+                    type: 'catalogue_content',
+                    data: User.getCatalogue(msg.name)
+                });
+            break;
+            case 'buy_from_catalogue':
+                var result;
+                if (result = User.buyFromCatalogue(user.nick, msg.name, msg.index)) {
+                    user.send({
+                        type: 'console_msg',
+                        msg: 'You bought the item: "' + result.name_full + '" for ' + result.price + ' bits' 
+                    });
+                } else {
+                    user.send({
+                        type: 'console_msg',
+                        msg: 'Buying item failed - do you have enough money?'
+                    });
+                }
             break;
             // handle unexpected packet types
             default:
@@ -659,8 +688,23 @@ wsServer.on('request', function(request) {
             connection.close();
             return;
         }
-        
-        msg.obj = sanitise(msg.obj);
+
+        // sanitise chat message
+        if (msg.obj.hasOwnProperty('chat')) {
+            msg.obj.chat = sanitiseChat(msg.obj.chat);
+        }
+
+        // check avatar
+        if (msg.obj.hasOwnProperty('img_name')) {
+            if (!User.hasAvatar(msg.nick, msg.obj.img_name)) {
+                connection.sendUTF(JSON.stringify({
+                    type: 'kick',
+                    reason: 'dont_have_avatar'
+                }));
+                connection.close();
+                return;
+            }
+        }
         
         // tell client about rooms
         connection.sendUTF(JSON.stringify({

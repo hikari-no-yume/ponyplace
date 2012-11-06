@@ -7,14 +7,19 @@
 body {
     font-family: sans-serif;
     font-size: 10pt;
+}
+
+#ponyplace {
+    overflow: hidden;
     padding: 0;
     margin: 0;
-    overflow: hidden;
 }
 
 #credits {
     color: white;
     background-color: black;
+    padding: 0;
+    margin: 0;
 }
 
 h1 {
@@ -207,6 +212,39 @@ input[type=submit]:hover, .button:hover {
 
 .chooser-preview:hover {
     cursor: pointer;
+}
+
+.catalogue-item {
+    border: 1px solid gold;
+    margin-bottom: 5px;
+    overflow: hidden;
+    background-color: white;
+    text-align: right;
+    padding: 4px;
+}
+
+.catalogue-item h2 {
+    margin: 2px;
+    font-size: 11pt;
+}
+
+.catalogue-item input {
+    background-color: gold;
+    color: black;
+    display: inline-block;
+}
+
+.catalogue-item-have {
+    background-color: gray;
+}
+
+.catalogue-item .chooser-preview {
+    float: left;
+    margin: 2px;
+    max-height: 40px;
+}
+.catalogue-item .chooser-preview:hover {
+    cursor: auto;
 }
 
 #chatbox-holder {
