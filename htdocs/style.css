@@ -114,6 +114,7 @@ h1, p {
 #background-iframe {
     border: 0;
     position: absolute;
+    z-index: 100;
 }
 
 #music {
