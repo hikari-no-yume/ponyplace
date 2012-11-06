@@ -789,7 +789,7 @@
                     }
                 break;
                 case 'account_state':
-                    mySpecialStatus = msg.status;
+                    mySpecialStatus = msg.special;
                     bitcount.innerHTML = '';
                     if (msg.bits !== null) {
                         bitcount.appendChild(document.createTextNode(msg.bits));
