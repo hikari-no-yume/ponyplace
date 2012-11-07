@@ -3,7 +3,7 @@
 
     // get them before IE errors out
     if (!window.hasOwnProperty('WebSocket')) {
-        window.location = 'no-websocket.html';
+        window.location = '/no-websocket.html';
         return;
     }
     
@@ -95,7 +95,7 @@
             user.elem.root.style.top = obj.y + 'px';
             if (avatars.hasOwnProperty(obj.img_name)) {
                 if (avatars[obj.img_name].hasOwnProperty(obj.img_index)) {
-                    var imgURL = 'media/' + avatars[obj.img_name][obj.img_index];
+                    var imgURL = '/media/' + avatars[obj.img_name][obj.img_index];
                     user.elem.root.style.backgroundImage = 'url(' + imgURL + ')';
                     user.elem.img = document.createElement('img');
                     user.elem.img.src = imgURL;
@@ -325,7 +325,7 @@
                 backgroundIframe.style.display = 'none';
             }
         } else {
-            background.src = 'media/background-cave.png';
+            background.src = '/media/background-cave.png';
             stage.style.width = '960px';
             stage.style.height = '660px';
             backgroundIframe.src = 'about:blank';
@@ -387,7 +387,7 @@
 
         background = document.createElement('img');
         background.id = 'background';
-        background.src = 'media/background-noroom.png';
+        background.src = '/media/background-noroom.png';
         background.onclick = function (e) {
             var cur = (new Date().getTime());
             if (cur - lastmove > 400) {
@@ -498,7 +498,7 @@
                 chooser.style.display = 'block';
                 chooser.innerHTML = '';
                 var ad = document.createElement('img');
-                ad.src = 'media/store/buy-more.png';
+                ad.src = '/media/store/buy-more.png';
                 ad.className = 'chooser-preview';
                 ad.title = 'Buy some avatars!';
                 ad.onclick = function () {
@@ -514,7 +514,7 @@
                     var name = avatarInventory[i];
                     if (avatars.hasOwnProperty(name)) {
                         var preview = document.createElement('img');
-                        preview.src = 'media/' + avatars[name][0];
+                        preview.src = '/media/' + avatars[name][0];
                         preview.className = 'chooser-preview';
                         (function (images, name) {
                             preview.onclick = function () {
