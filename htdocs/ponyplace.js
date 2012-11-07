@@ -2,8 +2,8 @@
     'use strict';
 
     // get them before IE errors out
-    if (!window.hasOwnProperty('WebSocket')) {
-        window.location = '/no-websocket.html';
+    if (!Object.prototype.hasOwnProperty.call(window,'WebSocket')) {
+        window.location = 'no-websocket.html';
         return;
     }
     
