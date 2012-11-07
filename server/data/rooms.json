@@ -157,7 +157,13 @@
             "data": "/media/rooms/canterlot.png",
             "width": 1173,
             "height": 660,
-            "iframe": false
+            "iframe": {
+                "left": 900,
+                "top": 10,
+                "width": 260,
+                "height": 260,
+                "src": "/media/rooms/canterlot-shop.html"
+            }
         },
         "user_count": 0,
         "user_noun": "posh ponies",

@@ -38,6 +38,89 @@
             "img": "/media/cheerilee_right.gif"
         }
     ],
+    "canterlot": [
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "bigcelestia"
+                }
+            ],
+            "name_full": "Big Princess Celestia",
+            "price": 50,
+            "img": "/media/bigcelestia_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "celestia"
+                }
+            ],
+            "name_full": "Princess Celestia",
+            "price": 50,
+            "img": "/media/celestia_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "fillycelestia"
+                }
+            ],
+            "name_full": "Filly Princess Celestia",
+            "price": 50,
+            "img": "/media/fillycelestia_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "nightmaremoon"
+                }
+            ],
+            "name_full": "Nightmare Moon",
+            "price": 50,
+            "img": "/media/nightmaremoon_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "luna2"
+                },
+                {
+                    "type": "avatar",
+                    "avatar_name": "luna"
+                }
+            ],
+            "name_full": "Princess Luna (Seasons 1 and 2)",
+            "price": 50,
+            "img": "/media/luna2_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "fillyluna"
+                }
+            ],
+            "name_full": "Filly Princess Luna",
+            "price": 50,
+            "img": "/media/fillyluna_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "royalguard"
+                }
+            ],
+            "name_full": "Royal Guard",
+            "price": 50,
+            "img": "/media/royalguard_right.gif"
+        }
+    ],
     "sweet_apple_acres": [
         {
             "items": [
@@ -298,76 +381,6 @@
             "items": [
                 {
                     "type": "avatar",
-                    "avatar_name": "bigcelestia"
-                }
-            ],
-            "name_full": "Big Princess Celestia",
-            "price": 50,
-            "img": "/media/bigcelestia_right.gif"
-        },
-        {
-            "items": [
-                {
-                    "type": "avatar",
-                    "avatar_name": "celestia"
-                }
-            ],
-            "name_full": "Princess Celestia",
-            "price": 50,
-            "img": "/media/celestia_right.gif"
-        },
-        {
-            "items": [
-                {
-                    "type": "avatar",
-                    "avatar_name": "fillycelestia"
-                }
-            ],
-            "name_full": "Filly Princess Celestia",
-            "price": 50,
-            "img": "/media/fillycelestia_right.gif"
-        },
-        {
-            "items": [
-                {
-                    "type": "avatar",
-                    "avatar_name": "nightmaremoon"
-                }
-            ],
-            "name_full": "Nightmare Moon",
-            "price": 50,
-            "img": "/media/nightmaremoon_right.gif"
-        },
-        {
-            "items": [
-                {
-                    "type": "avatar",
-                    "avatar_name": "luna2"
-                },
-                {
-                    "type": "avatar",
-                    "avatar_name": "luna"
-                }
-            ],
-            "name_full": "Princess Luna (Seasons 1 and 2)",
-            "price": 50,
-            "img": "/media/luna2_right.gif"
-        },
-        {
-            "items": [
-                {
-                    "type": "avatar",
-                    "avatar_name": "fillyluna"
-                }
-            ],
-            "name_full": "Filly Princess Luna",
-            "price": 50,
-            "img": "/media/fillyluna_right.gif"
-        },
-        {
-            "items": [
-                {
-                    "type": "avatar",
                     "avatar_name": "fillytwilight"
                 }
             ],
@@ -396,17 +409,6 @@
             "name_full": "Opalescence",
             "price": 50,
             "img": "/media/opalescence_right.gif"
-        },
-        {
-            "items": [
-                {
-                    "type": "avatar",
-                    "avatar_name": "royalguard"
-                }
-            ],
-            "name_full": "Royal Guard",
-            "price": 50,
-            "img": "/media/royalguard_right.gif"
         },
         {
             "items": [
