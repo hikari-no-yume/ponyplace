@@ -25,6 +25,19 @@
             "img": "/media/spike_right.gif"
         }
     ],
+    "classroom": [
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "cheerilee"
+                }
+            ],
+            "name_full": "Cheerilee",
+            "price": 50,
+            "img": "/media/cheerilee_right.gif"
+        }
+    ],
     "sweet_apple_acres": [
         {
             "items": [
@@ -464,17 +477,6 @@
             "name_full": "Sweetie Belle",
             "price": 50,
             "img": "/media/sweetiebelle_right.gif"
-        },
-        {
-            "items": [
-                {
-                    "type": "avatar",
-                    "avatar_name": "cheerilee"
-                }
-            ],
-            "name_full": "Cheerilee",
-            "price": 50,
-            "img": "/media/cheerilee_right.gif"
         },
         {
             "items": [
