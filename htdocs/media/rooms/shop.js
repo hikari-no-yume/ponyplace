@@ -6,7 +6,7 @@
 
         if (!ponyplace.hasAccount()) {
             var p = document.createElement('p');
-            p.appendChild(document.createTextNode('You need to create an account (see top-right, Account Settings) to be able to buy more avatars.'));
+            p.appendChild(document.createTextNode('You need to create an account (see top-right, Account Settings) to be able to buy avatars or items.'));
             document.body.appendChild(p);
             return;
         }
