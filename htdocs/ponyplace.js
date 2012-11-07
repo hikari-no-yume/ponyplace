@@ -12,7 +12,7 @@
     
     var avatars = [];
     
-    var socket, connected = false, ignoreDisconnect = false,
+    var socket, connected = false, ignoreDisconnect = false, pageFocussed = false, unseenHighlights = 0,
         me, myNick, myRoom = null, mySpecialStatus, avatarInventory, inventory = [], haveAccount = false,
         lastmove = (new Date().getTime()), 
         globalUserCount = 0,
@@ -235,6 +235,11 @@
         }
 
         chatPopulateLine(line, fullchatlog);
+
+        if (!pageFocussed && highlight) {
+            unseenHighlights++;
+            document.title = '(' + unseenHighlights + ') ponyplace';
+        }
     }
     
     function highlightCheck(msg) {
@@ -744,6 +749,15 @@
         initGUI_topbar();
         initGUI_chatbar();
         initGUI_loginbox();
+
+        window.onfocus = function () {
+            pageFocussed = true;
+            document.title = 'ponyplace';
+            unseenHighlights = 0;
+        };
+        window.onblur = function () {
+            pageFocussed = false;
+        };
     }
 
     function initGlobals() {
