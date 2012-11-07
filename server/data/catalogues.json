@@ -25,6 +25,19 @@
             "img": "/media/spike_right.gif"
         }
     ],
+    "zecoras_house": [
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "zecora"
+                }
+            ],
+            "name_full": "Zecora",
+            "price": 50,
+            "img": "/media/zecora_right.gif"
+        }
+    ],
     "classroom": [
         {
             "items": [
@@ -518,17 +531,6 @@
             "name_full": "The Great and Powerful Trixie (with and without robes)",
             "price": 50,
             "img": "/media/trixie_right.gif"
-        },
-        {
-            "items": [
-                {
-                    "type": "avatar",
-                    "avatar_name": "zecora"
-                }
-            ],
-            "name_full": "Zecora",
-            "price": 50,
-            "img": "/media/zecora_right.gif"
         }
     ]
 }

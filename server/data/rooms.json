@@ -129,7 +129,13 @@
             "data": "/media/rooms/zecoras-house.png",
             "width": 1175,
             "height": 660,
-            "iframe": false
+            "iframe": {
+                "left": 900,
+                "top": 10,
+                "width": 260,
+                "height": 180,
+                "src": "/media/rooms/zecoras-house-shop.html"
+            }
         },
         "user_count": 0,
         "user_noun": "rhyming zebras",
