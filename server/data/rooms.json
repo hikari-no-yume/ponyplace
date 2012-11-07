@@ -26,7 +26,7 @@
                 "top": 10,
                 "width": 260,
                 "height": 180,
-                "src": "/media/rooms/library-shop.html"
+                "src": "/static/rooms/library-shop.html"
             }
         },
         "user_count": 0,
@@ -56,7 +56,7 @@
             "width": 1159,
             "height": 660,
             "iframe": {
-                "src": "/media/rooms/boutique-shop.html",
+                "src": "/static/rooms/boutique-shop.html",
                 "left": 114,
                 "top": 180,
                 "width": 260,
@@ -80,7 +80,7 @@
                 "top": 10,
                 "width": 260,
                 "height": 180,
-                "src": "/media/rooms/classroom-shop.html"
+                "src": "/static/rooms/classroom-shop.html"
             }
         },
         "user_count": 0,
@@ -100,7 +100,7 @@
                 "top": 400,
                 "width": 260,
                 "height": 240,
-                "src": "/media/rooms/sweet-apple-acres-shop.html"
+                "src": "/static/rooms/sweet-apple-acres-shop.html"
             }
         },
         "user_count": 0,
@@ -134,7 +134,7 @@
                 "top": 10,
                 "width": 260,
                 "height": 180,
-                "src": "/media/rooms/zecoras-house-shop.html"
+                "src": "/static/rooms/zecoras-house-shop.html"
             }
         },
         "user_count": 0,
@@ -154,7 +154,7 @@
                 "top": 10,
                 "width": 260,
                 "height": 260,
-                "src": "/media/rooms/cloudsdale-shop.html"
+                "src": "/static/rooms/cloudsdale-shop.html"
             }
         },
         "user_count": 0,
@@ -174,7 +174,7 @@
                 "top": 10,
                 "width": 260,
                 "height": 260,
-                "src": "/media/rooms/canterlot-shop.html"
+                "src": "/static/rooms/canterlot-shop.html"
             }
         },
         "user_count": 0,
@@ -190,7 +190,7 @@
             "width": 1176,
             "height": 660,
             "iframe": {
-                "src": "/media/rooms/free-money.html",
+                "src": "/static/rooms/free-money.html",
                 "left": 483,
                 "top": 45,
                 "width": 260,
