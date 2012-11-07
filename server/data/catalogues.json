@@ -12,6 +12,19 @@
             "img": "/media/store/buy-more.png"
         }
     ],
+    "library": [
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "spike"
+                }
+            ],
+            "name_full": "Spike",
+            "price": 50,
+            "img": "/media/spike_right.gif"
+        }
+    ],
     "sweet_apple_acres": [
         {
             "items": [
@@ -124,17 +137,6 @@
             "name_full": "Mare-do-well",
             "price": 50,
             "img": "/media/maredowell_right.gif"
-        },
-        {
-            "items": [
-                {
-                    "type": "avatar",
-                    "avatar_name": "spike"
-                }
-            ],
-            "name_full": "Spike",
-            "price": 50,
-            "img": "/media/spike_right.gif"
         },
         {
             "items": [

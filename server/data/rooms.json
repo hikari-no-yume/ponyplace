@@ -35,7 +35,13 @@
             "data": "/media/rooms/library.png",
             "width": 1173,
             "height": 660,
-            "iframe": false
+            "iframe": {
+                "left": 900,
+                "top": 10,
+                "width": 260,
+                "height": 180,
+                "src": "/media/rooms/library-shop.html"
+            }
         },
         "user_count": 0,
         "user_noun": "bright sparks",
