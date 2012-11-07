@@ -4,7 +4,7 @@
         "name": "library_es",
         "name_full": "La biblioteca de Twilight (español)",
         "background": {
-            "data": "/media/background-library.png",
+            "data": "/media/rooms/library.png",
             "width": 1173,
             "height": 660,
             "iframe": false
@@ -18,7 +18,7 @@
         "name": "ponyville",
         "name_full": "Ponyville",
         "background": {
-            "data": "/media/background-ponyville.png",
+            "data": "/media/rooms/ponyville.png",
             "width": 1445,
             "height": 660,
             "iframe": false
@@ -32,7 +32,7 @@
         "name": "library",
         "name_full": "Twilight's Library",
         "background": {
-            "data": "/media/background-library.png",
+            "data": "/media/rooms/library.png",
             "width": 1173,
             "height": 660,
             "iframe": false
@@ -46,7 +46,7 @@
         "name": "sugarcube_corner",
         "name_full": "Sugarcube Corner",
         "background": {
-            "data": "/media/background-sugarcubecorner.png",
+            "data": "/media/rooms/sugarcubecorner.png",
             "width": 1173,
             "height": 660,
             "iframe": false
@@ -60,7 +60,7 @@
         "name": "carousel_boutique",
         "name_full": "Carousel Boutique",
         "background": {
-            "data": "/media/background-carousel-boutique.png",
+            "data": "/media/rooms/carousel-boutique.png",
             "width": 1159,
             "height": 660,
             "iframe": {
@@ -80,7 +80,7 @@
         "name": "classroom",
         "name_full": "Cheerilee's Classroom",
         "background": {
-            "data": "/media/background-classroom.png",
+            "data": "/media/rooms/classroom.png",
             "width": 1173,
             "height": 660,
             "iframe": false
@@ -114,7 +114,7 @@
         "name": "everfree_forest",
         "name_full": "Everfree Forest",
         "background": {
-            "data": "/media/background-everfreeforest.png",
+            "data": "/media/rooms/everfreeforest.png",
             "width": 1173,
             "height": 660,
             "iframe": false
@@ -128,7 +128,7 @@
         "name": "zecoras_house",
         "name_full": "Zecora's house",
         "background": {
-            "data": "/media/background-zecoras-house.png",
+            "data": "/media/rooms/zecoras-house.png",
             "width": 1175,
             "height": 660,
             "iframe": false
@@ -142,7 +142,7 @@
         "name": "cloudsdale",
         "name_full": "Cloudsdale",
         "background": {
-            "data": "/media/background-cloudsdale.png",
+            "data": "/media/rooms/cloudsdale.png",
             "width": 1213,
             "height": 660,
             "iframe": false
@@ -156,7 +156,7 @@
         "name": "canterlot",
         "name_full": "Canterlot",
         "background": {
-            "data": "/media/background-canterlot.png",
+            "data": "/media/rooms/canterlot.png",
             "width": 1173,
             "height": 660,
             "iframe": false
@@ -170,7 +170,7 @@
         "name": "dungeon",
         "name_full": "Dungeon",
         "background": {
-            "data": "/media/background-dungeon.png",
+            "data": "/media/rooms/dungeon.png",
             "width": 1176,
             "height": 660,
             "iframe": {
@@ -190,7 +190,7 @@
         "name": "dungeon_de",
         "name_full": "Verlies (auf Deutsch)",
         "background": {
-            "data": "/media/background-dungeon.png",
+            "data": "/media/rooms/dungeon.png",
             "width": 1176,
             "height": 660,
             "iframe": false
@@ -204,7 +204,7 @@
         "name": "credits",
         "name_full": "ponyplace credits",
         "background": {
-            "data": "/media/background-cave.png",
+            "data": "/media/rooms/cave.png",
             "width": 960,
             "height": 660,
             "iframe": {

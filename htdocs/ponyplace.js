@@ -325,7 +325,7 @@
                 backgroundIframe.style.display = 'none';
             }
         } else {
-            background.src = '/media/background-cave.png';
+            background.src = '/media/rooms/cave.png';
             stage.style.width = '960px';
             stage.style.height = '660px';
             backgroundIframe.src = 'about:blank';
@@ -387,7 +387,7 @@
 
         background = document.createElement('img');
         background.id = 'background';
-        background.src = '/media/background-noroom.png';
+        background.src = '/media/rooms/noroom.png';
         background.onclick = function (e) {
             var cur = (new Date().getTime());
             if (cur - lastmove > 400) {
