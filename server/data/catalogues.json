@@ -12,6 +12,74 @@
             "img": "/media/store/buy-more.png"
         }
     ],
+    "sweet_apple_acres": [
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "braeburn"
+                }
+            ],
+            "name_full": "Braeburn",
+            "price": 50,
+            "img": "/media/braeburn_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "fillyapplejack"
+                }
+            ],
+            "name_full": "Filly Applejack",
+            "price": 50,
+            "img": "/media/fillyapplejack_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "winona"
+                }
+            ],
+            "name_full": "Winona",
+            "price": 50,
+            "img": "/media/winona_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "bigmacintosh"
+                }
+            ],
+            "name_full": "Big Macintosh",
+            "price": 50,
+            "img": "/media/bigmacintosh_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "grannysmith"
+                }
+            ],
+            "name_full": "Granny Smith",
+            "price": 50,
+            "img": "/media/grannysmith_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "applebloom"
+                }
+            ],
+            "name_full": "Applebloom",
+            "price": 50,
+            "img": "/media/applebloom_right.gif"
+        }
+    ],
     "carousel_boutique": [
         {
             "items": [
@@ -372,72 +440,6 @@
             "name_full": "Berry Punch",
             "price": 50,
             "img": "/media/berrypunch_right.gif"
-        },
-        {
-            "items": [
-                {
-                    "type": "avatar",
-                    "avatar_name": "bigmacintosh"
-                }
-            ],
-            "name_full": "Big Macintosh",
-            "price": 50,
-            "img": "/media/bigmacintosh_right.gif"
-        },
-        {
-            "items": [
-                {
-                    "type": "avatar",
-                    "avatar_name": "grannysmith"
-                }
-            ],
-            "name_full": "Granny Smith",
-            "price": 50,
-            "img": "/media/grannysmith_right.gif"
-        },
-        {
-            "items": [
-                {
-                    "type": "avatar",
-                    "avatar_name": "braeburn"
-                }
-            ],
-            "name_full": "Braeburn",
-            "price": 50,
-            "img": "/media/braeburn_right.gif"
-        },
-        {
-            "items": [
-                {
-                    "type": "avatar",
-                    "avatar_name": "fillyapplejack"
-                }
-            ],
-            "name_full": "Filly Applejack",
-            "price": 50,
-            "img": "/media/fillyapplejack_right.gif"
-        },
-        {
-            "items": [
-                {
-                    "type": "avatar",
-                    "avatar_name": "winona"
-                }
-            ],
-            "name_full": "Winona",
-            "price": 50,
-            "img": "/media/winona_right.gif"
-        },
-        {
-            "items": [
-                {
-                    "type": "avatar",
-                    "avatar_name": "applebloom"
-                }
-            ],
-            "name_full": "Applebloom",
-            "price": 50,
-            "img": "/media/applebloom_right.gif"
         },
         {
             "items": [
