@@ -1,20 +1,6 @@
 [
     {
         "type": "real",
-        "name": "library_es",
-        "name_full": "La biblioteca de Twilight (español)",
-        "background": {
-            "data": "/media/rooms/library.png",
-            "width": 1173,
-            "height": 660,
-            "iframe": false
-        },
-        "user_count": 0,
-        "user_noun": "españoles",
-        "unlisted": false
-    },
-    {
-        "type": "real",
         "name": "ponyville",
         "name_full": "Ponyville",
         "background": {
@@ -189,20 +175,6 @@
         },
         "user_count": 0,
         "user_noun": "prisoners",
-        "unlisted": false
-    },
-    {
-        "type": "real",
-        "name": "dungeon_de",
-        "name_full": "Verlies (auf Deutsch)",
-        "background": {
-            "data": "/media/rooms/dungeon.png",
-            "width": 1176,
-            "height": 660,
-            "iframe": false
-        },
-        "user_count": 0,
-        "user_noun": "Deutsch sprechen",
         "unlisted": false
     },
     {
