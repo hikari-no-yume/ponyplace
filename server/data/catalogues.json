@@ -38,6 +38,41 @@
             "img": "/media/cheerilee_right.gif"
         }
     ],
+    "cloudsdale": [
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "spitfire"
+                }
+            ],
+            "name_full": "Spitfire",
+            "price": 50,
+            "img": "/media/spitfire_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "spitfire2"
+                }
+            ],
+            "name_full": "Spitfire (without suit)",
+            "price": 50,
+            "img": "/media/spitfire2_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "soarin"
+                }
+            ],
+            "name_full": "Soarin'",
+            "price": 50,
+            "img": "/media/soarin_right.gif"
+        }
+    ],
     "canterlot": [
         {
             "items": [
@@ -343,39 +378,6 @@
             "name_full": "Photo Finish",
             "price": 50,
             "img": "/media/photofinish_right.png"
-        },
-        {
-            "items": [
-                {
-                    "type": "avatar",
-                    "avatar_name": "spitfire"
-                }
-            ],
-            "name_full": "Spitfire",
-            "price": 50,
-            "img": "/media/spitfire_right.gif"
-        },
-        {
-            "items": [
-                {
-                    "type": "avatar",
-                    "avatar_name": "spitfire2"
-                }
-            ],
-            "name_full": "Spitfire (without suit)",
-            "price": 50,
-            "img": "/media/spitfire2_right.gif"
-        },
-        {
-            "items": [
-                {
-                    "type": "avatar",
-                    "avatar_name": "soarin"
-                }
-            ],
-            "name_full": "Soarin'",
-            "price": 50,
-            "img": "/media/soarin_right.gif"
         },
         {
             "items": [

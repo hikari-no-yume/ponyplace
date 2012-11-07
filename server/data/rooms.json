@@ -143,7 +143,13 @@
             "data": "/media/rooms/cloudsdale.png",
             "width": 1213,
             "height": 660,
-            "iframe": false
+            "iframe": {
+                "left": 900,
+                "top": 10,
+                "width": 260,
+                "height": 260,
+                "src": "/media/rooms/cloudsdale-shop.html"
+            }
         },
         "user_count": 0,
         "user_noun": "wonderbolts",
