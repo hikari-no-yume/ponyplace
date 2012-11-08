@@ -75,6 +75,26 @@
     },
     {
         "type": "real",
+        "name": "outside_sugarcube_corner",
+        "name_full": "Outside Sugarcube Corner",
+        "background": {
+            "data": "/media/rooms/outside-sugarcubecorner.png",
+            "width": 1173,
+            "height": 660,
+            "iframe": {
+                "left": 578,
+                "top": 512,
+                "width": 55,
+                "height": 96,
+                "src": "/static/rooms/outside-sugarcubecorner-enter.html"
+            }
+        },
+        "user_count": 0,
+        "user_noun": "party animals",
+        "unlisted": false
+    },
+    {
+        "type": "real",
         "name": "sugarcube_corner",
         "name_full": "Sugarcube Corner",
         "background": {
