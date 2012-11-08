@@ -31,6 +31,19 @@
             "img": "/media/rover_right_walk_threaten.gif"
         }
     ],
+    "discordville": [
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "discord"
+                }
+            ],
+            "name_full": "Discord",
+            "price": 50,
+            "img": "/media/discord_right.gif"
+        }
+    ],
     "library": [
         {
             "items": [
@@ -278,17 +291,6 @@
             "name_full": "Octavia",
             "price": 50,
             "img": "/media/octavia_right.gif"
-        },
-        {
-            "items": [
-                {
-                    "type": "avatar",
-                    "avatar_name": "discord"
-                }
-            ],
-            "name_full": "Discord",
-            "price": 50,
-            "img": "/media/discord_right.gif"
         },
         {
             "items": [

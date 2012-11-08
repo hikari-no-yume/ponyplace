@@ -1,6 +1,26 @@
 [
     {
         "type": "real",
+        "name": "discordville",
+        "name_full": "Discordville",
+        "background": {
+            "data": "/media/rooms/discordville.png",
+            "width": 1183,
+            "height": 660,
+            "iframe": {
+                "left": 900,
+                "top": 10,
+                "width": 260,
+                "height": 180,
+                "src": "/static/rooms/discordville-shop.html"
+            }
+        },
+        "user_count": 0,
+        "user_noun": "chocolate raindrops",
+        "unlisted": false
+    },
+    {
+        "type": "real",
         "name": "ponyville",
         "name_full": "Ponyville",
         "background": {
