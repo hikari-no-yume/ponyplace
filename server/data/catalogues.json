@@ -1,4 +1,43 @@
 {
+    "sugarcube_corner": [
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "crazypie"
+                }
+            ],
+            "name_full": "Pinkamena Diane Pie",
+            "price": 50,
+            "img": "/media/crazypie_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "fillypinkiepie"
+                },
+                {
+                    "type": "avatar",
+                    "avatar_name": "fillypinkiepie2"
+                }
+            ],
+            "name_full": "Filly Pinkie Pie",
+            "price": 50,
+            "img": "/media/fillypinkiepie_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "gummy"
+                }
+            ],
+            "name_full": "Gummy",
+            "price": 50,
+            "img": "/media/gummy_right.gif"
+        }
+    ],
     "dungeon": [
         {
             "name_full": "3000 bits, free",
@@ -445,43 +484,6 @@
             "name_full": "Opalescence",
             "price": 50,
             "img": "/media/opalescence_right.gif"
-        },
-        {
-            "items": [
-                {
-                    "type": "avatar",
-                    "avatar_name": "crazypie"
-                }
-            ],
-            "name_full": "Pinkamena Diane Pie",
-            "price": 50,
-            "img": "/media/crazypie_right.gif"
-        },
-        {
-            "items": [
-                {
-                    "type": "avatar",
-                    "avatar_name": "fillypinkiepie"
-                },
-                {
-                    "type": "avatar",
-                    "avatar_name": "fillypinkiepie2"
-                }
-            ],
-            "name_full": "Filly Pinkie Pie",
-            "price": 50,
-            "img": "/media/fillypinkiepie_right.gif"
-        },
-        {
-            "items": [
-                {
-                    "type": "avatar",
-                    "avatar_name": "gummy"
-                }
-            ],
-            "name_full": "Gummy",
-            "price": 50,
-            "img": "/media/gummy_right.gif"
         },
         {
             "items": [

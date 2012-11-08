@@ -101,7 +101,13 @@
             "data": "/media/rooms/sugarcubecorner.png",
             "width": 1173,
             "height": 660,
-            "iframe": false
+            "iframe": {
+                "left": 900,
+                "top": 10,
+                "width": 260,
+                "height": 260,
+                "src": "/static/rooms/sugarcubecorner-shop.html"
+            }
         },
         "user_count": 0,
         "user_noun": "party animals",
