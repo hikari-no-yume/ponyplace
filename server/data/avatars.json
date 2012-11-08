@@ -492,5 +492,27 @@
         "zecora_right.gif",
         "zecora_left_walk.gif",
         "zecora_right_walk.gif"
+    ],
+    "fido": [
+        "fido_left.gif",
+        "fido_right.gif",
+        "fido_left_walk.gif",
+        "fido_right_walk.gif"
+    ],
+    "rover": [
+        "rover_left.gif",
+        "rover_right.gif",
+        "rover_left_walk.gif",
+        "rover_right_walk.gif",
+        "rover_left_walk_threaten.gif",
+        "rover_right_walk_threaten.gif"
+    ],
+    "spot": [
+        "spot_left.gif",
+        "spot_right.gif",
+        "spot_left_walk.gif",
+        "spot_right_walk.gif",
+        "spot_left_walk_threaten.gif",
+        "spot_right_walk_threaten.gif"
     ]
 }

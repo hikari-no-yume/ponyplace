@@ -1,5 +1,5 @@
 {
-    "free_money": [
+    "dungeon": [
         {
             "name_full": "3000 bits, free",
             "items": [
@@ -10,6 +10,25 @@
             ],
             "price": -3000,
             "img": "/media/store/buy-more.png"
+        },
+        {
+            "name_full": "Diamond Dogs avatars (Fido, Rover and Spot!)",
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "fido"
+                },
+                {
+                    "type": "avatar",
+                    "avatar_name": "rover"
+                },
+                {
+                    "type": "avatar",
+                    "avatar_name": "spot"
+                }
+            ],
+            "price": 100,
+            "img": "/media/rover_right_walk_threaten.gif"
         }
     ],
     "library": [

@@ -190,11 +190,11 @@
             "width": 1176,
             "height": 660,
             "iframe": {
-                "src": "/static/rooms/free-money.html",
+                "src": "/static/rooms/dungeon-shop.html",
                 "left": 483,
                 "top": 45,
                 "width": 260,
-                "height": 140
+                "height": 200
             }
         },
         "user_count": 0,
