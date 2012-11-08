@@ -35,6 +35,26 @@
     },
     {
         "type": "real",
+        "name": "outside_library",
+        "name_full": "Outside the Library",
+        "background": {
+            "data": "/media/rooms/outside-library.png",
+            "width": 1173,
+            "height": 660,
+            "iframe": {
+                "left": 555,
+                "top": 452,
+                "width": 98,
+                "height": 130,
+                "src": "/static/rooms/outside-library-enter.html"
+            }
+        },
+        "user_count": 0,
+        "user_noun": "bright sparks",
+        "unlisted": false
+    },
+    {
+        "type": "real",
         "name": "library",
         "name_full": "Twilight's Library",
         "background": {

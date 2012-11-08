@@ -786,6 +786,12 @@
             },
             hasAccount: function () {
                 return haveAccount;
+            },
+            changeRoom: function (name) {
+                socket.send(JSON.stringify({
+                    type: 'room_change',
+                    name: name
+                }));
             }
         };
     }
