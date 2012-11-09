@@ -621,7 +621,7 @@
                 }
             }
         };
-        inventorylistbutton.disabled = true;
+        inventorylistbutton.style.display = 'none';
         overlay.appendChild(inventorylistbutton);
 
         bitcount = document.createElement('div');
@@ -889,12 +889,9 @@
                 break;
                 case 'account_state':
                     mySpecialStatus = msg.special;
-                    bitcount.style.display = 'block';
                     bitcount.innerHTML = '';
                     if (msg.bits !== null) {
                         bitcount.appendChild(document.createTextNode(msg.bits));
-                    } else {
-                        bitcount.appendChild(document.createTextNode('???'));
                     }
                     avatarInventory = msg.avatar_inventory;
                     inventory = msg.inventory;
@@ -904,11 +901,15 @@
                     if (haveAccount) {
                         rmpassbutton.style.display = 'block';
                         changepassbutton.value = 'Change password';
-                        inventorylistbutton.disabled = false;
+                        inventorylistbutton.style.display = 'block';
+                        bitcount.style.display = 'block';
                     } else {
                         rmpassbutton.style.display = 'none';
                         changepassbutton.value = 'Create account';
-                        inventorylistbutton.disabled = true;
+                        inventorylistbutton.style.display = 'none';
+                        inventorylist.style.display = 'none';
+                        inventorylistvisible = false;
+                        bitcount.style.display = 'none';
                     }
                     backgroundIframe.contentDocument.location.reload(true);
                 break;
