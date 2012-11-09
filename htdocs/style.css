@@ -370,16 +370,6 @@ a {
     -webkit-transition: left 0.25s linear, top 0.25s linear;
     -o-transition: left 0.25s linear, top 0.25s linear;
 }
-.pony:hover {
-    cursor: pointer;
-}
-
-.my-pony {
-    pointer-events: none;
-}
-.my-pony:hover {
-    cursor: auto;
-}
 
 .chatbubble {
     background-color: #ECAEFF;
@@ -404,10 +394,7 @@ a {
     padding: 1px;
 }
 
-.nickname {
-    font-weight: bold;
-    text-shadow: 1px 1px black, -1px -1px black, 1px -1px black, -1px 1px black;
-    color: white;
+.nick-tag {
     margin: 0;
     border-radius: 9px;
     height: 18px;
@@ -419,6 +406,16 @@ a {
     width: 188px;
     left: 0;
     top: 168px;
+}
+
+.nickname {
+    font-weight: bold;
+    text-shadow: 1px 1px black, -1px -1px black, 1px -1px black, -1px 1px black;
+    color: white;
+    pointer-events: auto;
+}
+.nickname:hover {
+    cursor: pointer;
 }
 
 .house-link {

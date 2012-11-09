@@ -48,27 +48,19 @@
 
             var elem = document.createElement('div');
             elem.className = 'pony';
-            if (me) {
-                elem.className += ' my-pony';
-            } else {
-                elem.onclick = function () {
-                    chatbox.value += nick;
-                    chatbox.focus();
-                };
-            }
             
             var chat = document.createElement('p');
             chat.className = 'chatbubble';
             elem.appendChild(chat);
             
             var nickTag = document.createElement('p');
-            nickTag.className = 'nickname';
+            nickTag.className = 'nick-tag';
             if (hasHouse) {
                 var houseLink = document.createElement('img');
                 houseLink.src = '/media/icons/house.png';
                 houseLink.className = 'house-link';
                 houseLink.title = 'Go to their house';
-                houseLink.onclick = function () {
+                houseLink.onclick = function (e) {
                     socket.send(JSON.stringify({
                         type: 'room_change',
                         name: 'house ' + nick
@@ -76,10 +68,19 @@
                 };
                 nickTag.appendChild(houseLink);
             }
-            nickTag.appendChild(document.createTextNode(nick));
+
+            var nickName = document.createElement('span');
+            nickName.className = 'nickname';
+            nickName.appendChild(document.createTextNode(nick));
             if (special) {
-                nickTag.className += ' ' + special;
+                nickName.className += ' ' + special;
             }
+            nickName.onclick = function () {
+                chatbox.value += nick;
+                chatbox.focus();
+            };
+            nickTag.appendChild(nickName);
+
             elem.appendChild(nickTag);
             
             stage.appendChild(elem);
@@ -91,6 +92,7 @@
                     root: elem,
                     chat: chat,
                     nickTag: nickTag,
+                    nickName: nickName,
                     img: null
                 }
             };
