@@ -270,6 +270,8 @@ function handleCommand(cmd, myNick, user) {
         } else {
             if (roomManager.has(unfoundUser.room)) {
                 sendLine('User "' + unfound + '" is in ' + unfoundUser.room + ' ("' + roomManager.get(unfoundUser.room).name_full + '")');
+            } else if (unfoundUser.room.substr(0, 6) === 'house ') {
+                sendLine('User "' + unfound + '" is in the house of the user with nick: "' + unfoundUser.room.substr(6) + '"');
             } else {
                 sendLine('User "' + unfound + '" is in the ephemeral room "' + unfoundUser.room + '"');
             }
