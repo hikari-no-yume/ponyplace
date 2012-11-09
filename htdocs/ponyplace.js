@@ -609,15 +609,19 @@
                 inventorylistvisible = true;
                 inventorylist.style.display = 'block';
                 inventorylist.innerHTML = '';
-                for (var i = 0; i < inventory.length; i++) {
-                    var name = inventory[i];
-                    if (inventoryItems.hasOwnProperty(name)) {
-                        var preview = document.createElement('img');
-                        preview.src = inventoryItems[name].img;
-                        preview.title = inventoryItems[name].name_full;
-                        preview.className = 'inventory-item-preview';
-                        inventorylist.appendChild(preview);
+                if (inventory.length) {
+                    for (var i = 0; i < inventory.length; i++) {
+                        var name = inventory[i];
+                        if (inventoryItems.hasOwnProperty(name)) {
+                            var preview = document.createElement('img');
+                            preview.src = inventoryItems[name].img;
+                            preview.title = inventoryItems[name].name_full;
+                            preview.className = 'inventory-item-preview';
+                            inventorylist.appendChild(preview);
+                        }
                     }
+                } else {
+                    inventorylist.appendChild(document.createTextNode('You have no inventory items.'));
                 }
             }
         };
