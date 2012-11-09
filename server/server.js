@@ -242,7 +242,7 @@ function handleCommand(cmd, myNick, user) {
             'Five user commands are available: 1) whereis, 2) list, 3) join, 4) setpass, 5) rmpass',
             '1. whereis - Takes a nick, tells you what room someone is in, e.g. /whereis someguy',
             '2. list - Lists available rooms, e.g. /list',
-            "3. join - Joins a room, e.g. /join library - if that room doesn't exist, an ephemeral room will be created",
+            "3. join - Joins a room, e.g. /join library - if room doesn't exist, an ephemeral room will be created - you can also enter people's houses, e.g. /join house ajf",
             '4. setpass - Creates an account with given password or changes the password, e.g. /setpass opensesame',
             '5. rmpass - Deletes your account, e.g. /rmpass'
         ]);
@@ -269,11 +269,11 @@ function handleCommand(cmd, myNick, user) {
             sendLine('User "' + unfound + '" is not in a room.');
         } else {
             if (roomManager.has(unfoundUser.room)) {
-                sendLine('User "' + unfound + '" is in ' + unfoundUser.room + ' ("' + roomManager.get(unfoundUser.room).name_full + '")');
+                sendLine('User "' + unfound + '" is in ' + unfoundUser.room + ' ("' + roomManager.get(unfoundUser.room).name_full + '") - join them with /join ' + unfoundUser.room);
             } else if (unfoundUser.room.substr(0, 6) === 'house ') {
-                sendLine('User "' + unfound + '" is in the house of the user with nick: "' + unfoundUser.room.substr(6) + '"');
+                sendLine('User "' + unfound + '" is in the house of the user with nick: "' + unfoundUser.room.substr(6) + '" - join them with /join ' + unfoundUser.room);
             } else {
-                sendLine('User "' + unfound + '" is in the ephemeral room "' + unfoundUser.room + '"');
+                sendLine('User "' + unfound + '" is in the ephemeral room "' + unfoundUser.room + '" - join them with /join ' + unfoundUser.room);
             }
         }
 
@@ -282,7 +282,11 @@ function handleCommand(cmd, myNick, user) {
         var roomName = cmd.substr(5);
 
         if (roomName.indexOf(' ') !== -1) {
-            sendLine('Room names cannot contain spaces.');
+            if (roomName.substr(0, 6) === 'house ') {
+                doRoomChange(roomName, user);
+            } else {
+                sendLine('Room names cannot contain spaces.');
+            }
         } else {
             doRoomChange(roomName, user);
         }
