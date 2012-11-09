@@ -146,12 +146,11 @@ input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover {
     cursor: pointer;
 }
 
-#room-refresh-button, #steamgroup-link, #account-settings-button, #inventory-list-button {
+#room-refresh-button, #account-settings-button, #inventory-list-button {
     position: absolute;
     top: 6px;
 }
 #room-refresh-button { left: 160px; }
-#steamgroup-link { left: 280px; }
 #account-settings-button { right: 6px; width: 150px; }
 #inventory-list-button { right: 160px; }
 

@@ -23,7 +23,6 @@
         loginbox, nickbox, passbox, loginsubmit,
         accountsettings, accountsettingsbutton, accountsettingsvisible, changepassbox, changepassbutton, rmpassbutton,
         outerstage, stage,
-        steamgrouplink,
         bitcount,
         chooser, chooserbutton, chooservisible,
         inventorylist, inventorylistbutton, inventorylistvisible,
@@ -588,14 +587,6 @@
         };
         refreshbutton.disabled = true;
         overlay.appendChild(refreshbutton);
-
-        steamgrouplink = document.createElement('a');
-        steamgrouplink.id = 'steamgroup-link';
-        steamgrouplink.className = 'button';
-        steamgrouplink.href = 'http://steamcommunity.com/groups/ponyplace';
-        steamgrouplink.target = '_blank';
-        steamgrouplink.appendChild(document.createTextNode('Steam Group'));
-        overlay.appendChild(steamgrouplink);
 
         inventorylistbutton = document.createElement('input');
         inventorylistbutton.id = 'inventory-list-button';
