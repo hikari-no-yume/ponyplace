@@ -202,7 +202,7 @@ input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover {
     height: 120px;
     white-space: nowrap;
     overflow-y: auto;
-    background-color: pink;
+    background-color: rgba(255, 192, 203, 0.7);
 }
 
 #inventory-list {
@@ -210,9 +210,8 @@ input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover {
     top: 36px;
     right: 160px;
     width: 400px;
-    height: 300px;
-    background-color: white;
-    border: 4px solid pink;
+    height: 200px;
+    background-color: rgba(255, 192, 203, 0.7);
     border-top: none;
     white-space: nowrap;
     overflow-y: auto;
