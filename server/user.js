@@ -1,6 +1,6 @@
 var fs = require('fs');
 
-function User (nick, conn, obj, special, room) {
+function User (nick, conn, obj, room) {
     if (User.has(nick)) {
         throw new Error('There is already a user with the same nick "' + nick + '"');
     }
@@ -10,6 +10,7 @@ function User (nick, conn, obj, special, room) {
     this.obj = obj;
     this.room = room;
     this.special = User.getSpecialStatus(nick);
+    this.has_account = User.hasPassword(nick);
 
     User.users[nick] = this;
     User.userCount++;
@@ -146,6 +147,24 @@ User.changeBits = function (nick, amount) {
         }
     }
     return false;
+};
+
+User.getHouse = function (nick) {
+    return this.getUserData(nick, 'house', {
+        type: 'house',
+        name: 'house ' + nick,
+        user_nick: nick,
+        background: {
+            data: '/media/rooms/cave.png',
+            width: 960,
+            height: 660,
+            iframe: false,
+            locked: false
+        }
+    });
+};
+User.setHouse = function (nick, data) {
+    return this.setUserData(nick, 'house', data);
 };
 
 User.getAvatarInventory = function (nick) {

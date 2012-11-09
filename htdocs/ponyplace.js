@@ -26,7 +26,7 @@
         bitcount,
         chooser, chooserbutton, chooservisible,
         inventorylist, inventorylistbutton, inventorylistvisible,
-        roomlist, refreshbutton,
+        roomlist, refreshbutton, homebutton,
         background, backgroundIframe,
         chatbox, chatboxholder, chatbutton, chatlog, fullchatlog, fullchatlogbutton, fullchatlogvisible;
     
@@ -41,7 +41,7 @@
             this.updateCounter();
             overlay.appendChild(this.userCounter);
         },
-        add: function (nick, obj, special, me) {
+        add: function (nick, obj, special, hasHouse, me) {
             if (this.has(nick)) {
                 throw new Error("There is already a user with the same nick.");
             }
@@ -63,6 +63,19 @@
             
             var nickTag = document.createElement('p');
             nickTag.className = 'nickname';
+            if (hasHouse) {
+                var houseLink = document.createElement('img');
+                houseLink.src = '/media/icons/house.png';
+                houseLink.className = 'house-link';
+                houseLink.title = 'Go to their house';
+                houseLink.onclick = function () {
+                    socket.send(JSON.stringify({
+                        type: 'room_change',
+                        name: 'house ' + nick
+                    }));
+                };
+                nickTag.appendChild(houseLink);
+            }
             nickTag.appendChild(document.createTextNode(nick));
             if (special) {
                 nickTag.className += ' ' + special;
@@ -115,7 +128,7 @@
                         user.elem.chat.style.bottom = newHeight + 'px';
                         user.elem.chat.style.marginLeft = (newWidth - 168) / 2 + 'px';
                         user.elem.nickTag.style.top = newHeight + 'px';
-                        user.elem.nickTag.style.marginLeft = (newWidth - 168) / 2 + 'px';
+                        user.elem.nickTag.style.marginLeft = (newWidth - 188) / 2 + 'px';
                     };
                 }
             } else {
@@ -159,10 +172,16 @@
         updateCounter: function () {
             this.userCounter.innerHTML = '';
             if (myRoom !== null) {
-                if (myRoom.type !== 'ephemeral') {
+                if (myRoom.type === 'real') {
                     this.userCounter.appendChild(document.createTextNode('You are in ' + myRoom.name + ' ("' + myRoom.name_full + '")'));
-                } else {
+                } else if (myRoom.type === 'ephemeral') {
                     this.userCounter.appendChild(document.createTextNode('You are in the ephemeral room "' + myRoom.name + '"'));
+                } else if (myRoom.type === 'house') {
+                    if (myRoom.user_nick === myNick) {
+                        this.userCounter.appendChild(document.createTextNode('You are in your house'));
+                    } else {
+                        this.userCounter.appendChild(document.createTextNode('You are in the house of user with nick: "' + myRoom.user_nick + '"'));
+                    }
                 }
                 this.userCounter.appendChild(document.createElement('br'));
                 this.userCounter.appendChild(document.createTextNode(this.userCount + ' users in room'));
@@ -273,6 +292,14 @@
     function logEphemeralRoomJoinInChat(name) {
         chatPrint('You joined the ephemeral room "' + name + '"', false, true);
     }
+
+    function logHouseRoomJoinInChat(nick) {
+        if (nick !== myNick) {
+            chatPrint('You entered the house of user with nick: "' + nick + '"', false, true);
+        } else {
+            chatPrint('You entered your house', false, true);
+        }
+    }
     
     function updateRoomList(rooms) {
         var option;
@@ -340,7 +367,7 @@
         myRoom = room;
         
         // add me
-        userManager.add(myNick, me, mySpecialStatus, true);
+        userManager.add(myNick, me, mySpecialStatus, false, true);
 
         // go to random position
         if (room.type !== 'ephemeral') {
@@ -354,9 +381,11 @@
         // push state
         pushAndUpdateState(me);
 
-        if (room.type !== 'ephemeral') {
+        if (room.type == 'real') {
             logRoomJoinInChat(room.name, room.name_full);
-        } else {
+        } else if (room.type === 'house') {
+            logHouseRoomJoinInChat(room.user_nick);
+        } else if (room.type === 'ephemeral') {
             logEphemeralRoomJoinInChat(room.name);
         }
 
@@ -587,6 +616,19 @@
         };
         refreshbutton.disabled = true;
         overlay.appendChild(refreshbutton);
+
+        homebutton = document.createElement('input');
+        homebutton.type = 'submit';
+        homebutton.value = 'My House';
+        homebutton.id = 'home-button';
+        homebutton.onclick = function () {
+            socket.send(JSON.stringify({
+                type: 'room_change',
+                name: 'house ' + myNick
+            }));
+        };
+        homebutton.style.display = 'none';
+        overlay.appendChild(homebutton);
 
         inventorylistbutton = document.createElement('input');
         inventorylistbutton.id = 'inventory-list-button';
@@ -875,7 +917,7 @@
             var msg = JSON.parse(e.data);
             switch (msg.type) {
                 case 'appear':
-                    userManager.add(msg.nick, msg.obj, msg.special, false);
+                    userManager.add(msg.nick, msg.obj, msg.special, msg.has_house, false);
                 break;
                 case 'update':
                     if (msg.nick !== myNick) {
@@ -898,6 +940,7 @@
                         changepassbutton.value = 'Change password';
                         inventorylistbutton.style.display = 'block';
                         bitcount.style.display = 'block';
+                        homebutton.style.display = 'block';
                     } else {
                         rmpassbutton.style.display = 'none';
                         changepassbutton.value = 'Create account';
@@ -905,6 +948,7 @@
                         inventorylist.style.display = 'none';
                         inventorylistvisible = false;
                         bitcount.style.display = 'none';
+                        homebutton.style.display = 'none';
                     }
                     backgroundIframe.contentDocument.location.reload(true);
                 break;

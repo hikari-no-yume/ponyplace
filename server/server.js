@@ -149,6 +149,8 @@ function doRoomChange(roomName, user) {
 
     if (roomManager.has(roomName)) {
         room = roomManager.get(roomName);
+    } else if (roomName.substr(0, 6) === 'house ') {
+        room = User.getHouse(roomName.substr(6));
     } else {
         room = {
             type: 'ephemeral',
@@ -172,7 +174,7 @@ function doRoomChange(roomName, user) {
         // decrease user count of old room
         if (roomManager.has(oldRoom)) {
             roomManager.get(oldRoom).user_count--;
-        } else {
+        } else if (room.name.substr(0, 6) !== 'house ') {
             roomManager.onEphemeralLeave(oldRoom);
         }
     }
@@ -194,14 +196,16 @@ function doRoomChange(roomName, user) {
                     type: 'appear',
                     obj: iterUser.obj,
                     nick: iterUser.nick,
-                    special: iterUser.special
+                    special: iterUser.special,
+                    has_house: iterUser.has_account
                 });
                 // tell other clients in room about client
                 iterUser.send({
                     type: 'appear',
                     obj: user.obj,
                     nick: user.nick,
-                    special: user.special
+                    special: user.special,
+                    has_house: user.has_account
                 });
             }
         }
@@ -210,7 +214,7 @@ function doRoomChange(roomName, user) {
     // increase user count of new room
     if (roomManager.has(room.name)) {
         room.user_count++;
-    } else {
+    } else if (room.name.substr(0, 6) !== 'house ') {
         roomManager.onEphemeralJoin(room.name);
     }
 }
@@ -230,6 +234,7 @@ function handleCommand(cmd, myNick, user) {
     }
 
     var isMod = User.isModerator(myNick);
+    var haveHouse = user.has_account;
     
     // help
     if (cmd.substr(0, 4) === 'help') {
@@ -241,6 +246,14 @@ function handleCommand(cmd, myNick, user) {
             '4. setpass - Creates an account with given password or changes the password, e.g. /setpass opensesame',
             '5. rmpass - Deletes your account, e.g. /rmpass'
         ]);
+        if (haveHouse) {
+            sendMultiLine([
+                'Three house commands are available: 1) empty, 2) lock, 3) unlock',
+                '1. empty - Removes everyone else from your house, e.g. /empty',
+                '2. lock - Prevents anyone else from joining your house, e.g. /lock',
+                '3. unlock - Lets other people join your house again, e.g. /unlock'
+            ]);
+        }
         if (isMod) {
             sendLine('See also: /modhelp');
         }
@@ -321,6 +334,42 @@ function handleCommand(cmd, myNick, user) {
             user.didConfirm = true;
         } else {
             sendLine("You don't have an account");
+        }
+    // empty house
+    } else if (haveHouse && cmd.substr(0, 5) === 'empty') {
+        var count = 0;
+        User.forEach(function (iterUser) {
+            if (iterUser.room === 'house ' + myNick && iterUser.nick !== myNick) {
+                doRoomChange('ponyville', iterUser);
+                sendLine('Removed user with nick: "' + iterUser.nick + '" from your house.');
+                sendLine('The user with nick: "' + myNick + '" removed you from their house.', iterUser.nick);
+                count++;
+            }
+        });
+        if (count) {
+            sendLine('Removed ' + count + ' users from your house.');
+        } else {
+            sendLine('There are no other users in your house.');
+        }
+    // lock house
+    } else if (haveHouse && cmd.substr(0, 4) === 'lock') {
+        var house = User.getHouse(myNick);
+        if (house.locked) {
+            sendLine('Your house is already locked. Use /unlock to unlock it.');
+        } else {
+            house.locked = true;
+            User.setHouse(myNick, house);
+            sendLine('Your house was locked. Use /unlock to unlock it.');
+        }
+    // unlock house
+    } else if (haveHouse && cmd.substr(0, 6) === 'unlock') {
+        var house = User.getHouse(myNick);
+        if (!house.locked) {
+            sendLine('Your house is already unlocked. Use /lock to lock it.');
+        } else {
+            house.locked = false;
+            User.setHouse(myNick, house);
+            sendLine('Your house was unlocked. Use /lock to lock it.');
         }
     // mod help
     } else if (isMod && cmd.substr(0, 7) === 'modhelp') {
@@ -562,12 +611,28 @@ wsServer.on('request', function(request) {
                 });
             break;
             case 'room_change':
-                var roomExists = false, room = null;
-
                 if (msg.name.indexOf(' ') === -1) {
                     doRoomChange(msg.name, user);
                 } else {
-                    user.kick('protocol_error');
+                    if (msg.name.substr(0, 6) === 'house ') {
+                        if (User.hasPassword(msg.name.substr(6))) {
+                            if (User.getHouse(msg.name.substr(6)).locked && myNick !== msg.name.substr(6)) {
+                                user.send({
+                                    type: 'console_msg',
+                                    msg: 'That house is locked.'
+                                });
+                            } else {
+                                doRoomChange(msg.name, user);
+                            }
+                        } else {
+                            user.send({
+                                type: 'console_msg',
+                                msg: 'The user with the nick: "' + msg.name.substr(6) + '" does not have a house.'
+                            });
+                        }
+                    } else {
+                        user.kick('protocol_error');
+                    }
                 }
             break;
             case 'room_list':
