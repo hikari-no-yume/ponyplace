@@ -27,6 +27,7 @@
         chooser, chooserbutton, chooservisible,
         inventorylist, inventorylistbutton, inventorylistvisible,
         roomlist, refreshbutton, homebutton,
+        roomedit, roomeditbutton, roomeditreset, roomeditiframe, roomeditvisible,
         background, backgroundIframe,
         chatbox, chatboxholder, chatbutton, chatlog, fullchatlog, fullchatlogbutton, fullchatlogvisible;
     
@@ -383,7 +384,7 @@
         // push state
         pushAndUpdateState(me);
 
-        if (room.type == 'real') {
+        if (room.type === 'real') {
             logRoomJoinInChat(room.name, room.name_full);
         } else if (room.type === 'house') {
             logHouseRoomJoinInChat(room.user_nick);
@@ -393,6 +394,26 @@
 
         // update URL hash
         window.location.hash = room.name;
+
+        // hide/show room edit button
+        if (room.type === 'house' && myNick === room.user_nick) {
+            roomeditbutton.style.display = 'block';
+        } else {
+            roomeditbutton.style.display = 'none';
+            roomedit.style.display = 'none';
+            roomeditvisible = false;
+        }
+    }
+
+    function handleItemClick(name, obj) {
+        if (obj.type === 'house_background') {
+            if (confirm('Do you want to change your house background to: "' + obj.name_full + '"?')) {
+                socket.send(JSON.stringify({
+                    type: 'change_house_background',
+                    bg_name: name
+                }));
+            }
+        }
     }
 
     // show GUI elements hidden pre-connection
@@ -652,6 +673,14 @@
                             preview.src = inventoryItems[name].img;
                             preview.title = inventoryItems[name].name_full;
                             preview.className = 'inventory-item-preview';
+                            if (inventoryItems[name].type !== 'useless') {
+                                preview.className += ' inventory-item-clickable';
+                                (function (itemName, item) {
+                                    preview.onclick = function () {
+                                        handleItemClick(itemName, item);
+                                    };
+                                }(name, inventoryItems[name]));
+                            }
                             inventorylist.appendChild(preview);
                         }
                     }
@@ -685,6 +714,47 @@
         };
         accountsettingsbutton.disabled = true;
         overlay.appendChild(accountsettingsbutton);
+
+        roomeditbutton = document.createElement('input');
+        roomeditbutton.id = 'room-edit-button';
+        roomeditbutton.type = 'submit';
+        roomeditbutton.value = 'Edit House';
+        roomeditbutton.onclick = function () {
+            if (roomeditvisible) {
+                roomedit.style.display = 'none';
+                roomeditvisible = false;
+            } else {
+                roomedit.style.display = 'block'
+                roomeditvisible = true;
+                roomeditiframe.contentDocument.location.reload(true);
+            }
+        };
+        roomeditbutton.style.display = 'none';
+        overlay.appendChild(roomeditbutton);
+
+        roomedit = document.createElement('div');
+        roomedit.id = 'room-edit';
+        roomedit.style.display = 'none';
+        roomedit.appendChild(document.createTextNode('Change your house background by clicking one in your inventory.'));
+        roomeditvisible = false;
+        overlay.appendChild(roomedit);
+
+        roomeditreset = document.createElement('input');
+        roomeditreset.type = 'submit';
+        roomeditreset.value = 'Reset to default';
+        roomeditreset.onclick = function () {
+            socket.send(JSON.stringify({
+                type: 'change_house_background',
+                bg_name: null
+            }));
+        };
+        roomedit.appendChild(roomeditreset);
+
+        roomeditiframe = document.createElement('iframe');
+        roomeditiframe.src = '/static/rooms/edit-shop.html';
+        roomeditiframe.width = 260;
+        roomeditiframe.height = 260;
+        roomedit.appendChild(roomeditiframe);
 
         accountsettings = document.createElement('div');
         accountsettings.id = 'account-settings';
@@ -953,6 +1023,9 @@
                         homebutton.style.display = 'none';
                     }
                     backgroundIframe.contentDocument.location.reload(true);
+                    if (roomeditvisible) {
+                        roomeditiframe.contentDocument.location.reload(true);
+                    }
                 break;
                 case 'broadcast':
                     logBroadcastInChat(msg.msg);
@@ -1006,6 +1079,8 @@
                         alert("No such room. You tried to join a room that doesn't exist.");
                     } else if (msg.reason === 'dont_have_avatar') {
                         alert("You do not have the avatar you tried to wear. This is probably a bug.");
+                    } else if (msg.reason === 'dont_have_item') {
+                        alert("You do not have the item you tried to use. This is probably a bug.");
                     } else if (msg.reason === 'kick') {
                         alert('You were kicked!');
                     } else if (msg.reason === 'ban') {

@@ -197,7 +197,7 @@ function doRoomChange(roomName, user) {
                     obj: iterUser.obj,
                     nick: iterUser.nick,
                     special: iterUser.special,
-                    has_house: iterUser.has_account
+                    has_house: User.hasPassword(iterUser.nick)
                 });
                 // tell other clients in room about client
                 iterUser.send({
@@ -205,7 +205,7 @@ function doRoomChange(roomName, user) {
                     obj: user.obj,
                     nick: user.nick,
                     special: user.special,
-                    has_house: user.has_account
+                    has_house: User.hasPassword(user.nick)
                 });
             }
         }
@@ -234,7 +234,7 @@ function handleCommand(cmd, myNick, user) {
     }
 
     var isMod = User.isModerator(myNick);
-    var haveHouse = user.has_account;
+    var haveHouse = User.hasPassword(myNick);
     
     // help
     if (cmd.substr(0, 4) === 'help') {
@@ -663,9 +663,55 @@ wsServer.on('request', function(request) {
                     });
                 }
             break;
+            case 'change_house_background':
+                if (User.hasPassword(myNick)) {
+                    var house = User.getHouse(myNick);
+                    // default
+                    if (msg.bg_name === null) {
+                        house.background = {
+                            data: '/media/rooms/cave.png',
+                            width: 960,
+                            height: 660,
+                            iframe: false
+                        };
+                        User.setHouse(myNick, house);
+                        user.send({
+                            type: 'console_msg',
+                            msg: 'House background reset.'
+                        });
+                        User.forEach(function (iterUser) {
+                            if (iterUser.room === 'house ' + myNick) {
+                                doRoomChange('house ' + myNick, iterUser);
+                            }
+                        });
+                    } else {
+                        if (User.hasInventoryItem(myNick, msg.bg_name)) {
+                            if (User.inventoryItems.hasOwnProperty(msg.bg_name)) {
+                                house.background = User.inventoryItems[msg.bg_name].background_data;
+                                User.setHouse(myNick, house);
+                                user.send({
+                                    type: 'console_msg',
+                                    msg: 'House background changed.'
+                                });
+                                User.forEach(function (iterUser) {
+                                    if (iterUser.room === 'house ' + myNick) {
+                                        doRoomChange('house ' + myNick, iterUser);
+                                    }
+                                });
+                            } else {
+                                user.kick('protocol_error');
+                            }
+                        } else {
+                            user.kick('dont_have_item');
+                        }
+                    }
+                } else {
+                    user.kick('protocol_error');
+                }
+            break;
             // handle unexpected packet types
             default:
-                User.kick('protocol_error');
+                user.kick('protocol_error');
             break;
         }
     }

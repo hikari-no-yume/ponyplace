@@ -10,7 +10,6 @@ function User (nick, conn, obj, room) {
     this.obj = obj;
     this.room = room;
     this.special = User.getSpecialStatus(nick);
-    this.has_account = User.hasPassword(nick);
 
     User.users[nick] = this;
     User.userCount++;
@@ -154,12 +153,12 @@ User.getHouse = function (nick) {
         type: 'house',
         name: 'house ' + nick,
         user_nick: nick,
+        locked: false,
         background: {
             data: '/media/rooms/cave.png',
             width: 960,
             height: 660,
-            iframe: false,
-            locked: false
+            iframe: false
         }
     });
 };
