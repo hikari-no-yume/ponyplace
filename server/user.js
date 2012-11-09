@@ -46,11 +46,14 @@ User.passwords = {};
 User.specialUsers = {};
 User.userData = {};
 User.avatars = {};
+User.inventoryItems = {};
 User.catalogues = {};
 
 User.init = function () {
     this.avatars = JSON.parse(fs.readFileSync('data/avatars.json'));
     console.log('Loaded avatars list');
+    this.inventoryItems = JSON.parse(fs.readFileSync('data/inventory_items.json'));
+    console.log('Loaded inventory items list');
     this.catalogues = JSON.parse(fs.readFileSync('data/catalogues.json'));
     console.log('Loaded catalogues');
     this.passwords = JSON.parse(fs.readFileSync('data/passwords.json'));

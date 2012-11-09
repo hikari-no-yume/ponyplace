@@ -10,7 +10,7 @@
     var ROOM_HEIGHT = 660;
     var PONY_WIDTH = 168, PONY_HEIGHT = 168;
     
-    var avatars = [];
+    var avatars = [], inventoryItems = [];
     
     var socket, connected = false, ignoreDisconnect = false, pageFocussed = false, unseenHighlights = 0,
         me, myNick, myRoom = null, mySpecialStatus, avatarInventory, inventory = [], haveAccount = false,
@@ -26,6 +26,7 @@
         steamgrouplink,
         bitcount,
         chooser, chooserbutton, chooservisible,
+        inventorylist, inventorylistbutton, inventorylistvisible,
         roomlist, refreshbutton,
         background, backgroundIframe,
         chatbox, chatboxholder, chatbutton, chatlog, fullchatlog, fullchatlogbutton, fullchatlogvisible;
@@ -303,8 +304,8 @@
         roomlist.appendChild(option);
 
         // show list and refresh button
-        refreshbutton.style.display = 'inline-block';
-        roomlist.style.display = 'inline-block';
+        refreshbutton.disabled = false;
+        roomlist.disabled = false;
     }
     
     function changeRoom(room) {
@@ -368,9 +369,9 @@
     function onConnect() {
         chatbox.focus();
 
-        chatboxholder.style.display = 'block';
-        chatbutton.style.display = 'block';
-        fullchatlogbutton.style.display = 'inline-block';
+        chatbox.disabled = false;
+        chatbutton.disabled = false;
+        fullchatlogbutton.disabled = false;
         
         stage.style.display = 'block';
     }
@@ -444,7 +445,6 @@
 
         chatboxholder = document.createElement('div');
         chatboxholder.id = 'chatbox-holder';
-        chatboxholder.style.display = 'none';
         overlay.appendChild(chatboxholder);
         
         chatbox = document.createElement('input');
@@ -456,6 +456,7 @@
                 handleChatMessage();
             }
         };
+        chatbox.disabled = true;
         chatboxholder.appendChild(chatbox);
         
         chatbutton = document.createElement('input');
@@ -465,7 +466,7 @@
         chatbutton.onclick = function (e) {
             handleChatMessage();
         };
-        chatbutton.style.display = 'none';
+        chatbutton.disabled = true;
         container.appendChild(chatbutton);
 
         fullchatlogbutton = document.createElement('input');
@@ -482,7 +483,7 @@
                 fullchatlog.scrollTop = fullchatlog.scrollHeight;
             }
         };
-        fullchatlogbutton.style.display = 'none';
+        fullchatlogbutton.disabled = true;
         overlay.appendChild(fullchatlogbutton);
         
         chooserbutton = document.createElement('input');
@@ -546,7 +547,7 @@
                 }
             }
         };
-        chooserbutton.style.display = 'none';
+        chooserbutton.disabled = true;;
         overlay.appendChild(chooserbutton);
     }
 
@@ -573,7 +574,7 @@
             roomlist.value = '[no choice]';
         };
         roomlist.value = '[no choice]';
-        roomlist.style.display = 'none';
+        roomlist.disabled = true;
         overlay.appendChild(roomlist);
 
         refreshbutton = document.createElement('input');
@@ -585,7 +586,7 @@
                 type: 'room_list'
             }));
         };
-        refreshbutton.style.display = 'none';
+        refreshbutton.disabled = true;
         overlay.appendChild(refreshbutton);
 
         steamgrouplink = document.createElement('a');
@@ -595,6 +596,33 @@
         steamgrouplink.target = '_blank';
         steamgrouplink.appendChild(document.createTextNode('Steam Group'));
         overlay.appendChild(steamgrouplink);
+
+        inventorylistbutton = document.createElement('input');
+        inventorylistbutton.id = 'inventory-list-button';
+        inventorylistbutton.type = 'submit';
+        inventorylistbutton.value = 'Inventory';
+        inventorylistbutton.onclick = function () {
+            if (inventorylistvisible) {
+                inventorylist.style.display = 'none';
+                inventorylistvisible = false;
+            } else {
+                inventorylistvisible = true;
+                inventorylist.style.display = 'block';
+                inventorylist.innerHTML = '';
+                for (var i = 0; i < inventory.length; i++) {
+                    var name = inventory[i];
+                    if (inventoryItems.hasOwnProperty(name)) {
+                        var preview = document.createElement('img');
+                        preview.src = inventoryItems[name].img;
+                        preview.title = inventoryItems[name].name_full;
+                        preview.className = 'inventory-item-preview';
+                        inventorylist.appendChild(preview);
+                    }
+                }
+            }
+        };
+        inventorylistbutton.disabled = true;
+        overlay.appendChild(inventorylistbutton);
 
         bitcount = document.createElement('div');
         bitcount.id = 'bit-count';
@@ -616,7 +644,7 @@
                 accountsettingsvisible = true;
             }
         };
-        accountsettingsbutton.style.display = 'none';
+        accountsettingsbutton.disabled = true;
         overlay.appendChild(accountsettingsbutton);
 
         accountsettings = document.createElement('div');
@@ -675,6 +703,12 @@
         chooservisible = false;
         chooser.style.display = 'none';
         overlay.appendChild(chooser);
+
+        inventorylist = document.createElement('div');
+        inventorylist.id = 'inventory-list';
+        inventorylistvisible = false;
+        inventorylist.style.display = 'none';
+        overlay.appendChild(inventorylist);
     }
 
     function doLogin() {
@@ -864,15 +898,17 @@
                     }
                     avatarInventory = msg.avatar_inventory;
                     inventory = msg.inventory;
-                    chooserbutton.style.display = 'inline-block';
+                    chooserbutton.disabled = false;
                     haveAccount = msg.have_account;
-                    accountsettingsbutton.style.display = 'block';
+                    accountsettingsbutton.disabled = false;
                     if (haveAccount) {
                         rmpassbutton.style.display = 'block';
                         changepassbutton.value = 'Change password';
+                        inventorylistbutton.disabled = false;
                     } else {
                         rmpassbutton.style.display = 'none';
                         changepassbutton.value = 'Create account';
+                        inventorylistbutton.disabled = true;
                     }
                     backgroundIframe.contentDocument.location.reload(true);
                 break;
@@ -892,6 +928,9 @@
                 break;
                 case 'avatar_list':
                     avatars = msg.list;
+                break;
+                case 'inventory_item_list':
+                    inventoryItems = msg.list;
                 break;
                 case 'room_change':
                     changeRoom(msg.data);

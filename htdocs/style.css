@@ -137,19 +137,23 @@ input[type=submit], .button {
     width: 105px;
     height: 24px;
 }
+input[type=submit][disabled], .button[disabled] {
+    color: gray;
+}
 
-input[type=submit]:hover, .button:hover {
+input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover {
     text-decoration: underline;
     cursor: pointer;
 }
 
-#room-refresh-button, #steamgroup-link, #account-settings-button {
+#room-refresh-button, #steamgroup-link, #account-settings-button, #inventory-list-button {
     position: absolute;
     top: 6px;
 }
 #room-refresh-button { left: 160px; }
 #steamgroup-link { left: 280px; }
 #account-settings-button { right: 6px; width: 150px; }
+#inventory-list-button { right: 160px; }
 
 #room-list {
     position: absolute;
@@ -167,7 +171,7 @@ input[type=submit]:hover, .button:hover {
     font-size: 14pt;
     position: absolute;
     top: 6px;
-    right: 160px;
+    right: 270px;
     padding: 2px;
     height: 20px;
     vertical-align: middle;
@@ -201,7 +205,20 @@ input[type=submit]:hover, .button:hover {
     background-color: pink;
 }
 
-.chooser-preview {
+#inventory-list {
+    position: absolute;
+    top: 36px;
+    right: 160px;
+    width: 400px;
+    height: 300px;
+    background-color: white;
+    border: 4px solid pink;
+    border-top: none;
+    white-space: nowrap;
+    overflow-y: auto;
+}
+
+.chooser-preview, .inventory-item-preview {
     max-height: 50px;
     border: 1px solid black;
     margin: 2px;

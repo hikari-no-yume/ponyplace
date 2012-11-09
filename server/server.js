@@ -718,6 +718,12 @@ wsServer.on('request', function(request) {
             type: 'avatar_list',
             list: User.avatars
         }));
+
+        // tell client about inventory items
+        connection.sendUTF(JSON.stringify({
+            type: 'inventory_item_list',
+            list: User.inventoryItems
+        }));
         
         myNick = msg.nick;
         user = new User(msg.nick, connection, msg.obj, null);
