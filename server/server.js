@@ -174,7 +174,7 @@ function doRoomChange(roomName, user) {
         // decrease user count of old room
         if (roomManager.has(oldRoom)) {
             roomManager.get(oldRoom).user_count--;
-        } else if (room.name.substr(0, 6) !== 'house ') {
+        } else if (oldRoom.substr(0, 6) !== 'house ') {
             roomManager.onEphemeralLeave(oldRoom);
         }
     }
@@ -899,7 +899,7 @@ wsServer.on('request', function(request) {
                 // decrease user count of room
                 if (roomManager.has(user.room)) {
                     roomManager.get(user.room).user_count--;
-                } else {
+                } else if (user.room.substr(0, 6) !== 'house '){
                     roomManager.onEphemeralLeave(user.room);
                 }
             }
