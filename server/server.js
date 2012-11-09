@@ -839,6 +839,33 @@ wsServer.on('request', function(request) {
         myNick = msg.nick;
         user = new User(msg.nick, connection, msg.obj, null);
         user.sendAccountState();
+
+        // give daily reward
+        if (User.hasPassword(msg.nick)) {
+            var date = (new Date()).toISOString().split('T', 1)[0];
+            if (User.getUserData(msg.nick, 'last_reward', '1970-01-01') !== date) {
+                if (User.hasBits(msg.nick) < 500) {
+                    var reward = Math.floor(Math.random()*100);
+                    if (User.changeBits(msg.nick, reward)) {
+                        User.setUserData(msg.nick, 'last_reward', date);
+                        user.send({
+                            type: 'console_msg',
+                            msg: "As a thanks for visiting ponyplace again today, here's " + reward + " free bits! :)"
+                        });
+                    } else {
+                        user.send({
+                            type: 'console_msg',
+                            msg: 'Sorry, something went wrong. Giving you your daily reward failed :('
+                        });
+                    }
+                } else {
+                    user.send({
+                        type: 'console_msg',
+                        msg: "Sorry, you can only get rewards if you have less than 500 bits. :("
+                    });
+                }
+            }
+        }
         
         // call onMessage for subsequent messages
         connection.on('message', onMessage);
