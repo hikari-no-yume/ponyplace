@@ -389,7 +389,7 @@ a {
     margin-top: -84px;
     background-position: center;
     background-repeat: no-repeat;
-    pointer-events: auto;
+    pointer-events: none;
     transition: left 0.25s linear, top 0.25s linear;
     -webkit-transition: left 0.25s linear, top 0.25s linear;
     -o-transition: left 0.25s linear, top 0.25s linear;
@@ -423,7 +423,7 @@ a {
     border-radius: 9px;
     height: 18px;
     overflow: hidden;
-    pointer-events: none;
+    pointer-events: auto;
 
     /* position below avatar */
     position: absolute;
