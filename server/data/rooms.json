@@ -1,6 +1,26 @@
 [
     {
         "type": "real",
+        "name": "party_barn",
+        "name_full": "Party Barn",
+        "background": {
+            "data": "/media/rooms/party-barn.png",
+            "width": 1152,
+            "height": 660,
+            "iframe": {
+                "left": 0,
+                "top": 0,
+                "width": 1152,
+                "height": 660,
+                "src": "/static/rooms/party-barn.html"
+            }
+        },
+        "user_count": 0,
+        "user_noun": "funlovers",
+        "unlisted": false
+    },
+    {
+        "type": "real",
         "name": "discordville",
         "name_full": "Discordville",
         "background": {

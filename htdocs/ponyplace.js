@@ -429,6 +429,19 @@
         stage.style.display = 'block';
     }
 
+    function doMove(x, y) {
+        var cur = (new Date().getTime());
+        if (cur - lastmove > 400) {
+            me.img_index = (me.img_index | 1) - (me.x < x ? 0 : 1);
+            me.x = x;
+            me.y = y;
+            pushAndUpdateState(me);
+            lastmove = cur;
+        } else {
+            chatPrint('You are doing that too often.');
+        }
+    }
+
     function initGUI_stage() {
         outerstage = document.createElement('div');
         outerstage.id = 'outer-stage';
@@ -443,17 +456,7 @@
         background.id = 'background';
         background.src = '/media/rooms/noroom.png';
         background.onclick = function (e) {
-            var cur = (new Date().getTime());
-            if (cur - lastmove > 400) {
-                var newx = e.layerX;
-                me.img_index = (me.img_index | 1) - (me.x < newx ? 0 : 1);
-                me.x = newx;
-                me.y = e.layerY;
-                pushAndUpdateState(me);
-                lastmove = cur;
-            } else {
-                chatPrint('You are doing that too often.');
-            }
+            doMove(e.layerX, e.layerY);
         };
         background.ondragstart = function () {
             return false;
@@ -954,7 +957,8 @@
                     type: 'room_change',
                     name: name
                 }));
-            }
+            },
+            doMove: doMove
         };
     }
 
