@@ -601,6 +601,7 @@
                                         preview.onclick = function () {
                                             me.img_name = name;
                                             me.img_index = imgid;
+                                            localStorage.setItem('last-avatar', name);
                                             pushAndUpdateState(me);
                                             chooser.style.display = 'none';
                                             chooservisible = false;
@@ -976,7 +977,7 @@
             myNick = myNick.replace(/^\s+|\s+$/g, '');
             mySpecialStatus = false;
             me = {
-                img_name: 'derpy',
+                img_name: localStorage.getItem('last-avatar') || 'derpy',
                 img_index: 0,
                 x: 0,
                 y: 0,
@@ -1044,6 +1045,7 @@
                         inventorylistvisible = false;
                         bitcount.style.display = 'none';
                         homebutton.style.display = 'none';
+                        localStorage.setItem('last-avatar', '');
                     }
                     backgroundIframe.contentDocument.location.reload(true);
                     if (roomeditvisible) {
@@ -1102,6 +1104,8 @@
                         alert("No such room. You tried to join a room that doesn't exist.");
                     } else if (msg.reason === 'dont_have_avatar') {
                         alert("You do not have the avatar you tried to wear. This is probably a bug.");
+                        // erase last avatar
+                        localStorage.setItem('last-avatar', '');
                     } else if (msg.reason === 'dont_have_item') {
                         alert("You do not have the item you tried to use. This is probably a bug.");
                     } else if (msg.reason === 'kick') {
