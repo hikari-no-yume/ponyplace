@@ -217,6 +217,17 @@
             "items": [
                 {
                     "type": "avatar",
+                    "avatar_name": "raindrops"
+                }
+            ],
+            "name_full": "Raindrops",
+            "price": 50,
+            "img": "/media/raindrops_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
                     "avatar_name": "spitfire"
                 }
             ],

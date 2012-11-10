@@ -73,6 +73,16 @@
         "doctorwhooves_left_walk.gif",
         "doctorwhooves_right_walk.gif"
     ],
+    "raindrops": [
+        "raindrops_left.gif",
+        "raindrops_right.gif",
+        "raindrops_left_walk.gif",
+        "raindrops_right_walk.gif",
+        "raindrops_left_hover.gif",
+        "raindrops_right_hover.gif",
+        "raindrops_left_sleep.gif",
+        "raindrops_right_sleep.gif"
+    ],
     "rainbowdash": [
         "rainbowdash_left.gif",
         "rainbowdash_right.gif",
