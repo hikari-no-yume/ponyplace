@@ -414,6 +414,17 @@
             "items": [
                 {
                     "type": "avatar",
+                    "avatar_name": "nurseredheart"
+                }
+            ],
+            "name_full": "Nurse Redheart",
+            "price": 50,
+            "img": "/media/nurseredheart_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
                     "avatar_name": "vinylscratch"
                 }
             ],

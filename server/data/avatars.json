@@ -528,5 +528,11 @@
         "spot_right_walk.gif",
         "spot_left_walk_threaten.gif",
         "spot_right_walk_threaten.gif"
+    ],
+    "nurseredheart": [
+        "nurseredheart_left.gif",
+        "nurseredheart_right.gif",
+        "nurseredheart_left_walk.gif",
+        "nurseredheart_right_walk.gif"
     ]
 }
