@@ -1,7 +1,7 @@
 [
     {
         "type": "real",
-        "name": "party_barn",
+        "name": " party_barn",
         "name_full": "Party Barn",
         "background": {
             "data": "/media/rooms/party-barn.png",
@@ -17,7 +17,7 @@
         },
         "user_count": 0,
         "user_noun": "funlovers",
-        "unlisted": false
+        "unlisted": true
     },
     {
         "type": "real",
