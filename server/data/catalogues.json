@@ -206,6 +206,17 @@
             "items": [
                 {
                     "type": "avatar",
+                    "avatar_name": "rainbowdash_shades"
+                }
+            ],
+            "name_full": "Rainbow #SWAG",
+            "price": 150,
+            "img": "/media/rainbowdash_right_shades.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
                     "avatar_name": "spitfire"
                 }
             ],

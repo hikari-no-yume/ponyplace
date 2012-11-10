@@ -93,6 +93,10 @@
         "rainbowdash_left_sleep.gif",
         "rainbowdash_right_sleep.gif"
     ],
+    "rainbowdash_shades": [
+        "rainbowdash_left_shades.gif",
+        "rainbowdash_right_shades.gif"
+    ],
     "fillyrainbowdash": [
         "fillyrainbowdash_left.gif",
         "fillyrainbowdash_right.gif",
