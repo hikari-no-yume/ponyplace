@@ -168,7 +168,9 @@
         forEach: function (callback) {
             for (var nick in this.users) {
                 if (this.users.hasOwnProperty(nick)) {
-                    callback(nick);
+                    if (callback(nick) === 'stop') {
+                        return;
+                    }
                 }
             }
         },
@@ -503,8 +505,25 @@
         chatbox.id = 'chatbox';
         chatbox.maxLength = 100;
         chatbox.onkeypress = function (e) {
+            // enter
             if (e.which === 13) {
                 handleChatMessage();
+            }
+        };
+        chatbox.onkeydown = function (e) {
+            var kc = e.keyCode || e.which;
+
+            // tab completion
+            if (kc === 9) {
+                var stop = false;
+                e.preventDefault();
+                userManager.forEach(function (nick) {
+                    if (nick.substr(0, chatbox.value.length) === chatbox.value) {
+                        chatbox.value = nick + ': ';
+                        return 'stop';
+                    }
+                });
+                return false;
             }
         };
         chatbox.disabled = true;
