@@ -1,4 +1,5 @@
 var fs = require('fs');
+var https = require('https');
 
 function User (nick, conn, obj, room) {
     if (User.has(nick)) {
@@ -17,11 +18,12 @@ function User (nick, conn, obj, room) {
 User.prototype.sendAccountState = function () {
     this.send({
         type: 'account_state',
+        nick: this.nick,
         special: User.getSpecialStatus(this.nick),
         bits: User.hasBits(this.nick),
         avatar_inventory: User.getAvatarInventory(this.nick),
         inventory: User.getInventory(this.nick),
-        have_account: User.hasPassword(this.nick)
+        have_account: User.hasAccount(this.nick)
     });
 };
 User.prototype.kill = function () {
@@ -42,9 +44,9 @@ User.prototype.kick = function (reason) {
 
 User.users = [];
 User.userCount = 0;
-User.passwords = {};
 User.specialUsers = {};
-User.userData = {};
+User.accounts = {};
+User.emails = {};
 User.avatars = {};
 User.inventoryItems = {};
 User.catalogues = {};
@@ -56,23 +58,23 @@ User.init = function () {
     console.log('Loaded inventory items list');
     this.catalogues = JSON.parse(fs.readFileSync('data/catalogues.json'));
     console.log('Loaded catalogues');
-    this.passwords = JSON.parse(fs.readFileSync('data/passwords.json'));
-    console.log('Loaded passwords');
     this.specialUsers = JSON.parse(fs.readFileSync('data/special-users.json'));
     console.log('Loaded special users info');
     try {
-        this.userData = JSON.parse(fs.readFileSync('data/user-data.json'));
+        var data1 = fs.readFileSync('data/accounts.json');
+        var data2 = fs.readFileSync('data/emails.json');
     } catch (e) {
-        console.log('Error loading user data, skipped');
+        console.log('Error loading accounts, skipped');
         return;
     }
-    console.log('Loaded user data');
+    this.accounts = JSON.parse(data1);
+    this.emails = JSON.parse(data2);
+    console.log('Loaded accounts');
 };
 User.save = function () {
-    fs.writeFileSync('data/passwords.json', JSON.stringify(this.passwords));
-    console.log('Saved passwords');
-    fs.writeFileSync('data/user-data.json', JSON.stringify(this.userData));
-    console.log('Saved user data');
+    fs.writeFileSync('data/accounts.json', JSON.stringify(this.accounts));
+    fs.writeFileSync('data/emails.json', JSON.stringify(this.emails));
+    console.log('Saved accounts');
 };
 User.getSpecialStatus = function (nick) {
     if (this.specialUsers.hasOwnProperty(nick)) {
@@ -84,54 +86,100 @@ User.isModerator = function (nick) {
     var status = this.getSpecialStatus(nick);
     return (status === 'moderator' || status === 'creator' || status === 'bot');
 };
-User.isCorrectPassword = function (nick, password) {
-    if (!this.hasPassword(nick)) {
-        return false;
+User.assert = function (assertion, callback) {
+    var postdata;
+    
+    if (process.argv.hasOwnProperty('2') && process.argv[2] === '--debug') {
+        postdata = 'assertion=' + assertion + '&audience=http://localhost:8000';
+    } else {
+        postdata = 'assertion=' + assertion + '&audience=http://ponyplace.ajf.me';
     }
-    return (this.passwords[nick] === password);
+    
+    var req = https.request({
+        hostname: 'verifier.login.persona.org',
+        method: 'POST',
+        path: '/verify',
+        headers: {
+            'Content-Length': postdata.length,
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+    }, function (res) {
+        res.setEncoding('utf8');
+        res.on('data', function (chunk) {
+            var data = JSON.parse(chunk);
+            if (data.status === 'okay') {
+                callback(true, data.email);
+                return;
+            }
+            callback(false);
+        });
+    });
+
+    req.on('error', function (e) {
+        callback(false);
+    });
+
+    req.write(postdata);
+    req.end();
 };
-User.setPassword = function (nick, password) {
-    this.passwords[nick] = password;
-    if (!this.userData.hasOwnProperty(nick)) {
-        this.userData[nick] = {
-            bits: 0
-        };
+User.createAccount = function (nick, email) {
+    if (this.hasAccount(nick)) {
+        throw new Error('Account with given nick already exists.');
     }
+    if (this.emails.hasOwnProperty(email)) {
+        throw new Error('Account with given email already exists.');
+    }
+    this.accounts[nick] = {
+        email: email
+    };
+    this.emails[email] = nick;
     this.save();
 };
-User.removePassword = function (nick) {
-    delete this.passwords[nick];
-    delete this.userData[nick];
+User.deleteAccount = function (nick) {
+    if (!this.hasAccount(nick)) {
+        throw new Error('No account with given nick exists.');
+    }
+    delete this.emails[this.accounts[nick].email];
+    delete this.accounts[nick];
     this.save();
 };
-User.hasPassword = function (nick) {
-    return this.passwords.hasOwnProperty(nick);
+User.hasAccount = function (nick) {
+    return this.accounts.hasOwnProperty(nick);
+};
+User.hasEmail = function (email) {
+    return this.emails.hasOwnProperty(email);
+};
+User.getAccountForEmail = function (email) {
+    if (this.hasEmail(email)) {
+        return User.emails[email];
+    }
+    return null;
 };
 
 User.hasBits = function (nick) {
-    if (this.hasPassword(nick)) {
+    if (this.hasAccount(nick)) {
         return this.getUserData(nick, 'bits', 0);
     } else {
         return null;
     }
 };
 User.getUserData = function (nick, property, defaultValue) {
-    if (this.userData.hasOwnProperty(nick)) {
-        if (this.userData[nick].hasOwnProperty(property)) {
-            return this.userData[nick][property];
+    if (this.accounts.hasOwnProperty(nick)) {
+        if (this.accounts[nick].hasOwnProperty(property)) {
+            return this.accounts[nick][property];
         }
     }
     return defaultValue;
 };
 User.setUserData = function (nick, property, value) {
-    if (!this.userData.hasOwnProperty(nick)) {
-        this.userData[nick] = {};
+    if (!this.hasAccount(nick)) {
+        throw new Error('There is no account with the given nick.');
     }
-    this.userData[nick][property] = value;
+    this.accounts[nick][property] = value;
     this.save();
 };
 User.changeBits = function (nick, amount) {
-    if (this.hasPassword(nick)) {
+    if (this.hasAccount(nick)) {
         var bits = this.getUserData(nick, 'bits', 0);
         
         bits += amount;

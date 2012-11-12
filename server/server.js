@@ -197,7 +197,7 @@ function doRoomChange(roomName, user) {
                     obj: iterUser.obj,
                     nick: iterUser.nick,
                     special: iterUser.special,
-                    has_house: User.hasPassword(iterUser.nick)
+                    has_house: User.hasAccount(iterUser.nick)
                 });
                 // tell other clients in room about client
                 iterUser.send({
@@ -205,7 +205,7 @@ function doRoomChange(roomName, user) {
                     obj: user.obj,
                     nick: user.nick,
                     special: user.special,
-                    has_house: User.hasPassword(user.nick)
+                    has_house: User.hasAccount(user.nick)
                 });
             }
         }
@@ -234,17 +234,15 @@ function handleCommand(cmd, myNick, user) {
     }
 
     var isMod = User.isModerator(myNick);
-    var haveHouse = User.hasPassword(myNick);
+    var haveHouse = User.hasAccount(myNick);
     
     // help
     if (cmd.substr(0, 4) === 'help') {
         sendMultiLine([
-            'Five user commands are available: 1) whereis, 2) list, 3) join, 4) setpass, 5) rmpass',
+            'Three user commands are available: 1) whereis, 2) list, 3) join',
             '1. whereis - Takes a nick, tells you what room someone is in, e.g. /whereis someguy',
             '2. list - Lists available rooms, e.g. /list',
-            "3. join - Joins a room, e.g. /join library - if room doesn't exist, an ephemeral room will be created - you can also enter people's houses, e.g. /join house ajf",
-            '4. setpass - Creates an account with given password or changes the password, e.g. /setpass opensesame',
-            '5. rmpass - Deletes your account, e.g. /rmpass'
+            "3. join - Joins a room, e.g. /join library - if room doesn't exist, an ephemeral room will be created - you can also enter people's houses, e.g. /join house ajf"
         ]);
         if (haveHouse) {
             sendMultiLine([
@@ -301,46 +299,6 @@ function handleCommand(cmd, myNick, user) {
             }
         }
         sendLine(roomList.length + ' rooms available: ' + roomNames.join(', '));
-    // create account
-    } else if (cmd.substr(0, 8) === 'setpass ') {
-        var password = cmd.substr(8);
-
-        if (password.length > 0) {
-            if (User.hasPassword(myNick)) {
-                sendLine('Changed password');
-            } else {
-                sendLine('Created account');
-            }
-            User.setPassword(myNick, password);
-            user.sendAccountState();
-        } else {
-            sendLine('Password must be at least 1 characters in length');
-        }
-    // remove account
-    } else if (cmd.substr(0, 10) === 'rmpass yes') {
-        if (user.didConfirm) {
-            User.removePassword(myNick);
-            sendLine("Your account was deleted.");
-            user.didConfirm = false;
-            user.sendAccountState();
-        } else {
-            sendLine("You need to do /rmpass first to delete your account.");
-        }
-    // don't remove account
-    } else if (cmd.substr(0, 9) === 'rmpass no') {
-        user.didConfirm = false;
-        sendLine("Your account was not deleted.");
-    // remove account confirm
-    } else if (cmd.substr(0, 6) === 'rmpass') {
-        if (User.hasPassword(myNick)) {
-            sendLine("Are you sure you want to delete your account?");
-            sendLine("You'll lose all your bits and items, and your nickname will be unprotected.");
-            sendLine("If you're sure, do: /rmpass yes");
-            sendLine("Otherwise, do: /rmpass no");
-            user.didConfirm = true;
-        } else {
-            sendLine("You don't have an account");
-        }
     // empty house
     } else if (haveHouse && cmd.substr(0, 5) === 'empty') {
         var count = 0;
@@ -549,7 +507,7 @@ wsServer.on('request', function(request) {
     }
 
     try {
-        var connection = request.accept('ponyplace-broadcast', request.origin);
+        var connection = request.accept('ponyplace', request.origin);
     } catch (e) {
         console.log('Caught error: ' + e);
         return;
@@ -616,12 +574,44 @@ wsServer.on('request', function(request) {
                     }
                 });
             break;
+            case 'create_account':
+                if (!User.hasAccount(myNick)) {
+                    User.assert(msg.assertion, function (good, email) {
+                        if (good) {
+                            if (!User.hasEmail(email)) {
+                                User.createAccount(myNick, email);
+                                user.sendAccountState();
+                            } else {
+                                user.send({
+                                    type: 'console_msg',
+                                    msg: 'Email already in use.'
+                                });
+                            }
+                        } else {
+                            user.send({
+                                type: 'console_msg',
+                                msg: 'Bad login.'
+                            });
+                        }
+                    });
+                } else {
+                    user.kick('protocol_error');
+                }
+            break;
+            case 'delete_account':
+                if (User.hasAccount(myNick)) {
+                    User.deleteAccount(myNick);
+                    user.kick('account_deleted');
+                } else {
+                    user.kick('protocol_error');
+                }
+            break;
             case 'room_change':
                 if (msg.name.indexOf(' ') === -1) {
                     doRoomChange(msg.name, user);
                 } else {
                     if (msg.name.substr(0, 6) === 'house ') {
-                        if (User.hasPassword(msg.name.substr(6))) {
+                        if (User.hasAccount(msg.name.substr(6))) {
                             if (User.getHouse(msg.name.substr(6)).locked && myNick !== msg.name.substr(6)) {
                                 user.send({
                                     type: 'console_msg',
@@ -670,7 +660,7 @@ wsServer.on('request', function(request) {
                 }
             break;
             case 'change_house_background':
-                if (User.hasPassword(myNick)) {
+                if (User.hasAccount(myNick)) {
                     var house = User.getHouse(myNick);
                     // default
                     if (msg.bg_name === null) {
@@ -721,91 +711,18 @@ wsServer.on('request', function(request) {
             break;
         }
     }
-    
-    // Deals with first message
-    connection.once('message', function(message) {
-        if (!amConnected) {
-            return;
-        }
-        // handle unexpected packet types
-        // we don't use binary frames
-        if (message.type !== 'utf8') {
-            connection.sendUTF(JSON.stringify({
-                type: 'kick',
-                reason: 'protocol_error'
-            }));
-            connection.close();
-            return;
-        }
 
-        console.log('Received Initial Message: ' + message.utf8Data);
-        
-        // every frame is a JSON-encoded packet
-        try {
-            var msg = JSON.parse(message.utf8Data);
-        } catch (e) {
-            connection.sendUTF(JSON.stringify({
-                type: 'kick',
-                reason: 'protocol_error'
-            }));
-            connection.close();
-            return;
-        }
-        
-        // We're expecting an appear packet first
-        // Anything else is unexpected
-        if (msg.type !== 'appear') {
-            connection.sendUTF(JSON.stringify({
-                type: 'kick',
-                reason: 'protocol_error'
-            }));
-            connection.close();
-            return;
-        }
-
-        // Prevent stupidity
-        if (msg.password && !User.hasPassword(msg.nick)) {
-            connection.sendUTF(JSON.stringify({
-                type: 'kick',
-                reason: 'no_password'
-            }));
-            connection.close();
-            return;
-        }
-        
-        // Name banning and prevent nickname dupe
-        if (User.has(msg.nick)) {
+    function completeRequest(nick, msg) {
+        // Prevent nickname dupe
+        if (User.has(nick)) {
             connection.sendUTF(JSON.stringify({
                 type: 'kick',
                 reason: 'nick_in_use'
             }));
             connection.close();
             return;
-        // Prevent nick spoofing
-        } else if (!User.isCorrectPassword(msg.nick, msg.password) && User.hasPassword(msg.nick)) {
-            if (!msg.password) {
-                connection.sendUTF(JSON.stringify({
-                    type: 'kick',
-                    reason: 'password_required'
-                }));
-            } else {
-                connection.sendUTF(JSON.stringify({
-                    type: 'kick',
-                    reason: 'wrong_password'
-                }));
-            }
-            connection.close();
-            return;
-        // Prefent profane/long/short/additional whitespace nicks
-        } else if ((!!msg.nick.match(badRegex)) || msg.nick.length > 18 || msg.nick.length < 1 || /^\s+|\s+$/g.test(msg.nick)) {
-            connection.sendUTF(JSON.stringify({
-                type: 'kick',
-                reason: 'bad_nick'
-            }));
-            connection.close();
-            return;
         }
-
+    
         // sanitise chat message
         if (msg.obj.hasOwnProperty('chat')) {
             msg.obj.chat = sanitiseChat(msg.obj.chat);
@@ -813,7 +730,7 @@ wsServer.on('request', function(request) {
 
         // check avatar
         if (msg.obj.hasOwnProperty('img_name')) {
-            if (!User.hasAvatar(msg.nick, msg.obj.img_name)) {
+            if (!User.hasAvatar(nick, msg.obj.img_name)) {
                 connection.sendUTF(JSON.stringify({
                     type: 'kick',
                     reason: 'dont_have_avatar'
@@ -842,18 +759,18 @@ wsServer.on('request', function(request) {
             list: User.inventoryItems
         }));
         
-        myNick = msg.nick;
-        user = new User(msg.nick, connection, msg.obj, null);
+        myNick = nick;
+        user = new User(nick, connection, msg.obj, null);
         user.sendAccountState();
 
         // give daily reward
-        if (User.hasPassword(msg.nick)) {
+        if (User.hasAccount(nick)) {
             var date = (new Date()).toISOString().split('T', 1)[0];
-            if (User.getUserData(msg.nick, 'last_reward', '1970-01-01') !== date) {
-                if (User.hasBits(msg.nick) < 500) {
+            if (User.getUserData(nick, 'last_reward', '1970-01-01') !== date) {
+                if (User.hasBits(nick) < 500) {
                     var reward = Math.floor(Math.random()*100);
-                    if (User.changeBits(msg.nick, reward)) {
-                        User.setUserData(msg.nick, 'last_reward', date);
+                    if (User.changeBits(nick, reward)) {
+                        User.setUserData(nick, 'last_reward', date);
                         user.send({
                             type: 'console_msg',
                             msg: "As a thanks for visiting ponyplace again today, here's " + reward + " free bits! :)"
@@ -871,6 +788,91 @@ wsServer.on('request', function(request) {
                     });
                 }
             }
+        }
+
+        console.log((new Date()) + ' User with nick: "' + myNick + '" connected.');
+    }
+    
+    // Deals with first message
+    connection.once('message', function(message) {
+        if (!amConnected) {
+            return;
+        }
+        
+        // handle unexpected packet types
+        // we don't use binary frames
+        if (message.type !== 'utf8') {
+            connection.sendUTF(JSON.stringify({
+                type: 'kick',
+                reason: 'protocol_error'
+            }));
+            connection.close();
+            return;
+        }
+        
+        // every frame is a JSON-encoded packet
+        try {
+            var msg = JSON.parse(message.utf8Data);
+        } catch (e) {
+            connection.sendUTF(JSON.stringify({
+                type: 'kick',
+                reason: 'protocol_error'
+            }));
+            connection.close();
+            return;
+        }
+        
+        // We're expecting an appear packet first
+        // Anything else is unexpected
+        if (msg.type !== 'appear') {
+            connection.sendUTF(JSON.stringify({
+                type: 'kick',
+                reason: 'protocol_error'
+            }));
+            connection.close();
+            return;
+        }
+
+        if (!msg.authenticated) {
+            // Prevent nickname stealing
+            if (User.hasAccount(msg.nick)) {
+                connection.sendUTF(JSON.stringify({
+                    type: 'kick',
+                    reason: 'protected_nick'
+                }));
+                connection.close();
+                return;
+            // Prefent profane/long/short/additional whitespace nicks
+            } else if ((!!msg.nick.match(badRegex)) || msg.nick.length > 18 || msg.nick.length < 3 || !/^[a-zA-Z0-9_]+$/g.test(msg.nick)) {
+                connection.sendUTF(JSON.stringify({
+                    type: 'kick',
+                    reason: 'bad_nick'
+                }));
+                connection.close();
+                return;
+            }
+            completeRequest(msg.nick, msg);
+        } else {
+            User.assert(msg.assertion, function (good, email) {
+                var nick;
+                if (good) {
+                    if (nick = User.getAccountForEmail(email)) {
+                        completeRequest(nick, msg);
+                    } else {
+                        connection.sendUTF(JSON.stringify({
+                            type: 'kick',
+                            reason: 'no_assoc_account'
+                        }));
+                        connection.close();
+                    }
+                } else {
+                    connection.sendUTF(JSON.stringify({
+                        type: 'kick',
+                        reason: 'bad_login'
+                    }));
+                    connection.close();
+                }
+            });
         }
         
         // call onMessage for subsequent messages
