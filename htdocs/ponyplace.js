@@ -843,7 +843,7 @@
     function initGUI_login() {
         loginbox = document.createElement('div');
         loginbox.id = 'loginbox';
-        loginbox.appendChild(document.createTextNode("If you already have an account, log in."));
+        loginbox.appendChild(document.createTextNode("If you already have a ponyplace and Persona account, log in. If you want to create a ponyplace account, sign in anonymously first, then go to Account Settings."));
         overlay.appendChild(loginbox);
 
         personasubmit = document.createElement('input');
@@ -863,7 +863,7 @@
         };
         loginbox.appendChild(personasubmit);
 
-        loginbox.appendChild(document.createTextNode("Otherwise, you can log in anonymously. Choose a nickname (3 to 18 characters; digits, letters and underscores (_) only). You can create an account once you're in."));
+        loginbox.appendChild(document.createTextNode("Otherwise, you can log in anonymously. Choose a nickname (3 to 18 characters; digits, letters and underscores (_) only)."));
 
         nickbox = document.createElement('input');
         nickbox.type = 'text';
