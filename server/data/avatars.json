@@ -449,6 +449,12 @@
         "winona_left_run.gif",
         "winona_right_run.gif"
     ],
+    "diamondtiara": [
+        "diamondtiara_left.gif",
+        "diamondtiara_right.gif",
+        "diamondtiara_left_walk.gif",
+        "diamondtiara_right_walk.gif"
+    ],
     "applebloom": [
         "applebloom_left.gif",
         "applebloom_right.gif",

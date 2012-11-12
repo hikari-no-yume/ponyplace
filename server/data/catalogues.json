@@ -199,6 +199,39 @@
             "name_full": "Cheerilee",
             "price": 50,
             "img": "/media/cheerilee_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "diamondtiara"
+                }
+            ],
+            "name_full": "Diamond Tiara",
+            "price": 50,
+            "img": "/media/diamondtiara_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "scootaloo"
+                }
+            ],
+            "name_full": "Scootaloo",
+            "price": 50,
+            "img": "/media/scootaloo_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "sweetiebelle"
+                }
+            ],
+            "name_full": "Sweetie Belle",
+            "price": 50,
+            "img": "/media/sweetiebelle_right.gif"
         }
     ],
     "cloudsdale": [
@@ -629,28 +662,6 @@
             "name_full": "Berry Punch",
             "price": 50,
             "img": "/media/berrypunch_right.gif"
-        },
-        {
-            "items": [
-                {
-                    "type": "avatar",
-                    "avatar_name": "scootaloo"
-                }
-            ],
-            "name_full": "Scootaloo",
-            "price": 50,
-            "img": "/media/scootaloo_right.gif"
-        },
-        {
-            "items": [
-                {
-                    "type": "avatar",
-                    "avatar_name": "sweetiebelle"
-                }
-            ],
-            "name_full": "Sweetie Belle",
-            "price": 50,
-            "img": "/media/sweetiebelle_right.gif"
         },
         {
             "items": [
