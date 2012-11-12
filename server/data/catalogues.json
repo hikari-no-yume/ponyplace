@@ -274,6 +274,17 @@
             "items": [
                 {
                     "type": "avatar",
+                    "avatar_name": "cadence"
+                }
+            ],
+            "name_full": "Princess Cadence",
+            "price": 50,
+            "img": "/media/cadence_right.png"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
                     "avatar_name": "bigcelestia"
                 }
             ],

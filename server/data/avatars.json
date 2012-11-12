@@ -209,6 +209,18 @@
         "soarin_left_pie.gif",
         "soarin_right_pie.gif"
     ],
+    "cadence": [
+        "cadence_left.png",
+        "cadence_right.png",
+        "cadence_left_walk.gif",
+        "cadence_right_walk.gif",
+        "cadence_left_hover.gif",
+        "cadence_right_hover.gif",
+        "cadence_left_sleep.gif",
+        "cadence_right_sleep.gif",
+        "cadence_left_wedding.png",
+        "cadence_right_wedding.png"
+    ],
     "bigcelestia": [
         "bigcelestia_left.gif",
         "bigcelestia_right.gif",
