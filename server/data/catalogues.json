@@ -318,6 +318,21 @@
             "items": [
                 {
                     "type": "avatar",
+                    "avatar_name": "chrysalis"
+                },
+                {
+                    "type": "avatar",
+                    "avatar_name": "changeling"
+                }
+            ],
+            "name_full": "Queen Chrysalis + Changeling",
+            "price": 100,
+            "img": "/media/chrysalis_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
                     "avatar_name": "cadence"
                 }
             ],

@@ -1,4 +1,16 @@
 {
+    "chrysalis": [
+        "chrysalis_left.gif",
+        "chrysalis_right.gif",
+        "chrysalis_left_walk.gif",
+        "chrysalis_right_walk.gif"
+    ],
+    "changeling": [
+        "changeling_left.gif",
+        "changeling_right.gif",
+        "changeling_left_walk.gif",
+        "changeling_right_walk.gif"
+    ],
     "derpy": [
         "derpy_left.gif",
         "derpy_right.gif",
