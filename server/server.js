@@ -289,7 +289,7 @@ function handleCommand(cmd, myNick, user) {
                         doRoomChange(roomName, user);
                     }
                 } else {
-                    sendLine('The user with the nick: "' + msg.name.substr(6) + '" does not have a house.');
+                    sendLine('The user with the nick: "' + houseName + '" does not have a house.');
                 }
             } else {
                 sendLine('Room names cannot contain spaces.');
@@ -633,7 +633,7 @@ wsServer.on('request', function(request) {
                         } else {
                             user.send({
                                 type: 'console_msg',
-                                msg: 'The user with the nick: "' + msg.name.substr(6) + '" does not have a house.'
+                                msg: 'The user with the nick: "' + houseName + '" does not have a house.'
                             });
                         }
                     } else {
