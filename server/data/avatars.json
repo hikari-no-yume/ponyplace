@@ -455,6 +455,12 @@
         "diamondtiara_left_walk.gif",
         "diamondtiara_right_walk.gif"
     ],
+    "silverspoon": [
+        "silverspoon_left.gif",
+        "silverspoon_right.gif",
+        "silverspoon_left_walk.gif",
+        "silverspoon_right_walk.gif"
+    ],
     "applebloom": [
         "applebloom_left.gif",
         "applebloom_right.gif",

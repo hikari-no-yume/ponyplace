@@ -215,6 +215,17 @@
             "items": [
                 {
                     "type": "avatar",
+                    "avatar_name": "silverspoon"
+                }
+            ],
+            "name_full": "Silver Spoon",
+            "price": 50,
+            "img": "/media/silverspoon_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
                     "avatar_name": "scootaloo"
                 }
             ],
