@@ -11,6 +11,16 @@
         "derpy_left_sleep.gif",
         "derpy_right_sleep.gif"
     ],
+    "derpynn": [
+        "derpynn_left.gif",
+        "derpynn_right.gif",
+        "derpynn_left_walk.gif",
+        "derpynn_right_walk.gif",
+        "derpynn_left_hover.gif",
+        "derpynn_right_hover.gif",
+        "derpynn_left_muffin.gif",
+        "derpynn_right_muffin.gif"
+    ],
     "vinylscratch": [
         "vinylscratch_left.gif",
         "vinylscratch_right.gif",
