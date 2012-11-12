@@ -507,11 +507,18 @@
 
             // tab completion
             if (kc === 9) {
-                var stop = false;
                 e.preventDefault();
+                var parts = chatbox.value.split(' ');
+                var lastpart = parts[parts.length - 1];
                 userManager.forEach(function (nick) {
-                    if (nick.substr(0, chatbox.value.length) === chatbox.value) {
-                        chatbox.value = nick + ': ';
+                    if (nick.substr(0, lastpart.length) === lastpart) {
+                        if (parts.length === 1) {
+                            parts[parts.length - 1] = nick + ':';
+                        } else {
+                            parts[parts.length - 1] = nick;
+                        }
+                        parts.push('');
+                        chatbox.value = parts.join(' ');
                         return 'stop';
                     }
                 });
