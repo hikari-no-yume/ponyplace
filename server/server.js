@@ -281,7 +281,16 @@ function handleCommand(cmd, myNick, user) {
 
         if (roomName.indexOf(' ') !== -1) {
             if (roomName.substr(0, 6) === 'house ') {
-                doRoomChange(roomName, user);
+                var houseName = roomName.substr(6);
+                if (User.hasAccount(houseName)) {
+                    if (User.isHouseLocked(houseName) && myNick !== houseName) {
+                        sendLine('That house is locked.');
+                    } else {
+                        doRoomChange(roomName, user);
+                    }
+                } else {
+                    sendLine('The user with the nick: "' + msg.name.substr(6) + '" does not have a house.');
+                }
             } else {
                 sendLine('Room names cannot contain spaces.');
             }
@@ -611,8 +620,9 @@ wsServer.on('request', function(request) {
                     doRoomChange(msg.name, user);
                 } else {
                     if (msg.name.substr(0, 6) === 'house ') {
-                        if (User.hasAccount(msg.name.substr(6))) {
-                            if (User.getHouse(msg.name.substr(6)).locked && myNick !== msg.name.substr(6)) {
+                        var houseName = msg.name.substr(6);
+                        if (User.hasAccount(houseName)) {
+                            if (User.isHouseLocked(houseName) && myNick !== houseName) {
                                 user.send({
                                     type: 'console_msg',
                                     msg: 'That house is locked.'

@@ -222,6 +222,9 @@ User.getHouse = function (nick) {
 User.setHouse = function (nick, data) {
     return this.setUserData(nick, 'house', data);
 };
+User.isHouseLocked = function (nick) {
+    return this.getHouse(nick).locked;
+};
 
 User.getAvatarInventory = function (nick) {
     return this.getUserData(nick, 'avatarInventory', ['derpy', 'applejack', 'fluttershy', 'pinkiepie', 'rainbowdash', 'rarity', 'twilight']);
