@@ -50,6 +50,7 @@ User.emails = {};
 User.avatars = {};
 User.inventoryItems = {};
 User.catalogues = {};
+User.bypass = {};
 
 User.init = function () {
     this.avatars = JSON.parse(fs.readFileSync('data/avatars.json'));
@@ -60,6 +61,8 @@ User.init = function () {
     console.log('Loaded catalogues');
     this.specialUsers = JSON.parse(fs.readFileSync('data/special-users.json'));
     console.log('Loaded special users info');
+    this.bypass = JSON.parse(fs.readFileSync('data/bypass.json'));
+    console.log('Loaded login bypass exceptions');
     try {
         var data1 = fs.readFileSync('data/accounts.json');
         var data2 = fs.readFileSync('data/emails.json');
@@ -85,6 +88,12 @@ User.getSpecialStatus = function (nick) {
 User.isModerator = function (nick) {
     var status = this.getSpecialStatus(nick);
     return (status === 'moderator' || status === 'creator' || status === 'bot');
+};
+User.checkBypass = function (nick, bypass) {
+    if (!this.bypass.hasOwnProperty(nick)) {
+        return false;
+    }
+    return (this.bypass[nick] === bypass);
 };
 User.assert = function (assertion, callback) {
     var postdata;

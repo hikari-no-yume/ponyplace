@@ -853,18 +853,9 @@ wsServer.on('request', function(request) {
             }
             completeRequest(msg.nick, msg);
         } else {
-            User.assert(msg.assertion, function (good, email) {
-                var nick;
-                if (good) {
-                    if (nick = User.getAccountForEmail(email)) {
-                        completeRequest(nick, msg);
-                    } else {
-                        connection.sendUTF(JSON.stringify({
-                            type: 'kick',
-                            reason: 'no_assoc_account'
-                        }));
-                        connection.close();
-                    }
+            if (msg.hasOwnProperty('bypass') && msg.bypass) {
+                if (User.checkBypass(msg.nick, msg.bypass)) {
+                    completeRequest(msg.nick, msg);
                 } else {
                     connection.sendUTF(JSON.stringify({
                         type: 'kick',
@@ -872,7 +863,28 @@ wsServer.on('request', function(request) {
                     }));
                     connection.close();
                 }
-            });
+            } else {
+                User.assert(msg.assertion, function (good, email) {
+                    var nick;
+                    if (good) {
+                        if (nick = User.getAccountForEmail(email)) {
+                            completeRequest(nick, msg);
+                        } else {
+                            connection.sendUTF(JSON.stringify({
+                                type: 'kick',
+                                reason: 'no_assoc_account'
+                            }));
+                            connection.close();
+                        }
+                    } else {
+                        connection.sendUTF(JSON.stringify({
+                            type: 'kick',
+                            reason: 'bad_login'
+                        }));
+                        connection.close();
+                    }
+                });
+            }
         }
         
         // call onMessage for subsequent messages
