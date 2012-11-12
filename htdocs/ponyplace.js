@@ -245,9 +245,10 @@
     
         var date = new Date()
         line = '[' + digitPad(date.getHours()) + ':' + digitPad(date.getMinutes()) + '] ' + line;
-    
+
+        var span;
         if (showInShortLog) {
-            var span = document.createElement('span');
+            span = document.createElement('span');
             span.className = 'chatline';
             if (highlight) {
                 span.className += ' highlight';
@@ -259,7 +260,12 @@
             }
         }
 
-        chatPopulateLine(line, fullchatlog);
+        span = document.createElement('span');
+        if (highlight) {
+            span.className = 'highlight';
+        }
+        chatPopulateLine(line, span);
+        fullchatlog.appendChild(span);
 
         if (!pageFocussed && highlight) {
             unseenHighlights++;
