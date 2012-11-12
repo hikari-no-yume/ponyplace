@@ -1108,7 +1108,7 @@
                     } else if (msg.reason === 'bad_login') {
                         alert('Login failed.');
                     } else if (msg.reason === 'no_assoc_account') {
-                        alert('There is no account associated with this email address.');
+                        alert('There is no account associated with this email address.\nAre you sure you have a ponyplace account? You need to sign in anonymously, then go to the top-right, Account Settings, and click "Create Account with Persona" to create an account.');
                     } else if (msg.reason === 'account_deleted') {
                         alert('Your account was deleted.');
                         navigator.id.logout();
