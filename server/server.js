@@ -547,6 +547,13 @@ wsServer.on('request', function(request) {
             user.kick('protocol_error');
             return;
         }
+
+        if (user === null) {
+            user.send({
+                type: 'console_msg',
+                msg: 'Not yet logged in.'
+            });
+        }
         
         switch (msg.type) {
             case 'console_command':
