@@ -284,7 +284,7 @@
             }
         }
 
-        tr = document.createElement('span');
+        tr = document.createElement('tr');
         if (type) {
             tr.className = type;
         }

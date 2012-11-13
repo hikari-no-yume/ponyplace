@@ -360,6 +360,10 @@ input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover {
     overflow: hidden;
 }
 
+#chatlog, #fullchatlog {
+    border-collapse: collapse;
+}
+
 a {
     color: orange;
     text-decoration: underline;
@@ -382,6 +386,13 @@ a {
 .msgpart {
     text-align: left;
 }
+#fullchatlog .originpart {
+    padding-right: 4px;
+    border-right: 1px solid rgba(255, 255, 255, 0.5);
+}
+#fullchatlog .msgpart {
+    padding-left: 4px;
+}
 #chatlog .innertext {
     background-color: rgba(0, 0, 0, 0.5);
 }
@@ -389,21 +400,21 @@ a {
 .mine .originpart {
     font-weight: bold;
 }
-.highlight .innertext {
+#chatlog .highlight .innertext, #fullchatlog .highlight {
     background-color: fuchsia !important;
 }
-.privmsg .innertext {
+#chatlog .privmsg .innertext, #fullchatlog .privmsg {
     background-color: rgb(128, 8, 128) !important;
 }
-.broadcast .innertext {
+#chatlog .broadcast .innertext, #fullchatlog .broadcast {
     background-color: darkorange !important;
 }
-.info .innertext {
-    color: lightgray;
-}
-.console .innertext {
+#chatlog .console .innertext, #fullchatlog .console {
     color: lime;
-    background-color: black !important;
+    background-color: rgba(0,0,0,0.7) !important;
+}
+.info {
+    color: lightgray;
 }
 .console .originpart, .console .msgpart {
     font-family: monospace;
