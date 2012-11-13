@@ -239,10 +239,11 @@ function handleCommand(cmd, myNick, user) {
     // help
     if (cmd.substr(0, 4) === 'help') {
         sendMultiLine([
-            'Three user commands are available: 1) whereis, 2) list, 3) join',
+            'Four user commands are available: 1) whereis, 2) list, 3) join, 4) msg',
             '1. whereis - Takes a nick, tells you what room someone is in, e.g. /whereis someguy',
             '2. list - Lists available rooms, e.g. /list',
-            "3. join - Joins a room, e.g. /join library - if room doesn't exist, an ephemeral room will be created - you can also enter people's houses, e.g. /join house ajf"
+            "3. join - Joins a room, e.g. /join library - if room doesn't exist, an ephemeral room will be created - you can also enter people's houses, e.g. /join house ajf",
+            '4. msg - Lets you send a private message to someone, e.g. /msg cool_guy Meet up at your house?'
         ]);
         if (haveHouse) {
             sendMultiLine([
@@ -308,6 +309,24 @@ function handleCommand(cmd, myNick, user) {
             }
         }
         sendLine(roomList.length + ' rooms available: ' + roomNames.join(', '));
+    } else if (cmd.substr(0, 4) === 'msg ') {
+        var pos = cmd.indexOf(' ', 4);
+        if (pos !== -1) {
+            var to = cmd.substr(4, pos-4);
+            var msg = cmd.substr(pos+1);
+            if (!User.has(to)) {
+                sendLine('There is no online user with nick: "' + to + '"');
+                return;
+            }
+            User.get(to).send({
+                type: 'priv_msg',
+                from_nick: myNick,
+                msg: msg
+            });
+        } else {
+            sendLine('/msg takes a nickname and a message');
+            return;
+        }
     // empty house
     } else if (haveHouse && cmd.substr(0, 5) === 'empty') {
         var count = 0;

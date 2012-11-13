@@ -383,6 +383,7 @@ a {
     border-right: 1px solid rgba(255, 255, 255, 0.5);
     margin-right: 4px;
     color: white;
+    font-style: none;
 }
 .firstpart {
     min-width: 180px;
@@ -394,6 +395,9 @@ a {
 }
 .highlight {
     background-color: fuchsia;
+}
+.privmsg {
+    background-color: rgb(128, 8, 128);
 }
 .broadcast {
     background-color: darkorange;

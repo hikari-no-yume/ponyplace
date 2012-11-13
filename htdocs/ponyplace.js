@@ -277,7 +277,7 @@
         chatPopulateLine(timepart, firstpart, line, span);
         fullchatlog.appendChild(span);
 
-        if (!pageFocussed && highlight) {
+        if (!pageFocussed && (type === 'highlight' || type === 'privmsg')) {
             unseenHighlights++;
             document.title = '(' + unseenHighlights + ') ponyplace';
         }
@@ -290,13 +290,21 @@
     function logInChat(nick, msg) {
         chatPrint('<' + nick + '> ', msg, highlightCheck(msg), true);
     }
+
+    function logPrivmsgInChat(nick, msg) {
+        chatPrint(nick + ' ->', msg, 'privmsg', true);
+    }
     
     function logBroadcastInChat(msg) {
         chatPrint('BROADCAST', msg, 'broadcast', true);
     }
+
+    function logSentConsoleCommandInChat(msg) {
+        chatPrint('CONSOLE <-', msg, 'console', true);
+    }
     
     function logConsoleMessageInChat(msg) {
-        chatPrint('CONSOLE', msg, 'console', true);
+        chatPrint('CONSOLE ->', msg, 'console', true);
     }
     
     function logJoinInChat(nick) {
@@ -482,6 +490,7 @@
                 type: 'console_command',
                 cmd: chatbox.value.substr(1)
             }));
+            logSentConsoleCommandInChat(chatbox.value.substr(1));
         // is chat message
         } else {
             me.chat = chatbox.value;
@@ -1098,6 +1107,9 @@
                 break;
                 case 'console_msg':
                     logConsoleMessageInChat(msg.msg);
+                break;
+                case 'priv_msg':
+                    logPrivmsgInChat(msg.from_nick, msg.msg);
                 break;
                 case 'die':
                     userManager.kill(msg.nick);
