@@ -213,7 +213,17 @@
         pushState();
     }
 
-    function chatPopulateLine(line, parent) {
+    function chatPopulateLine(timepart, firstpart, line, parent) {
+        var span = document.createElement('span');
+        span.className = 'timepart';
+        span.appendChild(document.createTextNode(timepart));
+        parent.appendChild(span);
+
+        span = document.createElement('span');
+        span.className = 'firstpart';
+        span.appendChild(document.createTextNode(firstpart));
+        parent.appendChild(span);
+
         var pos;
         while (((pos = line.indexOf('http://')) !== -1) || ((pos = line.indexOf('https://')) !== -1)) {
             var pos2 = line.indexOf(' ', pos);
@@ -238,13 +248,13 @@
         parent.appendChild(document.createElement('br'));
     }
     
-    function chatPrint(line, type, showInShortLog) {
+    function chatPrint(firstpart, line, type, showInShortLog) {
         function digitPad(n) {
             return n = (n < 10) ? ("0" + n) : n;
         }
-    
-        var date = new Date()
-        line = '[' + digitPad(date.getHours()) + ':' + digitPad(date.getMinutes()) + '] ' + line;
+
+        var date = new Date();
+        var timepart = '[' + digitPad(date.getHours()) + ':' + digitPad(date.getMinutes()) + ']';
 
         var span;
         if (showInShortLog) {
@@ -253,7 +263,7 @@
             if (type) {
                 span.className += ' ' + type;
             }
-            chatPopulateLine(line, span);
+            chatPopulateLine(timepart, firstpart, line, span);
             chatlog.appendChild(span);
             while (chatlog.children.length > 12) {
                 chatlog.removeChild(chatlog.firstChild);
@@ -264,7 +274,7 @@
         if (type) {
             span.className = type;
         }
-        chatPopulateLine(line, span);
+        chatPopulateLine(timepart, firstpart, line, span);
         fullchatlog.appendChild(span);
 
         if (!pageFocussed && highlight) {
@@ -278,38 +288,38 @@
     }
     
     function logInChat(nick, msg) {
-        chatPrint('<' + nick + '> ' + msg, highlightCheck(msg), true);
+        chatPrint('<' + nick + '> ', msg, highlightCheck(msg), true);
     }
     
     function logBroadcastInChat(msg) {
-        chatPrint('** BROADCAST: ' + msg, 'broadcast', true);
+        chatPrint('BROADCAST', msg, 'broadcast', true);
     }
     
     function logConsoleMessageInChat(msg) {
-        chatPrint('* CONSOLE: ' + msg, 'console', true);
+        chatPrint('CONSOLE', msg, 'console', true);
     }
     
     function logJoinInChat(nick) {
-        chatPrint(nick + ' appeared', 'info', false);
+        chatPrint('*', nick + ' appeared', 'info', false);
     }
     
     function logLeaveInChat(nick) {
-        chatPrint(nick + ' left', 'info', false);
+        chatPrint('*', nick + ' left', 'info', false);
     }
     
     function logRoomJoinInChat(name, name_full) {
-        chatPrint('You joined the room ' + name + ' ("' + name_full + '")', 'info', true);
+        chatPrint('*', 'You joined the room ' + name + ' ("' + name_full + '")', 'info', true);
     }
 
     function logEphemeralRoomJoinInChat(name) {
-        chatPrint('You joined the ephemeral room "' + name + '"', 'info', true);
+        chatPrint('*', 'You joined the ephemeral room "' + name + '"', 'info', true);
     }
 
     function logHouseRoomJoinInChat(nick) {
         if (nick !== myNick) {
-            chatPrint('You entered the house of user with nick: "' + nick + '"', 'info', true);
+            chatPrint('*', 'You entered the house of user with nick: "' + nick + '"', 'info', true);
         } else {
-            chatPrint('You entered your house', 'info', true);
+            chatPrint('*', 'You entered your house', 'info', true);
         }
     }
     

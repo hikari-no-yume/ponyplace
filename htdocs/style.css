@@ -341,7 +341,7 @@ input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover {
     right: 0;
     top: 150px;
     height: 400px;
-    width: 300px;
+    width: 400px;
     padding: 4px;
     border-top-left-radius: 10px;
     border-bottom-left-radius: 10px;
@@ -375,6 +375,23 @@ a {
     background-color: rgba(0, 0, 0, 0.5);
 }
 
+.timepart {
+    min-width: 50px;
+    display: inline-block;
+    text-align: right;
+    padding-right: 4px;
+    border-right: 1px solid rgba(255, 255, 255, 0.5);
+    margin-right: 4px;
+    color: white;
+}
+.firstpart {
+    min-width: 180px;
+    display: inline-block;
+    text-align: right;
+    padding-right: 4px;
+    border-right: 1px solid rgba(255, 255, 255, 0.5);
+    margin-right: 4px;
+}
 .highlight {
     background-color: fuchsia;
 }
