@@ -259,7 +259,7 @@ function handleCommand(cmd, myNick, user) {
     } else if (cmd.substr(0, 8) === 'whereis ') {
         var unfound = cmd.substr(8);
         if (!User.has(unfound)) {
-            sendLine('There is no user with nick: "' + unfound + '"');
+            sendLine('There is no online user with nick: "' + unfound + '"');
             return;
         }
         var unfoundUser = User.get(unfound);
@@ -360,7 +360,7 @@ function handleCommand(cmd, myNick, user) {
     } else if (isMod && cmd.substr(0, 8) === 'kickban ') {
         var kickee = cmd.substr(8);
         if (!User.has(kickee)) {
-            sendLine('There is no user with nick: "' + kickee + '"');
+            sendLine('There is no online user with nick: "' + kickee + '"');
             return;
         }
         if (User.isModerator(kickee)) {
@@ -369,6 +369,7 @@ function handleCommand(cmd, myNick, user) {
         }
         var IP = User.get(kickee).conn.remoteAddress;
         banManager.addIPBan(IP);
+        sendLine('Banned IP ' + IP);
         // Kick aliases
         User.forEach(function (iterUser) {
             if (iterUser.conn.remoteAddress === IP) {
@@ -382,7 +383,7 @@ function handleCommand(cmd, myNick, user) {
     } else if (isMod && cmd.substr(0, 5) === 'kick ') {
         var kickee = cmd.substr(5);
         if (!User.has(kickee)) {
-            sendLine('There is no user with nick: "' + kickee + '"');
+            sendLine('There is no online user with nick: "' + kickee + '"');
             return;
         }
         var IP = User.get(kickee).conn.remoteAddress;
@@ -402,7 +403,7 @@ function handleCommand(cmd, myNick, user) {
             var room = cmd.substr(5, pos-5);
             var movee = cmd.substr(pos+1);
             if (!User.has(movee)) {
-                sendLine('There is no user with nick: "' + movee + '"');
+                sendLine('There is no online user with nick: "' + movee + '"');
                 return;
             }
             if (User.isModerator(movee)) {
@@ -419,7 +420,7 @@ function handleCommand(cmd, myNick, user) {
     } else if (isMod && cmd.substr(0, 8) === 'aliases ') {
         var checked = cmd.substr(8);
         if (!User.has(checked)) {
-            sendLine('There is no user with nick: "' + checked + '"');
+            sendLine('There is no online user with nick: "' + checked + '"');
             return;
         }
         var IP = User.get(checked).conn.remoteAddress;
@@ -451,7 +452,7 @@ function handleCommand(cmd, myNick, user) {
             var amount = cmd.substr(5, pos-5);
             var receiver = cmd.substr(pos+1);
             if (!User.has(receiver)) {
-                sendLine('There is no user with nick: "' + receiver + '"');
+                sendLine('There is no online user with nick: "' + receiver + '"');
                 return;
             }
             if (User.hasBits(receiver) === null) {
