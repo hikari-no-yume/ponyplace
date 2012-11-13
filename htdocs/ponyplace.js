@@ -286,6 +286,10 @@
     function highlightCheck(msg) {
         return (msg.indexOf(myNick) !== -1) ? 'highlight' : false;
     }
+
+    function logMineInChat(nick, msg) {
+        chatPrint('<' + nick + '> ', msg, highlightCheck(msg) ? 'highlight mine' : 'mine', true);
+    }
     
     function logInChat(nick, msg) {
         chatPrint('<' + nick + '> ', msg, highlightCheck(msg), true);
@@ -495,7 +499,7 @@
         } else {
             me.chat = chatbox.value;
             if (me.chat !== '') {
-                logInChat(myNick, me.chat, true);
+                logMineInChat(myNick, me.chat, true);
             }
             pushAndUpdateState(me);
         }
