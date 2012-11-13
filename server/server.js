@@ -321,6 +321,7 @@ function handleCommand(cmd, myNick, user) {
             User.get(to).send({
                 type: 'priv_msg',
                 from_nick: myNick,
+                from_special: user.special,
                 msg: msg
             });
         } else {

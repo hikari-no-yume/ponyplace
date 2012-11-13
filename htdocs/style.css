@@ -482,28 +482,30 @@ a {
     cursor: pointer;
 }
 
-.creator {
+.nickname.creator, .creator .originpart {
     color: gold !important;
 }
-.creator::after {
+.nickname.creator::after, .creator .originpart .innertext::after {
     font-weight: normal !important;
+    font-family: sans-serif;
     color: white !important;
     content: ' (pp creator)';
 }
 
-.moderator {
+.nickname.moderator, .moderator .originpart {
     color: rgb(204, 255, 0) !important;
 }
-.moderator::after {
+.nickname.moderator::after, .moderator .originpart .innertext::after {
     font-weight: normal !important;
+    font-family: sans-serif;
     color: white !important;
     content: ' (mod)';
 }
 
-.bot {
+.nickname.bot, .bot .originpart {
     color: red !important;
 }
-.bot::after {
+.nickname.bot::after, .bot .originpart .innertext::after {
     font-weight: normal !important;
     color: white !important;
     content: ' (bot)';

@@ -96,7 +96,8 @@
                     nickTag: nickTag,
                     nickName: nickName,
                     img: null
-                }
+                },
+                special: special
             };
             
             this.update(nick, obj);
@@ -143,7 +144,7 @@
             user.elem.chat.innerHTML = '';
             user.elem.chat.appendChild(document.createTextNode(obj.chat));
             if (obj.chat !== user.obj.chat && obj.chat !== '') {
-                logInChat(nick, obj.chat);
+                logInChat(nick, obj.chat, user.special);
             }
             
             user.obj = obj;
@@ -301,15 +302,19 @@
     }
 
     function logMineInChat(nick, msg) {
-        chatPrint('<' + nick + '> ', msg, highlightCheck(msg) ? 'highlight mine' : 'mine', true);
+        var className = highlightCheck(msg) || '';
+        className += ' mine ' + (mySpecialStatus || '');
+        chatPrint('<' + nick + '> ', msg, className, true);
     }
     
-    function logInChat(nick, msg) {
-        chatPrint('<' + nick + '> ', msg, highlightCheck(msg), true);
+    function logInChat(nick, msg, special) {
+        var className = highlightCheck(msg) || '';
+        className += ' ' + (special || '');
+        chatPrint('<' + nick + '> ', msg, className, true);
     }
 
-    function logPrivmsgInChat(nick, msg) {
-        chatPrint(nick + ' ->', msg, 'privmsg', true);
+    function logPrivmsgInChat(nick, msg, special) {
+        chatPrint(nick + ' ->', msg, 'privmsg ' + special, true);
     }
     
     function logBroadcastInChat(msg) {
@@ -1126,7 +1131,7 @@
                     logConsoleMessageInChat(msg.msg);
                 break;
                 case 'priv_msg':
-                    logPrivmsgInChat(msg.from_nick, msg.msg);
+                    logPrivmsgInChat(msg.from_nick, msg.msg, msg.from_special);
                 break;
                 case 'die':
                     userManager.kill(msg.nick);
