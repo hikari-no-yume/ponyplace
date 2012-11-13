@@ -1,8 +1,8 @@
 [
     {
         "type": "real",
-        "name": "party_barn",
-        "name_full": "Party Barn (ponyplace's 1 month birthday!)",
+        "name": " party_barn",
+        "name_full": "Party Barn",
         "background": {
             "data": "/media/rooms/party-barn.png",
             "width": 1152,
@@ -17,7 +17,7 @@
         },
         "user_count": 0,
         "user_noun": "partiers",
-        "unlisted": false
+        "unlisted": true
     },
     {
         "type": "real",
