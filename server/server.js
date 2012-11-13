@@ -760,6 +760,10 @@ wsServer.on('request', function(request) {
     }
 
     function completeRequest(nick, msg) {
+        if (!amConnected) {
+            return;
+        }
+
         // Prevent nickname dupe
         if (User.has(nick)) {
             connection.sendUTF(JSON.stringify({
