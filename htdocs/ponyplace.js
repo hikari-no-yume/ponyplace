@@ -238,7 +238,7 @@
         parent.appendChild(document.createElement('br'));
     }
     
-    function chatPrint(line, highlight, showInShortLog) {
+    function chatPrint(line, type, showInShortLog) {
         function digitPad(n) {
             return n = (n < 10) ? ("0" + n) : n;
         }
@@ -250,8 +250,8 @@
         if (showInShortLog) {
             span = document.createElement('span');
             span.className = 'chatline';
-            if (highlight) {
-                span.className += ' highlight';
+            if (type) {
+                span.className += ' ' + type;
             }
             chatPopulateLine(line, span);
             chatlog.appendChild(span);
@@ -261,8 +261,8 @@
         }
 
         span = document.createElement('span');
-        if (highlight) {
-            span.className = 'highlight';
+        if (type) {
+            span.className = type;
         }
         chatPopulateLine(line, span);
         fullchatlog.appendChild(span);
@@ -274,7 +274,7 @@
     }
     
     function highlightCheck(msg) {
-        return (msg.indexOf(myNick) !== -1);
+        return (msg.indexOf(myNick) !== -1) ? 'highlight' : false;
     }
     
     function logInChat(nick, msg) {
@@ -282,34 +282,34 @@
     }
     
     function logBroadcastInChat(msg) {
-        chatPrint('** BROADCAST: ' + msg, highlightCheck(msg), true);
+        chatPrint('** BROADCAST: ' + msg, 'broadcast', true);
     }
     
     function logConsoleMessageInChat(msg) {
-        chatPrint('* CONSOLE: ' + msg, false, true);
+        chatPrint('* CONSOLE: ' + msg, 'console', true);
     }
     
     function logJoinInChat(nick) {
-        chatPrint(nick + ' appeared', false, false);
+        chatPrint(nick + ' appeared', 'info', false);
     }
     
     function logLeaveInChat(nick) {
-        chatPrint(nick + ' left', false, false);
+        chatPrint(nick + ' left', 'info', false);
     }
     
     function logRoomJoinInChat(name, name_full) {
-        chatPrint('You joined the room ' + name + ' ("' + name_full + '")', false, true);
+        chatPrint('You joined the room ' + name + ' ("' + name_full + '")', 'info', true);
     }
 
     function logEphemeralRoomJoinInChat(name) {
-        chatPrint('You joined the ephemeral room "' + name + '"', false, true);
+        chatPrint('You joined the ephemeral room "' + name + '"', 'info', true);
     }
 
     function logHouseRoomJoinInChat(nick) {
         if (nick !== myNick) {
-            chatPrint('You entered the house of user with nick: "' + nick + '"', false, true);
+            chatPrint('You entered the house of user with nick: "' + nick + '"', 'info', true);
         } else {
-            chatPrint('You entered your house', false, true);
+            chatPrint('You entered your house', 'info', true);
         }
     }
     

@@ -378,6 +378,15 @@ a {
 .highlight {
     background-color: fuchsia;
 }
+.broadcast {
+    background-color: darkorange;
+}
+.info {
+    color: lightgray;
+}
+.console {
+    color: lime;
+}
 
 .offscreen-chatline {
     opacity: 0.6;
