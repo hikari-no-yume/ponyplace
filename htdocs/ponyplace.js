@@ -78,7 +78,7 @@
                 nickName.className += ' ' + special;
             }
             nickName.onclick = function () {
-                chatbox.value += nick;
+                chatbox.value = '/msg ' + nick + ' ';
                 chatbox.focus();
             };
             nickTag.appendChild(nickName);
