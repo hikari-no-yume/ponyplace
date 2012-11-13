@@ -891,6 +891,7 @@
         nickbox = document.createElement('input');
         nickbox.type = 'text';
         nickbox.placeholder = 'nickname';
+        nickbox.maxLength = 18;
         nickbox.onkeypress = function (e) {
             if (e.which === 13) {
                 doLogin();
