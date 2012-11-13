@@ -403,6 +403,7 @@ a {
 }
 .console .innertext {
     color: lime;
+    background-color: black !important;
 }
 .console .originpart, .console .msgpart {
     font-family: monospace;
