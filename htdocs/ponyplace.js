@@ -2,23 +2,23 @@
     'use strict';
 
     // get them before IE errors out
-    if (!Object.prototype.hasOwnProperty.call(window,'WebSocket')) {
+    if (!Object.prototype.hasOwnProperty.call(window, 'WebSocket')) {
         window.location = 'no-websocket.html';
         return;
     }
-    
+
     var ROOM_HEIGHT = 660;
     var PONY_WIDTH = 168, PONY_HEIGHT = 168;
-    
+
     var avatars = [], inventoryItems = [];
-    
+
     var socket, connected = false, ignoreDisconnect = false, pageFocussed = false, unseenHighlights = 0,
         me, myNick, myRoom = null, mySpecialStatus, avatarInventory, inventory = [], haveAccount = false,
         currentUser = null,
-        lastmove = (new Date().getTime()), 
+        lastmove = (new Date().getTime()),
         globalUserCount = 0,
         catalogueCallback = null;
-    
+
     var container,
         overlay,
         loginbox, nickbox, personasubmit, loginsubmit,
@@ -31,12 +31,12 @@
         roomedit, roomeditbutton, roomeditreset, roomeditiframe, roomeditvisible,
         background, backgroundIframe,
         chatbox, chatboxholder, chatbutton, chatlog, fullchatlog, fullchatlogbutton, fullchatlogvisible;
-    
+
     var userManager = {
         users: {},
         userCount: 0,
         userCounter: null,
-        
+
         initGUI: function () {
             this.userCounter = document.createElement('div');
             this.userCounter.id = 'usercounter';
@@ -50,11 +50,11 @@
 
             var elem = document.createElement('div');
             elem.className = 'pony';
-            
+
             var chat = document.createElement('p');
             chat.className = 'chatbubble';
             elem.appendChild(chat);
-            
+
             var nickTag = document.createElement('p');
             nickTag.className = 'nick-tag';
             if (hasHouse) {
@@ -84,9 +84,9 @@
             nickTag.appendChild(nickName);
 
             elem.appendChild(nickTag);
-            
+
             stage.appendChild(elem);
-            
+
             this.users[nick] = {
                 obj: obj,
                 nick: nick,
@@ -99,7 +99,7 @@
                 },
                 special: special
             };
-            
+
             this.update(nick, obj);
             this.userCount++;
             this.updateCounter();
@@ -107,7 +107,7 @@
         },
         update: function (nick, obj) {
             this.hasCheck(nick);
-        
+
             var user = this.users[nick];
             user.elem.root.style.left = obj.x + 'px';
             user.elem.root.style.top = obj.y + 'px';
@@ -140,18 +140,18 @@
                 user.elem.root.style.backgroundImage = 'none';
                 user.elem.root.style.height = PONY_HEIGHT + 'px';
             }
-            
+
             user.elem.chat.innerHTML = '';
             user.elem.chat.appendChild(document.createTextNode(obj.chat));
             if (obj.chat !== user.obj.chat && obj.chat !== '') {
                 logInChat(nick, obj.chat, user.special);
             }
-            
+
             user.obj = obj;
         },
         kill: function (nick) {
             this.hasCheck(nick);
-        
+
             var user = this.users[nick];
             this.userCount--;
             this.updateCounter();
@@ -199,7 +199,7 @@
             this.userCounter.appendChild(document.createTextNode(globalUserCount + ' users online total'));
         }
     };
-    
+
     function pushState() {
         if (connected) {
             socket.send(JSON.stringify({
@@ -208,7 +208,7 @@
             }));
         }
     }
-    
+
     function pushAndUpdateState(newState) {
         userManager.update(myNick, newState);
         pushState();
@@ -261,7 +261,7 @@
         }
         span.appendChild(document.createTextNode(line));
     }
-    
+
     function chatPrint(originpart, line, type, showInShortLog) {
         function digitPad(n) {
             return n = (n < 10) ? ("0" + n) : n;
@@ -296,7 +296,7 @@
             document.title = '(' + unseenHighlights + ') ponyplace';
         }
     }
-    
+
     function highlightCheck(msg) {
         return (msg.indexOf(myNick) !== -1) ? 'highlight' : false;
     }
@@ -306,7 +306,7 @@
         className += ' mine ' + (mySpecialStatus || '');
         chatPrint('<' + nick + '> ', msg, className, true);
     }
-    
+
     function logInChat(nick, msg, special) {
         var className = highlightCheck(msg) || '';
         className += ' ' + (special || '');
@@ -316,7 +316,7 @@
     function logPrivmsgInChat(nick, msg, special) {
         chatPrint(nick + ' ->', msg, 'privmsg ' + special, true);
     }
-    
+
     function logBroadcastInChat(msg) {
         chatPrint('BROADCAST', msg, 'broadcast', true);
     }
@@ -324,19 +324,19 @@
     function logSentConsoleCommandInChat(msg) {
         chatPrint('CONSOLE <-', msg, 'console', true);
     }
-    
+
     function logConsoleMessageInChat(msg) {
         chatPrint('CONSOLE ->', msg, 'console', true);
     }
-    
+
     function logJoinInChat(nick) {
         chatPrint('*', nick + ' appeared', 'info', false);
     }
-    
+
     function logLeaveInChat(nick) {
         chatPrint('*', nick + ' left', 'info', false);
     }
-    
+
     function logRoomJoinInChat(name, name_full) {
         chatPrint('*', 'You joined the room ' + name + ' ("' + name_full + '")', 'info', true);
     }
@@ -352,7 +352,7 @@
             chatPrint('*', 'You entered your house', 'info', true);
         }
     }
-    
+
     function updateRoomList(rooms) {
         var option;
         roomlist.innerHTML = '';
@@ -385,7 +385,7 @@
         refreshbutton.disabled = false;
         roomlist.disabled = false;
     }
-    
+
     function changeRoom(room) {
         // change background
         if (room.type !== 'ephemeral') {
@@ -410,14 +410,14 @@
             backgroundIframe.src = 'about:blank';
             backgroundIframe.style.display = 'none';
         }
-        
+
         // clear users
         userManager.forEach(function (nick) {
             userManager.kill(nick);
         });
 
         myRoom = room;
-        
+
         // add me
         userManager.add(myNick, me, mySpecialStatus, false, true);
 
@@ -429,7 +429,7 @@
         }
         me.y = me.y || Math.floor(Math.random() * ROOM_HEIGHT);
         outerstage.scrollLeft = Math.floor(me.x + window.innerWidth / 2);
-        
+
         // push state
         pushAndUpdateState(me);
 
@@ -528,7 +528,7 @@
         chatlog = document.createElement('table');
         chatlog.id = 'chatlog';
         overlay.appendChild(chatlog);
-        
+
         fullchatlog = document.createElement('table');
         fullchatlog.id = 'fullchatlog';
         fullchatlog.style.display = 'none';
@@ -538,7 +538,7 @@
         chatboxholder = document.createElement('div');
         chatboxholder.id = 'chatbox-holder';
         overlay.appendChild(chatboxholder);
-        
+
         chatbox = document.createElement('input');
         chatbox.type = 'text';
         chatbox.id = 'chatbox';
@@ -574,7 +574,7 @@
         };
         chatbox.disabled = true;
         chatboxholder.appendChild(chatbox);
-        
+
         chatbutton = document.createElement('input');
         chatbutton.type = 'submit';
         chatbutton.value = 'Send';
@@ -601,7 +601,7 @@
         };
         fullchatlogbutton.disabled = true;
         overlay.appendChild(fullchatlogbutton);
-        
+
         chooserbutton = document.createElement('input');
         chooserbutton.id = 'chooser-button';
         chooserbutton.type = 'submit';
@@ -939,7 +939,7 @@
         };
         loginbox.appendChild(loginsubmit);
     }
-    
+
     function initGUI() {
         document.body.innerHTML = '';
         document.body.onkeypress = function (e) {
@@ -949,13 +949,13 @@
                 return false;
             }
         };
-    
+
         container = document.createElement('div');
         container.id = 'container';
         document.body.appendChild(container);
 
         initGUI_stage();
-        
+
         overlay = document.createElement('div');
         overlay.id = 'overlay';
         container.appendChild(overlay);
@@ -1019,7 +1019,7 @@
         } else {
             socket = new WebSocket('ws://ajf.me:9001', 'ponyplace');
         }
-        
+
         socket.onopen = function () {
             connected = true;
             me = {
@@ -1074,7 +1074,7 @@
                     chatbox.disabled = false;
                     chatbutton.disabled = false;
                     fullchatlogbutton.disabled = false;
-                    
+
                     myNick = msg.nick;
                     mySpecialStatus = msg.special;
                     bitcount.innerHTML = '';
@@ -1118,7 +1118,7 @@
                             }));
                         }
                     }
-                    
+
                     backgroundIframe.contentDocument.location.reload(true);
                     if (roomeditvisible) {
                         roomeditiframe.contentDocument.location.reload(true);

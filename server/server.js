@@ -178,16 +178,16 @@ function doRoomChange(roomName, user) {
             roomManager.onEphemeralLeave(oldRoom);
         }
     }
-    
+
     // set current room to new room
     user.room = room.name;
-    
+
     // tell client it has changed room and tell room details
     user.send({
         type: 'room_change',
         data: room
     });
-    
+
     User.forEach(function (iterUser) {
         if (iterUser.room === user.room) {
             if (iterUser.nick !== user.nick) {
@@ -235,7 +235,7 @@ function handleCommand(cmd, myNick, user) {
 
     var isMod = User.isModerator(myNick);
     var haveHouse = User.hasAccount(myNick);
-    
+
     // help
     if (cmd.substr(0, 4) === 'help') {
         sendMultiLine([
@@ -542,13 +542,13 @@ wsServer.on('request', function(request) {
         console.log('Caught error: ' + e);
         return;
     }
-    console.log((new Date()) + ' Connection accepted from IP ' + connection.remoteAddress);    
+    console.log((new Date()) + ' Connection accepted from IP ' + connection.remoteAddress);
 
     var amConnected = true;
-    
+
     // this user
     var user = null, myNick = null;
-    
+
     function onMessage(message) {
         if (!amConnected) {
             return;
@@ -564,7 +564,7 @@ wsServer.on('request', function(request) {
             connection.close();
             return;
         }
-        
+
         // every frame is a JSON-encoded packet
         try {
             var msg = JSON.parse(message.utf8Data);
@@ -585,7 +585,7 @@ wsServer.on('request', function(request) {
             connection.close();
             return;
         }
-        
+
         switch (msg.type) {
             case 'console_command':
                 if (msg.hasOwnProperty('cmd')) {
@@ -606,10 +606,10 @@ wsServer.on('request', function(request) {
                         return;
                     }
                 }
-                
+
                 // update their stored state
                 user.obj = msg.obj;
-                
+
                 // broadcast new state to other clients in same room
                 User.forEach(function (iterUser) {
                     if (iterUser.conn !== connection && iterUser.room === user.room) {
@@ -698,7 +698,7 @@ wsServer.on('request', function(request) {
                 if (result = User.buyFromCatalogue(user.nick, msg.name, msg.index)) {
                     user.send({
                         type: 'console_msg',
-                        msg: 'You bought the item: "' + result.name_full + '" for ' + result.price + ' bits' 
+                        msg: 'You bought the item: "' + result.name_full + '" for ' + result.price + ' bits'
                     });
                 } else {
                     user.send({
@@ -774,7 +774,7 @@ wsServer.on('request', function(request) {
             connection.close();
             return;
         }
-    
+
         // sanitise chat message
         if (msg.obj.hasOwnProperty('chat')) {
             msg.obj.chat = sanitiseChat(msg.obj.chat);
@@ -791,7 +791,7 @@ wsServer.on('request', function(request) {
                 return;
             }
         }
-        
+
         // tell client about rooms
         connection.sendUTF(JSON.stringify({
             type: 'room_list',
@@ -810,7 +810,7 @@ wsServer.on('request', function(request) {
             type: 'inventory_item_list',
             list: User.inventoryItems
         }));
-        
+
         myNick = nick;
         user = new User(nick, connection, msg.obj, null);
         user.sendAccountState();
@@ -844,13 +844,13 @@ wsServer.on('request', function(request) {
 
         console.log((new Date()) + ' User with nick: "' + myNick + '" connected.');
     }
-    
+
     // Deals with first message
     connection.once('message', function(message) {
         if (!amConnected) {
             return;
         }
-        
+
         // handle unexpected packet types
         // we don't use binary frames
         if (message.type !== 'utf8') {
@@ -861,7 +861,7 @@ wsServer.on('request', function(request) {
             connection.close();
             return;
         }
-        
+
         // every frame is a JSON-encoded packet
         try {
             var msg = JSON.parse(message.utf8Data);
@@ -873,7 +873,7 @@ wsServer.on('request', function(request) {
             connection.close();
             return;
         }
-        
+
         // We're expecting an appear packet first
         // Anything else is unexpected
         if (msg.type !== 'appear') {
@@ -938,18 +938,18 @@ wsServer.on('request', function(request) {
                 });
             }
         }
-        
+
         // call onMessage for subsequent messages
         connection.on('message', onMessage);
     });
-    
+
     connection.on('close', function(reasonCode, description) {
         amConnected = false;
         console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.');
         if (user !== null && User.has(myNick)) {
             // remove from users map
             user.kill();
-            
+
             // don't if in null room (lobby)
             if (user.room !== null) {
                 // broadcast user leave to other clients

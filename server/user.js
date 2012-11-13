@@ -97,13 +97,13 @@ User.checkBypass = function (nick, bypass) {
 };
 User.assert = function (assertion, callback) {
     var postdata;
-    
+
     if (process.argv.hasOwnProperty('2') && process.argv[2] === '--debug') {
         postdata = 'assertion=' + assertion + '&audience=http://localhost:8000';
     } else {
         postdata = 'assertion=' + assertion + '&audience=http://ponyplace.ajf.me';
     }
-    
+
     var req = https.request({
         hostname: 'verifier.login.persona.org',
         method: 'POST',
@@ -190,7 +190,7 @@ User.setUserData = function (nick, property, value) {
 User.changeBits = function (nick, amount) {
     if (this.hasAccount(nick)) {
         var bits = this.getUserData(nick, 'bits', 0);
-        
+
         bits += amount;
 
         if (bits >= 0 && Number.isFinite(bits) && !Number.isNaN(bits)) {
@@ -306,7 +306,7 @@ User.get = function (nick) {
     if(!this.has(nick)) {
         throw new Error("There is no user named: " + nick);
     }
-    
+
     return this.users[nick];
 };
 User.has = function (nick) {
