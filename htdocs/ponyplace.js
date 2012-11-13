@@ -213,16 +213,31 @@
         pushState();
     }
 
-    function chatPopulateLine(timepart, firstpart, line, parent) {
-        var span = document.createElement('span');
-        span.className = 'timepart';
-        span.appendChild(document.createTextNode(timepart));
-        parent.appendChild(span);
+    function chatPopulateLine(timepart, originpart, line, parent) {
+        var span, td;
 
+        td = document.createElement('td');
+        td.className = 'timepart';
         span = document.createElement('span');
-        span.className = 'firstpart';
-        span.appendChild(document.createTextNode(firstpart));
-        parent.appendChild(span);
+        span.className = 'innertext';
+        span.appendChild(document.createTextNode(timepart));
+        td.appendChild(span);
+        parent.appendChild(td);
+
+        td = document.createElement('td');
+        td.className = 'originpart';
+        span = document.createElement('span');
+        span.className = 'innertext';
+        span.appendChild(document.createTextNode(originpart));
+        td.appendChild(span);
+        parent.appendChild(td);
+
+        td = document.createElement('td');
+        td.className = 'msgpart';
+        span = document.createElement('span');
+        span.className = 'innertext';
+        td.appendChild(span);
+        parent.appendChild(td);
 
         var pos;
         while (((pos = line.indexOf('http://')) !== -1) || ((pos = line.indexOf('https://')) !== -1)) {
@@ -231,24 +246,22 @@
             anchor.className = 'chat-link';
             anchor.target = '_blank';
             if (pos2 === -1) {
-                parent.appendChild(document.createTextNode(line.substr(0, pos)));
-
+                span.appendChild(document.createTextNode(line.substr(0, pos)));
                 anchor.href = line.substr(pos);
                 anchor.appendChild(document.createTextNode(line.substr(pos)));
                 line = '';
             } else {
-                parent.appendChild(document.createTextNode(line.substr(0, pos)));
+                span.appendChild(document.createTextNode(line.substr(0, pos)));
                 anchor.href = line.substr(pos, pos2 - pos);
                 anchor.appendChild(document.createTextNode(line.substr(pos, pos2 - pos)));
                 line = line.substr(pos2);
             }
-            parent.appendChild(anchor);
+            span.appendChild(anchor);
         }
-        parent.appendChild(document.createTextNode(line));
-        parent.appendChild(document.createElement('br'));
+        span.appendChild(document.createTextNode(line));
     }
     
-    function chatPrint(firstpart, line, type, showInShortLog) {
+    function chatPrint(originpart, line, type, showInShortLog) {
         function digitPad(n) {
             return n = (n < 10) ? ("0" + n) : n;
         }
@@ -256,26 +269,26 @@
         var date = new Date();
         var timepart = '[' + digitPad(date.getHours()) + ':' + digitPad(date.getMinutes()) + ']';
 
-        var span;
+        var tr;
         if (showInShortLog) {
-            span = document.createElement('span');
-            span.className = 'chatline';
+            tr = document.createElement('tr');
+            tr.className = 'chatline';
             if (type) {
-                span.className += ' ' + type;
+                tr.className += ' ' + type;
             }
-            chatPopulateLine(timepart, firstpart, line, span);
-            chatlog.appendChild(span);
+            chatPopulateLine(timepart, originpart, line, tr);
+            chatlog.appendChild(tr);
             while (chatlog.children.length > 12) {
                 chatlog.removeChild(chatlog.firstChild);
             }
         }
 
-        span = document.createElement('span');
+        tr = document.createElement('span');
         if (type) {
-            span.className = type;
+            tr.className = type;
         }
-        chatPopulateLine(timepart, firstpart, line, span);
-        fullchatlog.appendChild(span);
+        chatPopulateLine(timepart, originpart, line, tr);
+        fullchatlog.appendChild(tr);
 
         if (!pageFocussed && (type === 'highlight' || type === 'privmsg')) {
             unseenHighlights++;
@@ -507,11 +520,11 @@
     }
 
     function initGUI_chatbar() {
-        chatlog = document.createElement('div');
+        chatlog = document.createElement('table');
         chatlog.id = 'chatlog';
         overlay.appendChild(chatlog);
         
-        fullchatlog = document.createElement('div');
+        fullchatlog = document.createElement('table');
         fullchatlog.id = 'fullchatlog';
         fullchatlog.style.display = 'none';
         fullchatlogvisible = false;
