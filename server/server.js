@@ -536,7 +536,11 @@ wsServer.on('request', function(request) {
         // handle unexpected packet types
         // we don't use binary frames
         if (message.type !== 'utf8') {
-            user.kick('protocol_error');
+            connection.sendUTF(JSON.stringify({
+                type: 'kick',
+                reason: 'protocol_error'
+            }));
+            connection.close();
             return;
         }
         
@@ -544,15 +548,21 @@ wsServer.on('request', function(request) {
         try {
             var msg = JSON.parse(message.utf8Data);
         } catch (e) {
-            user.kick('protocol_error');
+            connection.sendUTF(JSON.stringify({
+                type: 'kick',
+                reason: 'protocol_error'
+            }));
+            connection.close();
             return;
         }
 
         if (user === null) {
-            user.send({
+            connection.sendUTF(JSON.stringify({
                 type: 'console_msg',
                 msg: 'Not yet logged in.'
-            });
+            }));
+            connection.close();
+            return;
         }
         
         switch (msg.type) {
