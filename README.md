@@ -26,6 +26,6 @@ Running Server
 --------------
 
 1. Obviously, make sure you have node.js.
-2. `cd` into the `server` directory and do `npm install websocket` to get [WebSocket-Node](https://github.com/Worlize/WebSocket-Node) (which itself requires node-gyp, do `sudo npm install -g node-gyp` first) and `npm install keypress` to get the keypress module
+2. `cd` into the `server` directory and do `npm install`. This is equivalent to `npm install websocket` to get [WebSocket-Node](https://github.com/Worlize/WebSocket-Node) (which itself requires node-gyp, do `sudo npm install -g node-gyp` first) and `npm install keypress` to get the keypress module.
 3. Run `server.js` (add `--debug` switch if running locally)
 4. Run a web server at the same hostname. When debugging, run one at `localhost:8000`. Note that it expects, for login verification purposes, the production server to always be called `ponyplace.ajf.me` and be on port 80.
