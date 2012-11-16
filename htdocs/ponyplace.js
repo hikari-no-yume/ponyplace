@@ -583,7 +583,7 @@
             handleChatMessage();
         };
         chatbutton.disabled = true;
-        container.appendChild(chatbutton);
+        overlay.appendChild(chatbutton);
 
         fullchatlogbutton = document.createElement('input');
         fullchatlogbutton.id = 'fullchatlog-button';
