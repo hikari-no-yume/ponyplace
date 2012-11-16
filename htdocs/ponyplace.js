@@ -715,6 +715,9 @@
                 var parts = chatbox.value.split(' ');
                 var lastpart = parts[parts.length - 1];
                 userManager.forEach(function (nick) {
+                    if (nick === myNick) {
+                        return;
+                    }
                     if (nick.substr(0, lastpart.length) === lastpart) {
                         if (parts.length === 1) {
                             parts[parts.length - 1] = nick + ':';
