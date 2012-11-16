@@ -505,6 +505,9 @@ a {
 .nickname:hover {
     cursor: pointer;
 }
+.nickname.own:hover {
+    cursor: default;
+}
 
 .house-link {
     pointer-events: auto;

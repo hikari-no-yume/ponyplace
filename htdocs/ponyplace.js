@@ -49,6 +49,8 @@
                 throw new Error("There is already a user with the same nick.");
             }
 
+            var isOwnNick = nick === myNick;
+
             var elem = document.createElement('div');
             elem.className = 'pony';
 
@@ -73,15 +75,17 @@
             }
 
             var nickName = document.createElement('span');
-            nickName.className = 'nickname';
+            nickName.className = 'nickname' + (isOwnNick ? ' own' : '');
             nickName.appendChild(document.createTextNode(nick));
             if (special) {
                 nickName.className += ' ' + special;
             }
-            nickName.onclick = function () {
-                chatbox.value = '/msg ' + nick + ' ';
-                chatbox.focus();
-            };
+            if (!isOwnNick) {
+                nickName.onclick = function () {
+                    chatbox.value = '/msg ' + nick + ' ';
+                    chatbox.focus();
+                };
+            }
             nickTag.appendChild(nickName);
 
             elem.appendChild(nickTag);
