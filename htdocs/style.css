@@ -358,7 +358,7 @@ input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover, button:
     position: absolute;
     left: 5px;
     bottom: 58px;
-    width: 100%;
+    width: 80%;
     color: white;
     pointer-events: none;
     overflow: hidden;
@@ -384,7 +384,7 @@ a {
 }
 .originpart {
     text-align: right;
-    min-width: 10em;
+    width: 16em;
     font-family: monospace;
 }
 .msgpart {
