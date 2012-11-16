@@ -135,7 +135,7 @@ h1, p {
     top: 0;
 }
 
-input[type=submit], .button {
+input[type=submit], .button, button {
     padding: 4px;
     display: block;
     text-align: center;
@@ -154,7 +154,7 @@ input[type=submit][disabled], .button[disabled] {
     color: gray;
 }
 
-input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover {
+input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover, button:not([disabled]):hover  {
     text-decoration: underline;
     cursor: pointer;
 }
@@ -167,6 +167,10 @@ input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover {
 #home-button { left: 270px; }
 #account-settings-button { right: 6px; width: 150px; }
 #inventory-list-button { right: 160px; }
+
+#home-button {
+    width: 24px;
+}
 
 #room-edit-button {
     position: absolute;

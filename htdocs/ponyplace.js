@@ -706,9 +706,11 @@
         refreshbutton.disabled = true;
         overlay.appendChild(refreshbutton);
 
-        homebutton = document.createElement('input');
-        homebutton.type = 'submit';
-        homebutton.value = 'My House';
+        homebutton = document.createElement('button');
+        var icon = document.createElement('img');
+        icon.src = 'media/icons/house.png';
+        icon.alt = icon.title = 'My House';
+        homebutton.appendChild(icon);
         homebutton.id = 'home-button';
         homebutton.onclick = function () {
             socket.send(JSON.stringify({
