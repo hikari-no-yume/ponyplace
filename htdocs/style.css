@@ -505,6 +505,10 @@ a {
 .nickname:hover {
     cursor: pointer;
 }
+
+.nickname.own {
+    color: #FF67D5;
+}
 .nickname.own:hover {
     cursor: default;
 }
