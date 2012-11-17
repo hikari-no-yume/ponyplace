@@ -30,9 +30,12 @@ h1, p {
 }
 
 #credits, #credits p {
-    color: white;
-    background-color: black;
+    font-family: Georgia, sans-serif;
+    font-size: 12pt;
     text-align: left !important;
+}
+#credits a {
+    color: blue;
 }
 
 #container {
