@@ -375,7 +375,7 @@
         "name": "zecoras_house",
         "name_full": "Zecora's house",
         "background": {
-            "data": "/media/rooms/zecoras-house.png",
+            "data": "/media/rooms/zecoras-house2.png",
             "width": 1175,
             "height": 660
         },
