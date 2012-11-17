@@ -315,7 +315,9 @@
         "twilight_left_run.gif",
         "twilight_right_run.gif",
         "twilight_left_crazy.gif",
-        "twilight_right_crazy.gif"
+        "twilight_right_crazy.gif",
+        "twilight_left_read.gif",
+        "twilight_right_read.gif"
     ],
     "fillytwilight": [
         "fillytwilight_left.gif",
