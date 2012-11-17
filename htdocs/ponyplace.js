@@ -118,7 +118,7 @@
             user.elem.root.style.top = obj.y + 'px';
             if (avatars.hasOwnProperty(obj.img_name)) {
                 if (avatars[obj.img_name].hasOwnProperty(obj.img_index)) {
-                    var imgURL = '/media/' + avatars[obj.img_name][obj.img_index];
+                    var imgURL = '/media/avatars/' + avatars[obj.img_name][obj.img_index];
                     user.elem.root.style.backgroundImage = 'url(' + imgURL + ')';
                     user.elem.img = document.createElement('img');
                     user.elem.img.src = imgURL;
@@ -795,14 +795,14 @@
                     var name = avatarInventory[i];
                     if (avatars.hasOwnProperty(name)) {
                         var preview = document.createElement('img');
-                        preview.src = '/media/' + avatars[name][0];
+                        preview.src = '/media/avatars/' + avatars[name][0];
                         preview.className = 'chooser-preview';
                         (function (images, name) {
                             preview.onclick = function () {
                                 chooser.innerHTML = '';
                                 for (var i = 0; i < images.length; i++) {
                                     var preview = document.createElement('img');
-                                    preview.src = 'media/' + images[i];
+                                    preview.src = '/media/avatars/' + images[i];
                                     preview.className = 'chooser-preview';
                                     (function (imgid) {
                                         preview.onclick = function () {

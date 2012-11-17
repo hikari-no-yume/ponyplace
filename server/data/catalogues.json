@@ -9,7 +9,7 @@
             ],
             "name_full": "Pinkamena Diane Pie",
             "price": 50,
-            "img": "/media/crazypie_right.gif"
+            "img": "/media/avatars/crazypie_right.gif"
         },
         {
             "items": [
@@ -24,7 +24,7 @@
             ],
             "name_full": "Filly Pinkie Pie",
             "price": 50,
-            "img": "/media/fillypinkiepie_right.gif"
+            "img": "/media/avatars/fillypinkiepie_right.gif"
         },
         {
             "items": [
@@ -35,7 +35,7 @@
             ],
             "name_full": "Gummy",
             "price": 50,
-            "img": "/media/gummy_right.gif"
+            "img": "/media/avatars/gummy_right.gif"
         }
     ],
     "dungeon": [
@@ -67,7 +67,7 @@
                 }
             ],
             "price": 100,
-            "img": "/media/rover_right_walk_threaten.gif"
+            "img": "/media/avatars/rover_right_walk_threaten.gif"
         }
     ],
     "discordville": [
@@ -80,7 +80,7 @@
             ],
             "name_full": "Discord",
             "price": 50,
-            "img": "/media/discord_right.gif"
+            "img": "/media/avatars/discord_right.gif"
         }
     ],
     "library": [
@@ -93,7 +93,7 @@
             ],
             "name_full": "Spike",
             "price": 50,
-            "img": "/media/spike_right.gif"
+            "img": "/media/avatars/spike_right.gif"
         }
     ],
     "zecoras_house": [
@@ -106,7 +106,7 @@
             ],
             "name_full": "Zecora",
             "price": 50,
-            "img": "/media/zecora_right.gif"
+            "img": "/media/avatars/zecora_right.gif"
         }
     ],
     "classroom": [
@@ -119,7 +119,7 @@
             ],
             "name_full": "Cheerilee",
             "price": 50,
-            "img": "/media/cheerilee_right.gif"
+            "img": "/media/avatars/cheerilee_right.gif"
         },
         {
             "items": [
@@ -130,7 +130,7 @@
             ],
             "name_full": "Diamond Tiara",
             "price": 50,
-            "img": "/media/diamondtiara_right.gif"
+            "img": "/media/avatars/diamondtiara_right.gif"
         },
         {
             "items": [
@@ -141,7 +141,7 @@
             ],
             "name_full": "Silver Spoon",
             "price": 50,
-            "img": "/media/silverspoon_right.gif"
+            "img": "/media/avatars/silverspoon_right.gif"
         },
         {
             "items": [
@@ -152,7 +152,7 @@
             ],
             "name_full": "Scootaloo",
             "price": 50,
-            "img": "/media/scootaloo_right.gif"
+            "img": "/media/avatars/scootaloo_right.gif"
         },
         {
             "items": [
@@ -163,7 +163,7 @@
             ],
             "name_full": "Sweetie Belle",
             "price": 50,
-            "img": "/media/sweetiebelle_right.gif"
+            "img": "/media/avatars/sweetiebelle_right.gif"
         }
     ],
     "cloudsdale": [
@@ -176,7 +176,7 @@
             ],
             "name_full": "Derpy in Nightmare Night costume",
             "price": 50,
-            "img": "/media/derpynn_right_muffin.gif"
+            "img": "/media/avatars/derpynn_right_muffin.gif"
         },
         {
             "items": [
@@ -187,7 +187,7 @@
             ],
             "name_full": "Rainbow #SWAG",
             "price": 150,
-            "img": "/media/rainbowdash_right_shades.gif"
+            "img": "/media/avatars/rainbowdash_right_shades.gif"
         },
         {
             "items": [
@@ -198,7 +198,7 @@
             ],
             "name_full": "Raindrops",
             "price": 50,
-            "img": "/media/raindrops_right.gif"
+            "img": "/media/avatars/raindrops_right.gif"
         },
         {
             "items": [
@@ -209,7 +209,7 @@
             ],
             "name_full": "Spitfire",
             "price": 50,
-            "img": "/media/spitfire_right.gif"
+            "img": "/media/avatars/spitfire_right.gif"
         },
         {
             "items": [
@@ -220,7 +220,7 @@
             ],
             "name_full": "Spitfire (without suit)",
             "price": 50,
-            "img": "/media/spitfire2_right.gif"
+            "img": "/media/avatars/spitfire2_right.gif"
         },
         {
             "items": [
@@ -231,7 +231,7 @@
             ],
             "name_full": "Soarin'",
             "price": 50,
-            "img": "/media/soarin_right.gif"
+            "img": "/media/avatars/soarin_right.gif"
         }
     ],
     "canterlot": [
@@ -248,7 +248,7 @@
             ],
             "name_full": "Queen Chrysalis + Changeling",
             "price": 100,
-            "img": "/media/chrysalis_right.gif"
+            "img": "/media/avatars/chrysalis_right.gif"
         },
         {
             "items": [
@@ -259,7 +259,7 @@
             ],
             "name_full": "Princess Cadence",
             "price": 50,
-            "img": "/media/cadence_right.png"
+            "img": "/media/avatars/cadence_right.png"
         },
         {
             "items": [
@@ -270,7 +270,7 @@
             ],
             "name_full": "Big Princess Celestia",
             "price": 50,
-            "img": "/media/bigcelestia_right.gif"
+            "img": "/media/avatars/bigcelestia_right.gif"
         },
         {
             "items": [
@@ -281,7 +281,7 @@
             ],
             "name_full": "Princess Celestia",
             "price": 50,
-            "img": "/media/celestia_right.gif"
+            "img": "/media/avatars/celestia_right.gif"
         },
         {
             "items": [
@@ -292,7 +292,7 @@
             ],
             "name_full": "Filly Princess Celestia",
             "price": 50,
-            "img": "/media/fillycelestia_right.gif"
+            "img": "/media/avatars/fillycelestia_right.gif"
         },
         {
             "items": [
@@ -303,7 +303,7 @@
             ],
             "name_full": "Nightmare Moon",
             "price": 50,
-            "img": "/media/nightmaremoon_right.gif"
+            "img": "/media/avatars/nightmaremoon_right.gif"
         },
         {
             "items": [
@@ -318,7 +318,7 @@
             ],
             "name_full": "Princess Luna (Seasons 1 and 2)",
             "price": 50,
-            "img": "/media/luna2_right.gif"
+            "img": "/media/avatars/luna2_right.gif"
         },
         {
             "items": [
@@ -329,7 +329,7 @@
             ],
             "name_full": "Filly Princess Luna",
             "price": 50,
-            "img": "/media/fillyluna_right.gif"
+            "img": "/media/avatars/fillyluna_right.gif"
         },
         {
             "items": [
@@ -340,7 +340,7 @@
             ],
             "name_full": "Royal Guard",
             "price": 50,
-            "img": "/media/royalguard_right.gif"
+            "img": "/media/avatars/royalguard_right.gif"
         }
     ],
     "sweet_apple_acres": [
@@ -353,7 +353,7 @@
             ],
             "name_full": "Braeburn",
             "price": 50,
-            "img": "/media/braeburn_right.gif"
+            "img": "/media/avatars/braeburn_right.gif"
         },
         {
             "items": [
@@ -364,7 +364,7 @@
             ],
             "name_full": "Filly Applejack",
             "price": 50,
-            "img": "/media/fillyapplejack_right.gif"
+            "img": "/media/avatars/fillyapplejack_right.gif"
         },
         {
             "items": [
@@ -375,7 +375,7 @@
             ],
             "name_full": "Winona",
             "price": 50,
-            "img": "/media/winona_right.gif"
+            "img": "/media/avatars/winona_right.gif"
         },
         {
             "items": [
@@ -386,7 +386,7 @@
             ],
             "name_full": "Big Macintosh",
             "price": 50,
-            "img": "/media/bigmacintosh_right.gif"
+            "img": "/media/avatars/bigmacintosh_right.gif"
         },
         {
             "items": [
@@ -397,7 +397,7 @@
             ],
             "name_full": "Granny Smith",
             "price": 50,
-            "img": "/media/grannysmith_right.gif"
+            "img": "/media/avatars/grannysmith_right.gif"
         },
         {
             "items": [
@@ -408,7 +408,7 @@
             ],
             "name_full": "Applebloom",
             "price": 50,
-            "img": "/media/applebloom_right.gif"
+            "img": "/media/avatars/applebloom_right.gif"
         }
     ],
     "carousel_boutique": [
@@ -498,7 +498,7 @@
             ],
             "name_full": "Nurse Redheart",
             "price": 50,
-            "img": "/media/nurseredheart_right.gif"
+            "img": "/media/avatars/nurseredheart_right.gif"
         },
         {
             "items": [
@@ -509,7 +509,7 @@
             ],
             "name_full": "Vinyl Scratch",
             "price": 50,
-            "img": "/media/vinylscratch_right.gif"
+            "img": "/media/avatars/vinylscratch_right.gif"
         },
         {
             "items": [
@@ -520,7 +520,7 @@
             ],
             "name_full": "Octavia",
             "price": 50,
-            "img": "/media/octavia_right.gif"
+            "img": "/media/avatars/octavia_right.gif"
         },
         {
             "items": [
@@ -531,7 +531,7 @@
             ],
             "name_full": "Mare-do-well",
             "price": 50,
-            "img": "/media/maredowell_right.gif"
+            "img": "/media/avatars/maredowell_right.gif"
         },
         {
             "items": [
@@ -542,7 +542,7 @@
             ],
             "name_full": "Carrot Top",
             "price": 50,
-            "img": "/media/carrottop_right.gif"
+            "img": "/media/avatars/carrottop_right.gif"
         },
         {
             "items": [
@@ -553,7 +553,7 @@
             ],
             "name_full": "Colgate",
             "price": 50,
-            "img": "/media/colgate_right.gif"
+            "img": "/media/avatars/colgate_right.gif"
         },
         {
             "items": [
@@ -564,7 +564,7 @@
             ],
             "name_full": "Doctor Whooves",
             "price": 50,
-            "img": "/media/doctorwhooves_right.gif"
+            "img": "/media/avatars/doctorwhooves_right.gif"
         },
         {
             "items": [
@@ -575,7 +575,7 @@
             ],
             "name_full": "Filly Rainbow Dash",
             "price": 50,
-            "img": "/media/fillyrainbowdash_right.gif"
+            "img": "/media/avatars/fillyrainbowdash_right.gif"
         },
         {
             "items": [
@@ -586,7 +586,7 @@
             ],
             "name_full": "Tank",
             "price": 50,
-            "img": "/media/tank_right_hover.gif"
+            "img": "/media/avatars/tank_right_hover.gif"
         },
         {
             "items": [
@@ -597,7 +597,7 @@
             ],
             "name_full": "Daring Do",
             "price": 50,
-            "img": "/media/daringdo_right.gif"
+            "img": "/media/avatars/daringdo_right.gif"
         },
         {
             "items": [
@@ -608,7 +608,7 @@
             ],
             "name_full": "Iron Will",
             "price": 50,
-            "img": "/media/ironwill_right_walk.gif"
+            "img": "/media/avatars/ironwill_right_walk.gif"
         },
         {
             "items": [
@@ -619,7 +619,7 @@
             ],
             "name_full": "Filly Fluttershy",
             "price": 50,
-            "img": "/media/fillyfluttershy_right.gif"
+            "img": "/media/avatars/fillyfluttershy_right.gif"
         },
         {
             "items": [
@@ -630,7 +630,7 @@
             ],
             "name_full": "Angel",
             "price": 50,
-            "img": "/media/angel_right.gif"
+            "img": "/media/avatars/angel_right.gif"
         },
         {
             "items": [
@@ -641,7 +641,7 @@
             ],
             "name_full": "Photo Finish",
             "price": 50,
-            "img": "/media/photofinish_right.png"
+            "img": "/media/avatars/photofinish_right.png"
         },
         {
             "items": [
@@ -652,7 +652,7 @@
             ],
             "name_full": "Filly Twilight Sparkle",
             "price": 50,
-            "img": "/media/fillytwilight_right.gif"
+            "img": "/media/avatars/fillytwilight_right.gif"
         },
         {
             "items": [
@@ -663,7 +663,7 @@
             ],
             "name_full": "Filly Rarity",
             "price": 50,
-            "img": "/media/fillyrarity_right.gif"
+            "img": "/media/avatars/fillyrarity_right.gif"
         },
         {
             "items": [
@@ -674,7 +674,7 @@
             ],
             "name_full": "Opalescence",
             "price": 50,
-            "img": "/media/opalescence_right.gif"
+            "img": "/media/avatars/opalescence_right.gif"
         },
         {
             "items": [
@@ -685,7 +685,7 @@
             ],
             "name_full": "Berry Punch",
             "price": 50,
-            "img": "/media/berrypunch_right.gif"
+            "img": "/media/avatars/berrypunch_right.gif"
         },
         {
             "items": [
@@ -696,7 +696,7 @@
             ],
             "name_full": "Bonbon",
             "price": 50,
-            "img": "/media/bonbon_right.gif"
+            "img": "/media/avatars/bonbon_right.gif"
         },
         {
             "items": [
@@ -707,7 +707,7 @@
             ],
             "name_full": "Lyra Heartstrings",
             "price": 50,
-            "img": "/media/lyra_right.gif"
+            "img": "/media/avatars/lyra_right.gif"
         },
         {
             "items": [
@@ -722,7 +722,7 @@
             ],
             "name_full": "The Great and Powerful Trixie (with and without robes)",
             "price": 50,
-            "img": "/media/trixie_right.gif"
+            "img": "/media/avatars/trixie_right.gif"
         }
     ]
 }
