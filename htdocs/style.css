@@ -94,7 +94,7 @@ h1, p {
     right: 6px;
     top: 66px;
     width: 280px;
-    height: 340px;
+    height: 80px;
     padding: 6px;
     background-color: white;
     border: 4px solid rgb(255, 103, 213);
@@ -124,9 +124,31 @@ h1, p {
     position: relative;
 }
 
-#background-iframe {
-    border: 0;
+#background-widgets {
     position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.room-widget {
+    position: absolute;
+    overflow-y: auto;
+}
+
+.iframe-widget iframe {
+    border: none;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.party-widget iframe {
+    pointer-events: auto;
+    position: absolute;
+    right: 0;
+    bottom: 0;
 }
 
 #music {
@@ -295,11 +317,6 @@ input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover, button:
 
 .portal {
     background-color: rgba(255, 127, 0, 0.3);
-    position: fixed;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
 }
 .portal:hover {
     cursor: pointer;

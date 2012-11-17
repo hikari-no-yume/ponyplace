@@ -1,83 +1,4 @@
 {
-    "room_edit": [
-        {
-            "items": [
-                {
-                    "type": "inventory_item",
-                    "item_name": "roombg_cherry_jubilees_guest_room"
-                }
-            ],
-            "name_full": "Cherry Jubilee's Guest Room background",
-            "price": 500,
-            "img": "/media/rooms/house/cherry-jubilees-guest-room.png"
-        },
-        {
-            "items": [
-                {
-                    "type": "inventory_item",
-                    "item_name": "roombg_pinkies_room"
-                }
-            ],
-            "name_full": "Pinkie's Room background",
-            "price": 500,
-            "img": "/media/rooms/house/pinkies-room.png"
-        },
-        {
-            "items": [
-                {
-                    "type": "inventory_item",
-                    "item_name": "roombg_canterlot_bedroom"
-                }
-            ],
-            "name_full": "Canterlot Bedroom background",
-            "price": 500,
-            "img": "/media/rooms/house/canterlot-bedroom.png"
-        },
-        {
-            "items": [
-                {
-                    "type": "inventory_item",
-                    "item_name": "roombg_dashies_bedroom"
-                }
-            ],
-            "name_full": "Dashie's Bedroom background",
-            "price": 500,
-            "img": "/media/rooms/house/dashies-bedroom.png"
-        },
-        {
-            "items": [
-                {
-                    "type": "inventory_item",
-                    "item_name": "roombg_shining_armors_apartments"
-                }
-            ],
-            "name_full": "Shining Armor's Apartments background",
-            "price": 500,
-            "img": "/media/rooms/house/shining-armors-apartments.png"
-        },
-        {
-            "items": [
-                {
-                    "type": "inventory_item",
-                    "item_name": "roombg_princess_celestias_room"
-                }
-            ],
-            "name_full": "Princess Celestia's Room background",
-            "price": 500,
-            "img": "/media/rooms/house/princess-celestias-room.png"
-        },
-        {
-            "items": [
-                {
-                    "type": "inventory_item",
-                    "item_name": "roombg_madam_pinkies_tent"
-                }
-            ],
-            "name_full": "Madam Pinkie's Tent background",
-            "price": 500,
-            "img": "/media/rooms/house/madam-pinkies-tent.png"
-        }
-    ],
     "sugarcube_corner": [
         {
             "items": [
@@ -491,6 +412,83 @@
         }
     ],
     "carousel_boutique": [
+        {
+            "items": [
+                {
+                    "type": "inventory_item",
+                    "item_name": "roombg_cherry_jubilees_guest_room"
+                }
+            ],
+            "name_full": "Cherry Jubilee's Guest Room background",
+            "price": 500,
+            "img": "/media/rooms/house/cherry-jubilees-guest-room.png"
+        },
+        {
+            "items": [
+                {
+                    "type": "inventory_item",
+                    "item_name": "roombg_pinkies_room"
+                }
+            ],
+            "name_full": "Pinkie's Room background",
+            "price": 500,
+            "img": "/media/rooms/house/pinkies-room.png"
+        },
+        {
+            "items": [
+                {
+                    "type": "inventory_item",
+                    "item_name": "roombg_canterlot_bedroom"
+                }
+            ],
+            "name_full": "Canterlot Bedroom background",
+            "price": 500,
+            "img": "/media/rooms/house/canterlot-bedroom.png"
+        },
+        {
+            "items": [
+                {
+                    "type": "inventory_item",
+                    "item_name": "roombg_dashies_bedroom"
+                }
+            ],
+            "name_full": "Dashie's Bedroom background",
+            "price": 500,
+            "img": "/media/rooms/house/dashies-bedroom.png"
+        },
+        {
+            "items": [
+                {
+                    "type": "inventory_item",
+                    "item_name": "roombg_shining_armors_apartments"
+                }
+            ],
+            "name_full": "Shining Armor's Apartments background",
+            "price": 500,
+            "img": "/media/rooms/house/shining-armors-apartments.png"
+        },
+        {
+            "items": [
+                {
+                    "type": "inventory_item",
+                    "item_name": "roombg_princess_celestias_room"
+                }
+            ],
+            "name_full": "Princess Celestia's Room background",
+            "price": 500,
+            "img": "/media/rooms/house/princess-celestias-room.png"
+        },
+        {
+            "items": [
+                {
+                    "type": "inventory_item",
+                    "item_name": "roombg_madam_pinkies_tent"
+                }
+            ],
+            "name_full": "Madam Pinkie's Tent background",
+            "price": 500,
+            "img": "/media/rooms/house/madam-pinkies-tent.png"
+        },
         {
             "items": [
                 {

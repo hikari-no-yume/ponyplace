@@ -14,6 +14,7 @@
 
     var socket, connected = false, ignoreDisconnect = false, pageFocussed = false, unseenHighlights = 0,
         me, myNick, myRoom = null, mySpecialStatus, avatarInventory, inventory = [], haveAccount = false,
+        roomwidgetstate = [],
         currentUser = null,
         lastmove = (new Date().getTime()),
         globalUserCount = 0,
@@ -28,8 +29,8 @@
         chooser, chooserbutton, chooservisible,
         inventorylist, inventorylistbutton, inventorylistvisible,
         roomlist, refreshbutton, homebutton,
-        roomedit, roomeditbutton, roomeditreset, roomeditiframe, roomeditvisible,
-        background, backgroundIframe,
+        roomedit, roomeditbutton, roomeditreset, roomeditvisible,
+        background, roomwidgets,
         chatbox, chatboxholder, chatbutton, chatlog, fullchatlog, fullchatlogbutton, fullchatlogvisible;
 
     var userManager = {
@@ -386,29 +387,186 @@
         roomlist.disabled = false;
     }
 
+    function getCatalogue (name, callback) {
+        socket.send(JSON.stringify({
+            type: 'get_catalogue',
+            name: name
+        }));
+        catalogueCallback = callback;
+    }
+
+    function haveAvatar (name) {
+        return (avatarInventory.indexOf(name) !== -1);
+    }
+    function haveInventoryItem (name) {
+        return (inventory.indexOf(name) !== -1);
+    }
+
+    function doBuy (catalogueName, itemIndex, itemName, itemPrice) {
+        if (confirm('Do you want to buy the product "' + itemName + '" for ' + itemPrice + ' bits?')) {
+            socket.send(JSON.stringify({
+                type: 'buy_from_catalogue',
+                name: catalogueName,
+                index: itemIndex
+            }));
+        }
+    }
+
+    function createCatalogueWidget(config, root) {
+        if (!haveAccount) {
+            var p = document.createElement('p');
+            p.id = 'no-account-note';
+            p.appendChild(document.createTextNode("You need to create an account (top-right, Account Settings) to get avatars or items. You can get free bits in the dungeon, and you'll get a little each day if you keep coming back. :)"));
+            root.appendChild(p);
+            return;
+        }
+        getCatalogue(config.catalogue_name, function (catalogue) {
+            for (var i = 0; i < catalogue.length; i++) {
+                var item = catalogue[i];
+
+                var total = item.items.length;
+                var alreadyHave = 0;
+                for (var j = 0; j < item.items.length; j++) {
+                    if (item.items[j].type === 'avatar'
+                        && haveAvatar(item.items[j].avatar_name)) {
+                        alreadyHave++;
+                    } else if (item.items[j].type === 'inventory_item'
+                        && haveInventoryItem(item.items[j].item_name)) {
+                        alreadyHave++;
+                    }
+                }
+
+                var catalogueitem = document.createElement('div');
+                catalogueitem.className = 'catalogue-item';
+                if (alreadyHave) {
+                    catalogueitem.className += ' catalogue-item-have';
+                }
+
+                var img = document.createElement('img');
+                img.className = 'chooser-preview';
+                img.src = item.img;
+                catalogueitem.appendChild(img);
+
+                var h2 = document.createElement('h2');
+                h2.appendChild(document.createTextNode(item.name_full));
+                catalogueitem.appendChild(h2);
+
+                if (alreadyHave) {
+                    var p = document.createElement('p');
+                    p.appendChild(document.createTextNode('You already have: ' + alreadyHave + '/' + total + ' items of this product'));
+                    catalogueitem.appendChild(p);
+                }
+
+                if (alreadyHave !== total || total === 0) {
+                    var buy = document.createElement('input');
+                    buy.type = 'submit';
+                    buy.value = 'Buy for ' + item.price + ' bits';
+                    (function (catalogueName, itemIndex, itemName, itemPrice) {
+                        buy.onclick = function () {
+                            doBuy(catalogueName, itemIndex, itemName, itemPrice);
+                        };
+                    }(config.catalogue_name, i, item.name_full, item.price));
+                    catalogueitem.appendChild(buy);
+                }
+
+                root.appendChild(catalogueitem);
+            }
+        });
+    }
+
+    function createIframeWidget(config, root) {
+        root.className += ' iframe-widget';
+
+        var iframe = document.createElement('iframe');
+        iframe.src = config.src;
+        root.appendChild(iframe);
+    }
+
+    function createPortalWidget(config, root) {
+        root.className += ' portal';
+        root.onclick = function () {
+            socket.send(JSON.stringify({
+                type: 'room_change',
+                name: config.to
+            }));
+        };
+    }
+
+    function createPartyWidget(config, root) {
+        root.className += ' party-widget';
+
+        root.innerHTML = '<iframe width="320" height="240" src="http://www.youtube.com/embed/videoseries?list=PLuyBiw2l8OdpAGly7cY6Ar5YgYovW2Ps7&amp;hl=en_US&amp;autoplay=1&amp;loop=1" frameborder="0" allowfullscreen></iframe>';
+
+        // "graceful degredation" for those poor IE10 users :'(
+        if (root.style.hasOwnProperty('pointerEvents')) {
+            root.style.pointerEvents = 'none';
+
+            var lastColor = '';
+            setInterval(function () {
+                do {
+                    var newColor = 'rgba('
+                        + Math.floor(Math.random()*2)*255
+                        + ','
+                        + Math.floor(Math.random()*2)*255
+                        + ','
+                        + Math.floor(Math.random()*2)*255
+                        + ',0.5)'
+                } while (lastColor === newColor)
+                root.style.backgroundColor = newColor;
+                lastColor = newColor;
+            }, 400);
+        }
+    }
+
+    function updateRoomWidgets(widgetdata) {
+        widgetdata = widgetdata || roomwidgetstate;
+        roomwidgets.innerHTML = '';
+        for (var i = 0; i < widgetdata.length; i++) {
+            var widget = widgetdata[i];
+            var element = document.createElement('div');
+            element.className = 'room-widget';
+            element.style.left = widget.left + 'px';
+            element.style.top = widget.top + 'px';
+            element.style.width = widget.width + 'px';
+            element.style.height = widget.height + 'px';
+            switch (widget.type) {
+                case 'catalogue':
+                    createCatalogueWidget(widget, element);
+                break;
+                case 'iframe':
+                    createIframeWidget(widget, element);
+                break;
+                case 'portal':
+                    createPortalWidget(widget, element);
+                break;
+                case 'party':
+                    createPartyWidget(widget, element);
+                break;
+                default:
+                    console.log('Unknown widget type: ' + widget.type);
+                    return;
+                break;
+            }
+            roomwidgets.appendChild(element);
+        }
+        roomwidgetstate = widgetdata;
+    }
+
     function changeRoom(room) {
-        // change background
+        // change room background and widgets
+        roomwidgets.innerHTML = '';
+        roomwidgetstate = [];
         if (room.type !== 'ephemeral') {
             background.src = room.background.data;
             stage.style.width = room.background.width + 'px';
             stage.style.height = room.background.height + 'px';
-            if (room.background.iframe) {
-                backgroundIframe.src = room.background.iframe.src;
-                backgroundIframe.width = room.background.iframe.width;
-                backgroundIframe.height = room.background.iframe.height;
-                backgroundIframe.style.left = room.background.iframe.left + 'px';
-                backgroundIframe.style.top = room.background.iframe.top + 'px';
-                backgroundIframe.style.display = 'block';
-            } else {
-                backgroundIframe.src = 'about:blank';
-                backgroundIframe.style.display = 'none';
+            if (room.hasOwnProperty('widgets')) {
+                updateRoomWidgets(room.widgets);
             }
         } else {
             background.src = '/media/rooms/cave.png';
             stage.style.width = '960px';
             stage.style.height = '660px';
-            backgroundIframe.src = 'about:blank';
-            backgroundIframe.style.display = 'none';
         }
 
         // clear users
@@ -498,11 +656,9 @@
         };
         stage.appendChild(background);
 
-        backgroundIframe = document.createElement('iframe');
-        backgroundIframe.id = 'background-iframe';
-        backgroundIframe.src = 'about:blank';
-        backgroundIframe.style.display = 'none';
-        stage.appendChild(backgroundIframe);
+        roomwidgets = document.createElement('div');
+        roomwidgets.id = 'background-widgets';
+        stage.appendChild(roomwidgets);
     }
 
     function handleChatMessage() {
@@ -794,7 +950,6 @@
             } else {
                 roomedit.style.display = 'block'
                 roomeditvisible = true;
-                roomeditiframe.contentDocument.location.reload(true);
             }
         };
         roomeditbutton.style.display = 'none';
@@ -803,7 +958,7 @@
         roomedit = document.createElement('div');
         roomedit.id = 'room-edit';
         roomedit.style.display = 'none';
-        roomedit.appendChild(document.createTextNode('Change your house background by clicking one in your inventory.'));
+        roomedit.appendChild(document.createTextNode('Buy house backgrounds from the Carousel Boutique. Change your house background by clicking one in your inventory.'));
         roomeditvisible = false;
         overlay.appendChild(roomedit);
 
@@ -817,12 +972,6 @@
             }));
         };
         roomedit.appendChild(roomeditreset);
-
-        roomeditiframe = document.createElement('iframe');
-        roomeditiframe.src = '/static/rooms/edit-shop.html';
-        roomeditiframe.width = 260;
-        roomeditiframe.height = 260;
-        roomedit.appendChild(roomeditiframe);
 
         accountsettings = document.createElement('div');
         accountsettings.id = 'account-settings';
@@ -978,43 +1127,6 @@
         };
     }
 
-    function initGlobals() {
-        window.ponyplace = {
-            buy: function (catalogueName, itemIndex, itemName, itemPrice) {
-                if (confirm('Do you want to buy the product "' + itemName + '" for ' + itemPrice + ' bits?')) {
-                    socket.send(JSON.stringify({
-                        type: 'buy_from_catalogue',
-                        name: catalogueName,
-                        index: itemIndex
-                    }));
-                }
-            },
-            getCatalogue: function (name, callback) {
-                socket.send(JSON.stringify({
-                    type: 'get_catalogue',
-                    name: name
-                }));
-                catalogueCallback = callback;
-            },
-            hasAvatar: function (name) {
-                return (avatarInventory.indexOf(name) !== -1);
-            },
-            hasInventoryItem: function (name) {
-                return (inventory.indexOf(name) !== -1);
-            },
-            hasAccount: function () {
-                return haveAccount;
-            },
-            changeRoom: function (name) {
-                socket.send(JSON.stringify({
-                    type: 'room_change',
-                    name: name
-                }));
-            },
-            doMove: doMove
-        };
-    }
-
     function initNetwork(authenticated, assertion) {
         if (window.location.hostname === 'localhost') {
             socket = new WebSocket('ws://localhost:9001', 'ponyplace');
@@ -1121,10 +1233,7 @@
                         }
                     }
 
-                    backgroundIframe.contentDocument.location.reload(true);
-                    if (roomeditvisible) {
-                        roomeditiframe.contentDocument.location.reload(true);
-                    }
+                    updateRoomWidgets();
                 break;
                 case 'broadcast':
                     logBroadcastInChat(msg.msg);
@@ -1209,6 +1318,5 @@
 
     window.onload = function () {
         initGUI();
-        initGlobals();
     };
 }());
