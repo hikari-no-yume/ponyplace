@@ -534,6 +534,16 @@ a {
     content: ' (pp creator)';
 }
 
+.nickname.developer, .developer .originpart {
+    color: orange !important;
+}
+.nickname.developer::after, .developer .originpart .innertext::after {
+    font-weight: normal !important;
+    font-family: sans-serif;
+    color: white !important;
+    content: ' (pp dev)';
+}
+
 .nickname.moderator, .moderator .originpart {
     color: rgb(204, 255, 0) !important;
 }

@@ -87,7 +87,7 @@ User.getSpecialStatus = function (nick) {
 };
 User.isModerator = function (nick) {
     var status = this.getSpecialStatus(nick);
-    return (status === 'moderator' || status === 'creator' || status === 'bot');
+    return (status === 'moderator' || status === 'developer' || status === 'creator' || status === 'bot');
 };
 User.checkBypass = function (nick, bypass) {
     if (!this.bypass.hasOwnProperty(nick)) {
