@@ -191,7 +191,7 @@ input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover, button:
 #home-button { left: 320px; width: 24px; }
 
 #account-settings-button { right: 6px; width: 150px; }
-#inventory-list-button { right: 210px; }
+#inventory-list-button { right: 160px; }
 
 #room-edit-button {
     position: absolute;
