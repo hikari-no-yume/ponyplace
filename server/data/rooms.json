@@ -320,6 +320,14 @@
         },
         "widgets": [
             {
+                "left": 760,
+                "top": 280,
+                "width": 400,
+                "height": 370,
+                "type": "iframe",
+                "src": "http://berrypunch.net/stats.php?embed"
+            },
+            {
                 "left": 900,
                 "top": 10,
                 "width": 260,
