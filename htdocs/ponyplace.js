@@ -28,7 +28,7 @@
         bitcount,
         chooser, chooserbutton, chooservisible,
         inventorylist, inventorylistbutton, inventorylistvisible,
-        roomlist, refreshbutton, homebutton,
+        roomlist, mapbutton, refreshbutton, homebutton,
         roomedit, roomeditbutton, roomeditreset, roomeditvisible,
         background, roomwidgets,
         chatbox, chatboxholder, chatbutton, chatlog, fullchatlog, fullchatlogbutton, fullchatlogvisible;
@@ -382,8 +382,9 @@
         option.appendChild(document.createTextNode('[create new ephemeral room]'));
         roomlist.appendChild(option);
 
-        // show list and refresh button
+        // show list, map, refresh buttons
         refreshbutton.disabled = false;
+        mapbutton.disabled = false;
         roomlist.disabled = false;
     }
 
@@ -849,6 +850,19 @@
         roomlist.value = '[no choice]';
         roomlist.disabled = true;
         overlay.appendChild(roomlist);
+
+        mapbutton = document.createElement('input');
+        mapbutton.type = 'submit';
+        mapbutton.value = 'Map';
+        mapbutton.id = 'map-button';
+        mapbutton.onclick = function () {
+            socket.send(JSON.stringify({
+                type: 'room_change',
+                name: 'map'
+            }));
+        };
+        mapbutton.disabled = true;
+        overlay.appendChild(mapbutton)
 
         refreshbutton = document.createElement('input');
         refreshbutton.type = 'submit';
