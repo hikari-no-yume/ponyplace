@@ -133,7 +133,7 @@
     {
         "type": "real",
         "name": "outside_library",
-        "name_full": "Outside the Library",
+        "name_full": "The Library",
         "background": {
             "data": "/media/rooms/outside-library.png",
             "width": 1173,
@@ -175,12 +175,12 @@
         ],
         "user_count": 0,
         "user_noun": "bright sparks",
-        "unlisted": true
+        "unlisted": false
     },
     {
         "type": "real",
         "name": "library",
-        "name_full": "Twilight's Library",
+        "name_full": "Inside the Library",
         "background": {
             "data": "/media/rooms/library.png",
             "width": 1173,
@@ -211,7 +211,7 @@
     {
         "type": "real",
         "name": "outside_sugarcube_corner",
-        "name_full": "Outside Sugarcube Corner",
+        "name_full": "Sugarcube Corner",
         "background": {
             "data": "/media/rooms/outside-sugarcubecorner.png",
             "width": 1173,
@@ -253,12 +253,12 @@
         ],
         "user_count": 0,
         "user_noun": "party animals",
-        "unlisted": true
+        "unlisted": false
     },
     {
         "type": "real",
         "name": "sugarcube_corner",
-        "name_full": "Sugarcube Corner",
+        "name_full": "Inside Sugarcube Corner",
         "background": {
             "data": "/media/rooms/sugarcubecorner.png",
             "width": 1173,
