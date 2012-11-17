@@ -15,13 +15,6 @@ body {
     margin: 0;
 }
 
-#credits {
-    color: white;
-    background-color: black;
-    padding: 0;
-    margin: 0;
-}
-
 #no-account-note {
     background-color: white;
 }
@@ -34,6 +27,12 @@ h1 {
 
 h1, p {
     text-align: center;
+}
+
+#credits, #credits p {
+    color: white;
+    background-color: black;
+    text-align: left !important;
 }
 
 #container {
