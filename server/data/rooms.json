@@ -505,9 +505,9 @@
         },
         "widgets": [
             {
-                "left": 480,
+                "left": 280,
                 "top": 80,
-                "width": 400,
+                "width": 600,
                 "height": 500,
                 "type": "iframe",
                 "src": "/credits.html"
