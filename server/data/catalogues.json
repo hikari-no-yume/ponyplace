@@ -171,6 +171,17 @@
             "items": [
                 {
                     "type": "avatar",
+                    "avatar_name": "gilda"
+                }
+            ],
+            "name_full": "Gilda",
+            "price": 50,
+            "img": "/media/avatars/gilda_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
                     "avatar_name": "derpynn"
                 }
             ],

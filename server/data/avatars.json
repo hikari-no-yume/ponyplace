@@ -143,6 +143,14 @@
         "tank_left_hover.gif",
         "tank_right_hover.gif"
     ],
+    "gilda": [
+        "gilda_left.gif",
+        "gilda_right.gif",
+        "gilda_left_walk.gif",
+        "gilda_right_walk.gif",
+        "gilda_left_hover.gif",
+        "gilda_right_hover.gif"
+    ],
     "daringdo": [
         "daringdo_left.gif",
         "daringdo_right.gif",
