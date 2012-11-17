@@ -110,6 +110,14 @@
                 "to": "outside_sugarcube_corner"
             },
             {
+                "left": 815,
+                "top": 370,
+                "width": 280,
+                "height": 145,
+                "type": "portal",
+                "to": "sweet_apple_acres"
+            },
+            {
                 "left": 1325,
                 "top": 360,
                 "width": 120,
@@ -334,6 +342,14 @@
             "height": 660
         },
         "widgets": [
+            {
+                "left": 580,
+                "top": 420,
+                "width": 230,
+                "height": 125,
+                "type": "portal",
+                "to": "ponyville"
+            },
             {
                 "left": 900,
                 "top": 400,
