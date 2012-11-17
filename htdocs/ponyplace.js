@@ -581,7 +581,7 @@
         userManager.add(myNick, me, mySpecialStatus, false, true);
 
         // go to random position
-        if (room.type !== 'ephemeral') {
+        if (room.type === 'ephemeral') {
             me.x = me.x || Math.floor(Math.random() * 920);
         } else {
             me.x = me.x || Math.floor(Math.random() * room.background.width);

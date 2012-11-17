@@ -41,6 +41,30 @@ function sanitiseChat(chat) {
     return chat;
 }
 
+function sanitisePosition(obj, roomName) {
+    if (roomName !== null) {
+        var room;
+        if (roomManager.has(roomName)) {
+            room = roomManager.get(roomName);
+        } else if (roomName.substr(0, 6) === 'house ') {
+            room = User.getHouse(roomName.substr(6));
+        } else {
+            room = {
+                type: 'ephemeral',
+                name: roomName
+            };
+        }
+
+        if (room.type === 'ephemeral') {
+            obj.x = Math.max(Math.min(obj.x, 960), 0);
+        } else {
+            obj.x = Math.max(Math.min(obj.x, room.background.width), 0);
+        }
+        obj.y = Math.max(Math.min(obj.y, 660), 0);
+    }
+    return obj;
+}
+
 var User = require('./user.js');
 
 var banManager = {
@@ -187,6 +211,9 @@ function doRoomChange(roomName, user) {
         type: 'room_change',
         data: room
     });
+
+    // bounds check position
+    user.obj = sanitisePosition(user.obj, user.room);
 
     User.forEach(function (iterUser) {
         if (iterUser.room === user.room) {
@@ -597,6 +624,11 @@ wsServer.on('request', function(request) {
                 // sanitise chat message
                 if (msg.obj.hasOwnProperty('chat')) {
                     msg.obj.chat = sanitiseChat(msg.obj.chat);
+                }
+
+                // bounds check position
+                if (msg.hasOwnProperty('obj')) {
+                    msg.obj = sanitisePosition(msg.obj, user.room);
                 }
 
                 // check avatar
