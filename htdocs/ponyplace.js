@@ -1062,6 +1062,7 @@
     }
 
     function doLogin(authenticated, assertion) {
+        nickbox.blur();
         loginbox.style.display = 'none';
         initNetwork(authenticated, assertion);
     }
