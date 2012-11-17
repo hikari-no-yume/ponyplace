@@ -263,6 +263,9 @@ function handleCommand(cmd, myNick, user) {
     var isMod = User.isModerator(myNick);
     var haveHouse = User.hasAccount(myNick);
 
+    // remove surrounding whitespaces and replace multiple ones by a single one
+    cmd = cmd.replace(/^\s+|\s+$/g,'').replace(/\s+/g, ' ');
+
     // help
     if (cmd.substr(0, 4) === 'help') {
         sendMultiLine([
