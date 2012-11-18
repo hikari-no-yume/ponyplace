@@ -11,8 +11,7 @@
         "background_data": {
             "data": "/media/rooms/house/cherry-jubilees-guest-room.png",
             "width": 1173,
-            "height": 660,
-            "iframe": false
+            "height": 660
         }
     },
     "roombg_pinkies_room": {
@@ -22,8 +21,7 @@
         "background_data": {
             "data": "/media/rooms/house/pinkies-room.png",
             "width": 1173,
-            "height": 660,
-            "iframe": false
+            "height": 660
         }
     },
     "roombg_canterlot_bedroom": {
@@ -33,8 +31,7 @@
         "background_data": {
             "data": "/media/rooms/house/canterlot-bedroom.png",
             "width": 1173,
-            "height": 660,
-            "iframe": false
+            "height": 660
         }
     },
     "roombg_dashies_bedroom": {
@@ -44,8 +41,7 @@
         "background_data": {
             "data": "/media/rooms/house/dashies-bedroom.png",
             "width": 1173,
-            "height": 660,
-            "iframe": false
+            "height": 660
         }
     },
     "roombg_shining_armors_apartments": {
@@ -55,8 +51,7 @@
         "background_data": {
             "data": "/media/rooms/house/shining-armors-apartments.png",
             "width": 1173,
-            "height": 660,
-            "iframe": false
+            "height": 660
         }
     },
     "roombg_princess_celestias_room": {
@@ -66,8 +61,7 @@
         "background_data": {
             "data": "/media/rooms/house/princess-celestias-room.png",
             "width": 1178,
-            "height": 660,
-            "iframe": false
+            "height": 660
         }
     },
     "roombg_madam_pinkies_tent": {
@@ -77,8 +71,7 @@
         "background_data": {
             "data": "/media/rooms/house/madam-pinkies-tent.png",
             "width": 1173,
-            "height": 660,
-            "iframe": false
+            "height": 660
         }
     }
 }
