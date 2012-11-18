@@ -250,6 +250,17 @@
             "items": [
                 {
                     "type": "avatar",
+                    "avatar_name": "shiningarmor"
+                }
+            ],
+            "name_full": "Shining Armor",
+            "price": 40,
+            "img": "/media/avatars/shiningarmor_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
                     "avatar_name": "chrysalis"
                 },
                 {
