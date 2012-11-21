@@ -5,9 +5,10 @@
 <link rel="shortcut icon" href=/favicon.ico>
 
 <h1>ponyplace - unsupported browser</h1>
-<p><a href=/>ponyplace</a> is a 2D pony chatroom!
-<br>ponyplace requires WebSocket.
+<p>ponyplace is a My Little Pony-themed chatroom! You can hang out, play games and earn bits and customise your avatar and house. It's all free, forever. You'll never have to pay a cent!</p>
+<p>ponyplace requires WebSocket. Unfortunately, it appears your browser does not support it.
 <br>You'll need a more modern browser like Chrome, Firefox, Safari or Internet Explorer 10.</p>
+<a href=/credits.html>Disclaimer and Credits</a>
 
 <script type="text/javascript">
 
@@ -21,4 +22,15 @@
     var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
   })();
 
+</script>
+<script>
+(function () {
+    'use strict';
+
+    // redirect to main page if browser is actually supported
+    if (Object.prototype.hasOwnProperty.call(window, 'WebSocket')) {
+        window.location = '/';
+        return;
+    }
+}());
 </script>
