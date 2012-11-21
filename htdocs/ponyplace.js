@@ -1070,6 +1070,7 @@
     function initGUI_login() {
         loginbox = document.createElement('div');
         loginbox.id = 'loginbox';
+        loginbox.innerHTML = "<p>ponyplace is a My Little Pony-themed chatroom! You can hang out, play games and earn bits and customise your avatar and house. It's all free, forever. You'll never have to pay a cent!</p>";
         loginbox.appendChild(document.createTextNode("If you already have a ponyplace and Persona account, log in. If you want to create a ponyplace account, sign in anonymously first, then go to Account Settings."));
         overlay.appendChild(loginbox);
 
@@ -1111,6 +1112,12 @@
             doLogin();
         };
         loginbox.appendChild(loginsubmit);
+
+        var a = document.createElement('a');
+        a.href = '/credits.html';
+        a.target = '_blank';
+        a.appendChild(document.createTextNode("Disclaimer and Credits"));
+        loginbox.appendChild(a);
     }
 
     function initGUI() {
