@@ -815,12 +815,13 @@ wsServer.on('request', function(request) {
         // check avatar
         if (msg.obj.hasOwnProperty('img_name')) {
             if (!User.hasAvatar(nick, msg.obj.img_name)) {
+                msg.obj.img_name = 'derpy';
+                msg.obj.img_index = 0;
                 connection.sendUTF(JSON.stringify({
-                    type: 'kick',
-                    reason: 'dont_have_avatar'
+                    type: 'avatar_change',
+                    img_name: msg.obj.img_name,
+                    img_index: msg.obj.img_index
                 }));
-                connection.close();
-                return;
             }
         }
 
