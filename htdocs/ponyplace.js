@@ -1212,6 +1212,15 @@
                         userManager.update(msg.nick, msg.obj);
                     }
                 break;
+                case 'avatar_change':
+                    me.img_name = msg.img_name;
+                    me.img_index = msg.img_index;
+                    if (myRoom !== null) {
+                        userManager.update(myNick, me);
+                        // erase last avatar
+                        localStorage.setItem('last-avatar', '');
+                    }
+                break;
                 case 'account_state':
                     chatbox.focus();
 
