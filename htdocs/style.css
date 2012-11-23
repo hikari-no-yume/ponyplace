@@ -57,11 +57,11 @@ h1 {
     position: absolute;
     left: 50%;
     top: 50%;
-    width: 350px;
+    width: 400px;
     height: 300px;
     padding: 6px;
-    margin-left: -150px;
-    margin-top: -125px;
+    margin-left: -200px;
+    margin-top: -150px;
     background-color: white;
     border: 4px solid lime;
 }
