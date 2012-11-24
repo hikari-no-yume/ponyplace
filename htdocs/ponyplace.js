@@ -41,8 +41,12 @@
         initGUI: function () {
             this.userCounter = document.createElement('div');
             this.userCounter.id = 'usercounter';
+            this.userCounter.style.display = 'none';
             this.updateCounter();
             overlay.appendChild(this.userCounter);
+        },
+        showUserCounter: function () {
+            this.userCounter.style.display = 'block';
         },
         add: function (nick, obj, special, hasHouse, me) {
             if (this.has(nick)) {
@@ -1062,9 +1066,11 @@
     }
 
     function doLogin(authenticated, assertion) {
-        nickbox.blur();
-        loginbox.style.display = 'none';
-        initNetwork(authenticated, assertion);
+        if (nickbox.value || authenticated) {
+            nickbox.blur();
+            loginbox.style.display = 'none';
+            initNetwork(authenticated, assertion);
+        }
     }
 
     function initGUI_login() {
@@ -1182,9 +1188,8 @@
                     authenticated: true
                 }));
             } else {
-                var nick = nickbox.value || ('Blank_flank_' + Math.floor(Math.random()*100));
                 // trim whitespace
-                nick = nick.replace(/^\s+|\s+$/g, '');
+                var nick = nickbox.value.replace(/^\s+|\s+$/g, '');
                 socket.send(JSON.stringify({
                     type: 'appear',
                     obj: me,
@@ -1289,6 +1294,7 @@
                 case 'room_list':
                     updateRoomList(msg.list);
                     globalUserCount = msg.user_count;
+                    userManager.showUserCounter();
                     userManager.updateCounter();
                 break;
                 case 'avatar_list':
