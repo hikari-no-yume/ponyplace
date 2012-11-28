@@ -53,20 +53,69 @@ h1 {
     -o-transform: rotate(180deg);
 }
 
-#loginbox {
+.popup {
     position: absolute;
+    border: 4px solid rgb(255, 103, 213);
+    min-width: 200px;
+    min-height: 200px;
+}
+
+.popup-titlebar {
+    background-color: pink;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    padding: 6px;
+    overflow: hidden;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    cursor: default;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.popup h2 {
+    color: white;
+    margin: 2px;
+    font-size: 12pt;
+    float: left;
+    pointer-events: none;
+}
+
+.popup-content {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 36px;
+    bottom: 0;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    padding: 6px;
+    overflow: auto;
+    background-color: white;
+}
+
+.popup-hide {
+    float: right;
+    width: 24px;
+}
+
+#loginbox {
     left: 50%;
     top: 50%;
     width: 400px;
-    height: 300px;
-    padding: 6px;
+    height: 400px;
     margin-left: -200px;
-    margin-top: -150px;
-    background-color: white;
+    margin-top: -200px;
     border: 4px solid lime;
 }
 
-#loginbox input, #account-settings input, #account-settings .button {
+#loginbox .popup-content input, #account-settings .popup-content input, #account-settings .popup-content .button {
     display: block;
     width: 100%;
     box-sizing: border-box;
@@ -76,15 +125,8 @@ h1 {
 }
 
 #account-settings {
-    position: absolute;
-    right: 0;
-    top: 36px;
     width: 280px;
-    height: 100px;
-    padding: 6px;
-    background-color: white;
-    border: 4px solid pink;
-    border-top: none;
+    height: 160px;
 }
 
 #room-edit {
@@ -235,28 +277,14 @@ input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover, button:
     pointer-events: none;
 }
 
-#chooser {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 36px;
-    width: 100%;
-    height: 120px;
-    white-space: nowrap;
-    overflow-y: auto;
-    background-color: rgba(255, 192, 203, 0.7);
-}
-
-#inventory-list {
-    position: absolute;
-    top: 36px;
-    right: 160px;
+.chooser {
     width: 400px;
-    height: 200px;
-    background-color: rgba(255, 192, 203, 0.7);
-    border-top: none;
+    height: 300px;
+}
+.chooser .popup-content {
     white-space: nowrap;
     overflow-y: auto;
+    background-color: rgba(255, 192, 203, 0.7);
 }
 
 .chooser-preview, .inventory-item-preview {
@@ -268,9 +296,6 @@ input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover, button:
     float: left;
 }
 
-.inventory-item-clickable {
-    border: 0;
-}
 .inventory-item-preview:hover {
     cursor: pointer;
 }
@@ -357,16 +382,15 @@ input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover, button:
 
 #fullchatlog {
     position: absolute;
-    right: 0;
-    top: 150px;
+    left: 100px;
+    top: 100px;
     height: 400px;
     width: 400px;
-    padding: 4px;
-    border-top-left-radius: 10px;
-    border-bottom-left-radius: 10px;
+}
+
+#fullchatlog .popup-content {
+    background-color: rgba(0,0,0,0.7);
     color: white;
-    background-color: rgba(0, 0, 0, 0.7);
-    overflow: auto;
 }
 
 #chatlog {
@@ -379,7 +403,7 @@ input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover, button:
     overflow: hidden;
 }
 
-#chatlog, #fullchatlog {
+#chatlog, #fullchatlog-content {
     border-collapse: collapse;
 }
 
@@ -405,11 +429,11 @@ a {
 .msgpart {
     text-align: left;
 }
-#fullchatlog .originpart {
+#fullchatlog-content .originpart {
     padding-right: 4px;
     border-right: 1px solid rgba(255, 255, 255, 0.5);
 }
-#fullchatlog .msgpart {
+#fullchatlog-content .msgpart {
     padding-left: 4px;
 }
 #chatlog .innertext {
@@ -419,16 +443,16 @@ a {
 .mine .originpart {
     font-weight: bold;
 }
-#chatlog .highlight .innertext, #fullchatlog .highlight {
+#chatlog .highlight .innertext, #fullchatlog-content .highlight {
     background-color: fuchsia !important;
 }
-#chatlog .privmsg .innertext, #fullchatlog .privmsg {
+#chatlog .privmsg .innertext, #fullchatlog-content .privmsg {
     background-color: rgb(128, 8, 128) !important;
 }
-#chatlog .broadcast .innertext, #fullchatlog .broadcast {
+#chatlog .broadcast .innertext, #fullchatlog-content .broadcast {
     background-color: darkorange !important;
 }
-#chatlog .console .innertext, #fullchatlog .console {
+#chatlog .console .innertext, #fullchatlog-content .console {
     color: lime;
     background-color: rgba(0,0,0,0.7) !important;
 }
