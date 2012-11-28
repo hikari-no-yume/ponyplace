@@ -23,15 +23,15 @@
     var container,
         overlay,
         loginbox, nickbox, personasubmit, loginsubmit,
-        accountsettings, accountsettingsbutton, accountsettingsvisible, createaccbutton, changepassbutton, rmpassbutton,
+        accountsettings, accountsettingsbutton, createaccbutton, changepassbutton, rmpassbutton,
         outerstage, stage,
         bitcount,
-        chooser, chooserbutton, chooservisible,
-        inventorylist, inventorylistbutton, inventorylistvisible,
+        chooser, chooserbutton,
+        inventorylist, inventorylistbutton,
         roomlist, mapbutton, refreshbutton, homebutton,
         roomedit, roomeditbutton, roomeditreset, roomeditvisible,
         background, roomwidgets,
-        chatbox, chatboxholder, chatbutton, chatlog, fullchatlog, fullchatlogbutton, fullchatlogvisible;
+        chatbox, chatboxholder, chatbutton, chatlog, fullchatlog, fullchatlogcontent, fullchatlogbutton;
 
     var userManager = {
         users: {},
@@ -298,7 +298,7 @@
             tr.className = type;
         }
         chatPopulateLine(timepart, originpart, line, tr);
-        fullchatlog.appendChild(tr);
+        fullchatlogcontent.appendChild(tr);
 
         if (!pageFocussed && (type === 'highlight' || type === 'privmsg')) {
             unseenHighlights++;
@@ -641,8 +641,97 @@
             pushAndUpdateState(me);
             lastmove = cur;
         } else {
+
             chatPrint('You are doing that too often.');
         }
+    }
+
+    function makePopup(tag, title, moveable, x, y, hideable, onhide, onshow) {
+        var popup = {
+            container: null,
+            titlebar: null,
+            title: null,
+            closebutton: null,
+            content: null,
+            visible: true,
+            hide: function () {
+                if (this.visible) {
+                    this.visible = false;
+                    this.container.style.display = 'none';
+                    if (onhide) {
+                        onhide();
+                    }
+                }
+            },
+            show: function () {
+                if (!this.visible) {
+                    this.visible = true;
+                    this.container.style.display = 'block';
+                    if (onshow) {
+                        onshow();
+                    }
+                }
+            }
+        };
+
+        popup.container = document.createElement('div');
+        popup.container.className = 'popup';
+        if (tag[0] === '.') {
+            popup.container.className += ' ' + tag.substr(1);;
+        } else if (tag[0] === '#') {
+            popup.container.id = tag.substr(1);
+        }
+
+        popup.titlebar = document.createElement('div');
+        popup.titlebar.className = 'popup-titlebar';
+        popup.container.appendChild(popup.titlebar);
+
+        popup.title = document.createElement('h2');
+        popup.title.appendChild(document.createTextNode(title));
+        popup.titlebar.appendChild(popup.title);
+
+        if (moveable) {
+            var oX, oY, popupX, popupY, down = false;
+
+            popup.container.style.left = x + 'px';
+            popup.container.style.top = y + 'px';
+
+            popup.titlebar.onmousedown = function (e) {
+                down = true;
+                oX = e.x;
+                oY = e.y;
+                popupX = parseInt(popup.container.style.left);
+                popupY = parseInt(popup.container.style.top);
+            };
+            popup.titlebar.onmousemove = function (e) {
+                if (down) {
+                    popup.container.style.left = (e.x - oX) + popupX + 'px';
+                    popup.container.style.top = (e.y - oY) + popupY + 'px';
+                }
+            };
+            popup.titlebar.onmouseup = function () {
+                down = false;
+            };
+        }
+
+        if (hideable) {
+            popup.hidebutton = document.createElement('button');
+            popup.hidebutton.className = 'popup-hide';
+            popup.hidebutton.title = 'Hide popup';
+            popup.hidebutton.onclick = function () {
+                popup.hide();
+            };
+            popup.hidebutton.appendChild(document.createTextNode('x'));
+            popup.titlebar.appendChild(popup.hidebutton);
+        }
+
+        popup.content = document.createElement('div');
+        popup.content.className = 'popup-content';
+        popup.container.appendChild(popup.content);
+
+        container.appendChild(popup.container);
+
+        return popup;
     }
 
     function initGUI_stage() {
@@ -694,11 +783,14 @@
         chatlog.id = 'chatlog';
         overlay.appendChild(chatlog);
 
-        fullchatlog = document.createElement('table');
-        fullchatlog.id = 'fullchatlog';
-        fullchatlog.style.display = 'none';
-        fullchatlogvisible = false;
-        overlay.appendChild(fullchatlog);
+        fullchatlog = makePopup('#fullchatlog', 'Full chat log', true, 200, 200, true, null, function () {
+            fullchatlog.content.scrollTop = fullchatlog.content.scrollHeight;
+        });
+        fullchatlog.hide();
+
+        fullchatlogcontent = document.createElement('table');
+        fullchatlogcontent.id = 'fullchatlog-content';
+        fullchatlog.content.appendChild(fullchatlogcontent);
 
         chatboxholder = document.createElement('div');
         chatboxholder.id = 'chatbox-holder';
@@ -758,14 +850,7 @@
         fullchatlogbutton.type = 'submit';
         fullchatlogbutton.value = 'Full chatlog';
         fullchatlogbutton.onclick = function () {
-            if (fullchatlogvisible) {
-                fullchatlog.style.display = 'none';
-                fullchatlogvisible = false;
-            } else {
-                fullchatlog.style.display = 'block'
-                fullchatlogvisible = true;
-                fullchatlog.scrollTop = fullchatlog.scrollHeight;
-            }
+            fullchatlog.show();
         };
         fullchatlogbutton.disabled = true;
         overlay.appendChild(fullchatlogbutton);
@@ -773,64 +858,9 @@
         chooserbutton = document.createElement('input');
         chooserbutton.id = 'chooser-button';
         chooserbutton.type = 'submit';
-        chooserbutton.value = 'Change Avatar';
+        chooserbutton.value = 'Avatars';
         chooserbutton.onclick = function () {
-            if (chooservisible) {
-                chooser.style.display = 'none';
-                chooservisible = false;
-            } else {
-                chooservisible = true;
-                chooser.style.display = 'block';
-                chooser.innerHTML = '';
-                var ad = document.createElement('img');
-                ad.src = '/media/store/buy-more.png';
-                ad.className = 'chooser-preview';
-                ad.title = 'Buy some avatars!';
-                ad.onclick = function () {
-                    socket.send(JSON.stringify({
-                        type: 'room_change',
-                        name: 'carousel_boutique'
-                    }));
-                    chooser.style.display = 'none';
-                    chooservisible = false;
-                };
-                chooser.appendChild(ad);
-                for (var i = 0; i < avatarInventory.length; i++) {
-                    var name = avatarInventory[i];
-                    if (avatars.hasOwnProperty(name)) {
-                        var preview = document.createElement('img');
-                        preview.src = '/media/avatars/' + avatars[name][0];
-                        preview.className = 'chooser-preview';
-                        (function (images, name) {
-                            preview.onclick = function () {
-                                chooser.innerHTML = '';
-                                for (var i = 0; i < images.length; i++) {
-                                    var preview = document.createElement('img');
-                                    preview.src = '/media/avatars/' + images[i];
-                                    preview.className = 'chooser-preview';
-                                    (function (imgid) {
-                                        preview.onclick = function () {
-                                            me.img_name = name;
-                                            me.img_index = imgid;
-                                            localStorage.setItem('last-avatar', name);
-                                            pushAndUpdateState(me);
-                                            chooser.style.display = 'none';
-                                            chooservisible = false;
-                                            if (images[imgid].indexOf('_upsidedown') !== -1) {
-                                                container.className = 'upside-down';
-                                            } else {
-                                                container.className = '';
-                                            }
-                                        };
-                                    }(i));
-                                    chooser.appendChild(preview);
-                                }
-                            };
-                        }(avatars[name], name));
-                        chooser.appendChild(preview);
-                    }
-                }
-            }
+            chooser.show();
         };
         chooserbutton.disabled = true;;
         overlay.appendChild(chooserbutton);
@@ -907,36 +937,7 @@
         inventorylistbutton.type = 'submit';
         inventorylistbutton.value = 'Inventory';
         inventorylistbutton.onclick = function () {
-            if (inventorylistvisible) {
-                inventorylist.style.display = 'none';
-                inventorylistvisible = false;
-            } else {
-                inventorylistvisible = true;
-                inventorylist.style.display = 'block';
-                inventorylist.innerHTML = '';
-                if (inventory.length) {
-                    for (var i = 0; i < inventory.length; i++) {
-                        var name = inventory[i];
-                        if (inventoryItems.hasOwnProperty(name)) {
-                            var preview = document.createElement('img');
-                            preview.src = inventoryItems[name].img;
-                            preview.title = inventoryItems[name].name_full;
-                            preview.className = 'inventory-item-preview';
-                            if (inventoryItems[name].type !== 'useless') {
-                                preview.className += ' inventory-item-clickable';
-                                (function (itemName, item) {
-                                    preview.onclick = function () {
-                                        handleItemClick(itemName, item);
-                                    };
-                                }(name, inventoryItems[name]));
-                            }
-                            inventorylist.appendChild(preview);
-                        }
-                    }
-                } else {
-                    inventorylist.appendChild(document.createTextNode('You have no inventory items.'));
-                }
-            }
+            inventorylist.show();
         };
         inventorylistbutton.style.display = 'none';
         overlay.appendChild(inventorylistbutton);
@@ -953,13 +954,7 @@
         accountsettingsbutton.type = 'submit';
         accountsettingsbutton.value = 'Account Settings';
         accountsettingsbutton.onclick = function () {
-            if (accountsettingsvisible) {
-                accountsettings.style.display = 'none';
-                accountsettingsvisible = false;
-            } else {
-                accountsettings.style.display = 'block'
-                accountsettingsvisible = true;
-            }
+            accountsettings.show();
         };
         accountsettingsbutton.disabled = true;
         overlay.appendChild(accountsettingsbutton);
@@ -998,18 +993,14 @@
         };
         roomedit.appendChild(roomeditreset);
 
-        accountsettings = document.createElement('div');
-        accountsettings.id = 'account-settings';
-        accountsettings.style.display = 'none';
-        accountsettingsvisible = false;
-        overlay.appendChild(accountsettings);
+        accountsettings = makePopup('#account-settings', 'Account Settings', true, 300, 300, true);
+        accountsettings.hide();
 
         createaccbutton = document.createElement('input');
         createaccbutton.type = 'submit';
         createaccbutton.value = 'Create account with Persona';
         createaccbutton.onclick = function () {
-            accountsettings.style.display = 'none';
-            accountsettingsvisible = false;
+            accountsettings.hide();
             navigator.id.watch({
                 loggedInUser: currentUser,
                 onlogin: function (assertion) {
@@ -1024,7 +1015,7 @@
             });
             navigator.id.request();
         };
-        accountsettings.appendChild(createaccbutton);
+        accountsettings.content.appendChild(createaccbutton);
 
         changepassbutton = document.createElement('a');
         changepassbutton.href = 'https://login.persona.org';
@@ -1032,11 +1023,10 @@
         changepassbutton.target = '_blank';
         changepassbutton.appendChild(document.createTextNode('Change password etc.'));
         changepassbutton.onclick = function () {
-            accountsettings.style.display = 'none';
-            accountsettingsvisible = false;
+            accountsettings.hide();
             return true;
         };
-        accountsettings.appendChild(changepassbutton);
+        accountsettings.content.appendChild(changepassbutton);
 
         rmpassbutton = document.createElement('input');
         rmpassbutton.type = 'submit';
@@ -1046,40 +1036,105 @@
                 socket.send(JSON.stringify({
                     type: 'delete_account'
                 }));
-                accountsettings.style.display = 'none';
-                accountsettingsvisible = false;
+                accountsettings.hide();
             }
         };
-        accountsettings.appendChild(rmpassbutton);
+        accountsettings.content.appendChild(rmpassbutton);
 
-        chooser = document.createElement('div');
-        chooser.id = 'chooser';
-        chooservisible = false;
-        chooser.style.display = 'none';
-        overlay.appendChild(chooser);
+        chooser = makePopup('.chooser', 'Avatar inventory', true, 200, 200, true, null, function () {
+            chooser.content.innerHTML = '';
+            var ad = document.createElement('img');
+            ad.src = '/media/store/buy-more.png';
+            ad.className = 'chooser-preview';
+            ad.title = 'Buy some avatars!';
+            ad.onclick = function () {
+                socket.send(JSON.stringify({
+                    type: 'room_change',
+                    name: 'carousel_boutique'
+                }));
+                chooser.hide();
+            };
+            chooser.content.appendChild(ad);
+            for (var i = 0; i < avatarInventory.length; i++) {
+                var name = avatarInventory[i];
+                if (avatars.hasOwnProperty(name)) {
+                    var preview = document.createElement('img');
+                    preview.src = '/media/avatars/' + avatars[name][0];
+                    preview.className = 'chooser-preview';
+                    (function (images, name) {
+                        preview.onclick = function () {
+                            var subChooser = makePopup('.chooser', 'Change avatar - ' + name, true, 300, 300, true, function () {
+                                container.removeChild(subChooser.container);
+                            }, null);
+                            for (var i = 0; i < images.length; i++) {
+                                var preview = document.createElement('img');
+                                preview.src = '/media/avatars/' + images[i];
+                                preview.className = 'chooser-preview';
+                                (function (imgid) {
+                                    preview.onclick = function () {
+                                        me.img_name = name;
+                                        me.img_index = imgid;
+                                        localStorage.setItem('last-avatar', name);
+                                        pushAndUpdateState(me);
+                                        subChooser.hide();
+                                        if (images[imgid].indexOf('_upsidedown') !== -1) {
+                                            container.className = 'upside-down';
+                                        } else {
+                                            container.className = '';
+                                        }
+                                    };
+                                }(i));
+                                subChooser.content.appendChild(preview);
+                            }
+                        };
+                    }(avatars[name], name));
+                    chooser.content.appendChild(preview);
+                }
+            }
+        });
+        chooser.hide();
 
-        inventorylist = document.createElement('div');
-        inventorylist.id = 'inventory-list';
-        inventorylistvisible = false;
-        inventorylist.style.display = 'none';
-        overlay.appendChild(inventorylist);
+        inventorylist = makePopup('.chooser', 'Item inventory', true, 200, 200, true, function () {
+            inventorylist.content.innerHTML = '';
+            if (inventory.length) {
+                for (var i = 0; i < inventory.length; i++) {
+                    var name = inventory[i];
+                    if (inventoryItems.hasOwnProperty(name)) {
+                        var preview = document.createElement('img');
+                        preview.src = inventoryItems[name].img;
+                        preview.title = inventoryItems[name].name_full;
+                        preview.className = 'inventory-item-preview';
+                        if (inventoryItems[name].type !== 'useless') {
+                            preview.className += ' inventory-item-clickable';
+                            (function (itemName, item) {
+                                preview.onclick = function () {
+                                    handleItemClick(itemName, item);
+                                };
+                            }(name, inventoryItems[name]));
+                        }
+                        inventorylist.content.appendChild(preview);
+                    }
+                }
+            } else {
+                inventorylist.content.appendChild(document.createTextNode('You have no inventory items.'));
+            }
+        }, null);
+        inventorylist.hide();
     }
 
     function doLogin(authenticated, assertion) {
         if (nickbox.value || authenticated) {
             nickbox.blur();
-            loginbox.style.display = 'none';
+            loginbox.hide();
             initNetwork(authenticated, assertion);
         }
     }
 
     function initGUI_login() {
-        loginbox = document.createElement('div');
-        loginbox.id = 'loginbox';
-        loginbox.innerHTML = "<h1>Welcome to ponyplace!</h1>\
-        <p>ponyplace is a My Little Pony-themed chatroom! You can hang out, play games and earn bits and customise your avatar and house. It's all free, forever. You'll never have to pay a cent!</p>";
-        loginbox.appendChild(document.createTextNode("If you already have a ponyplace and Persona account, log in. If you want to create a ponyplace account, sign in anonymously first, then go to Account Settings."));
-        overlay.appendChild(loginbox);
+        loginbox = makePopup('#loginbox', 'Log in');
+        loginbox.content.innerHTML = "<h1>Welcome to ponyplace!</h1>\
+        <p>ponyplace is a My Little Pony-themed chatroom! You can hang out, play games and earn bits and customise your avatar and house. It's all free, forever. You'll never have to pay a cent!</p>\
+        <p>If you already have a ponyplace and Persona account, log in. If you want to create a ponyplace account, sign in anonymously first, then go to Account Settings.</p>";
 
         personasubmit = document.createElement('input');
         personasubmit.type = 'submit';
@@ -1096,9 +1151,9 @@
             });
             navigator.id.request();
         };
-        loginbox.appendChild(personasubmit);
+        loginbox.content.appendChild(personasubmit);
 
-        loginbox.appendChild(document.createTextNode("Otherwise, you can log in anonymously. Choose a nickname (3 to 18 characters; digits, letters and underscores (_) only)."));
+        loginbox.content.appendChild(document.createTextNode("Otherwise, you can log in anonymously. Choose a nickname (3 to 18 characters; digits, letters and underscores (_) only)."));
 
         nickbox = document.createElement('input');
         nickbox.type = 'text';
@@ -1109,7 +1164,7 @@
                 doLogin();
             }
         };
-        loginbox.appendChild(nickbox);
+        loginbox.content.appendChild(nickbox);
         nickbox.focus();
 
         loginsubmit = document.createElement('input');
@@ -1118,13 +1173,13 @@
         loginsubmit.onclick = function () {
             doLogin();
         };
-        loginbox.appendChild(loginsubmit);
+        loginbox.content.appendChild(loginsubmit);
 
         var a = document.createElement('a');
         a.href = '/credits.html';
         a.target = '_blank';
         a.appendChild(document.createTextNode("Disclaimer and Credits"));
-        loginbox.appendChild(a);
+        loginbox.content.appendChild(a);
     }
 
     function initGUI() {
@@ -1256,8 +1311,7 @@
                         changepassbutton.style.display = 'none';
                         rmpassbutton.style.display = 'none';
                         inventorylistbutton.style.display = 'none';
-                        inventorylist.style.display = 'none';
-                        inventorylistvisible = false;
+                        inventorylist.hide();
                         bitcount.style.display = 'none';
                         homebutton.style.display = 'none';
                         localStorage.setItem('last-avatar', '');
