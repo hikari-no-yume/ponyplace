@@ -702,6 +702,7 @@
                 oY = e.y;
                 popupX = parseInt(popup.container.style.left);
                 popupY = parseInt(popup.container.style.top);
+                document.body.onmousemove = popup.titlebar.onmousemove;
             };
             popup.titlebar.onmousemove = function (e) {
                 if (down) {
@@ -711,6 +712,7 @@
             };
             popup.titlebar.onmouseup = function () {
                 down = false;
+                document.body.onmousemove = null;
             };
         }
 
