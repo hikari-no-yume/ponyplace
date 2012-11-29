@@ -168,6 +168,92 @@ var roomManager = {
 
 roomManager.init();
 
+var modLogger = {
+    log: [],
+
+    init: function () {
+        try {
+            var data = fs.readFileSync('data/mod-log.json');
+        } catch (e) {
+            console.log('Error loading moderation log, skipped.');
+            return;
+        }
+        data = JSON.parse(fs.readFileSync('data/mod-log.json'));
+        this.log = data.log;
+        console.log('Loaded moderation log');
+    },
+    save: function () {
+        fs.writeFileSync('data/mod-log.json', JSON.stringify({
+            log: this.log
+        }));
+        console.log('Saved moderation log');
+    },
+    getLast: function (count) {
+        return this.log.slice(-count);
+    },
+
+    timestamp: function () {
+        return (new Date()).toISOString();
+    },
+
+    logBan: function (mod, IP, aliases) {
+        this.log.push({
+            type: 'ban',
+            date: this.timestamp(),
+            mod: mod,
+            IP: IP,
+            aliases: aliases
+        });
+        this.save();
+    },
+    logKick: function (mod, IP, aliases) {
+        this.log.push({
+            type: 'kick',
+            date: this.timestamp(),
+            mod: mod,
+            IP: IP,
+            aliases: aliases
+        });
+        this.save();
+    },
+    logMove: function (mod, nick, oldRoom, newRoom, state) {
+        this.log.push({
+            type: 'move',
+            date: this.timestamp(),
+            mod: mod,
+            nick: nick,
+            old_room: oldRoom,
+            new_room: newRoom,
+            state: state
+        });
+        this.save();
+    },
+    logBroadcast: function (mod, msg) {
+        this.log.push({
+            type: 'broadcast',
+            date: this.timestamp(),
+            mod: mod,
+            msg: msg
+        });
+        this.save();
+    },
+    logBitsChange: function (mod, nick, amount, oldBalance, newBalance, state) {
+        this.log.push({
+            type: 'bits_change',
+            date: this.timestamp(),
+            mod: mod,
+            nick: nick,
+            amount: amount,
+            old_balance: oldBalance,
+            new_balance: newBalance,
+            state: state
+        });
+        this.save();
+    }
+};
+
+modLogger.init();
+
 function doRoomChange(roomName, user) {
     var room;
 
@@ -394,13 +480,14 @@ function handleCommand(cmd, myNick, user) {
     // mod help
     } else if (isMod && cmd.substr(0, 7) === 'modhelp') {
         sendMultiLine([
-            'Five mod commands available: 1) kick, 2) kickban, 3) broadcast, 4) aliases, 5) move, 6) bits',
+            'Seven mod commands available: 1) kick, 2) kickban, 3) broadcast, 4) aliases, 5) move, 6) bits, 7) modlog',
             '1. kick - Takes the nick of someone, they (& any aliases) will be kicked, e.g. /kick sillyfilly',
             '2. kickban - Like /kick but also permabans by IP, e.g. /kickban stupidfilly',
             '3. broadcast - Sends a message to everyone on the server, e.g. /broadcast Hello all!',
             "4. aliases - Lists someone's aliases (people with same IP address), e.g. /aliases joebloggs",
             '5. move - Forcibly moves a user to a room, e.g. /move canterlot sillyfilly',
             "6. bits - Adds to or removes from someone's bits balance, e.g. /bits 20 ajf, /bits -10 otherguy",
+            "7. modlog - Shows moderator activity log. Can optionally specify how many items you want to see (default 10), e.g. /modlog 15",
             'See also: /help'
         ]);
     // kickbanning
@@ -417,6 +504,7 @@ function handleCommand(cmd, myNick, user) {
         var IP = User.get(kickee).conn.remoteAddress;
         banManager.addIPBan(IP);
         sendLine('Banned IP ' + IP);
+        var aliases = [];
         // Kick aliases
         User.forEach(function (iterUser) {
             if (iterUser.conn.remoteAddress === IP) {
@@ -424,8 +512,14 @@ function handleCommand(cmd, myNick, user) {
                 iterUser.kick('ban');
                 console.log('Kicked alias "' + iterUser.nick + '" of user with IP ' + IP);
                 sendLine('Kicked alias "' + iterUser.nick + '" of user with IP ' + IP);
+                aliases.push({
+                    nick: iterUser.nick,
+                    room: iterUser.room,
+                    state: iterUser.obj
+                });
             }
         });
+        modLogger.logBan(myNick, IP, aliases);
     // kicking
     } else if (isMod && cmd.substr(0, 5) === 'kick ') {
         var kickee = cmd.substr(5);
@@ -434,6 +528,7 @@ function handleCommand(cmd, myNick, user) {
             return;
         }
         var IP = User.get(kickee).conn.remoteAddress;
+        var aliases = [];
         // Kick aliases
         User.forEach(function (iterUser) {
             if (iterUser.conn.remoteAddress === IP) {
@@ -441,8 +536,14 @@ function handleCommand(cmd, myNick, user) {
                 iterUser.kick('kick');
                 console.log('Kicked alias "' + iterUser.nick + '" of user with IP ' + IP);
                 sendLine('Kicked alias "' + iterUser.nick + '" of user with IP ' + IP);
+                aliases.push({
+                    nick: iterUser.nick,
+                    room: iterUser.room,
+                    state: iterUser.obj
+                });
             }
         });
+        modLogger.logKick(myNick, IP, aliases);
     // forced move
     } else if (isMod && cmd.substr(0, 5) === 'move ') {
         var pos = cmd.indexOf(' ', 5);
@@ -457,6 +558,7 @@ function handleCommand(cmd, myNick, user) {
                 sendLine('You cannot move other moderators');
                 return;
             }
+            modLogger.logMove(myNick, movee, User.get(movee).room, room, User.get(movee).obj);
             doRoomChange(room, User.get(movee));
             sendLine('You were forcibly moved room by ' + myNick, movee);
         } else {
@@ -492,6 +594,7 @@ function handleCommand(cmd, myNick, user) {
         });
         console.log('Broadcasted message "' + broadcast + '" from user "' + myNick + '"');
         sendLine('Broadcasted message');
+        modLogger.logBroadcast(myNick, broadcast);
     // change bits
     } else if (isMod && cmd.substr(0, 5) === 'bits ') {
         var pos = cmd.indexOf(' ', 5);
@@ -511,9 +614,11 @@ function handleCommand(cmd, myNick, user) {
                 sendLine('Amount is not valid');
                 return;
             }
+            var oldBalance = User.hasBits(receiver);
             if (User.changeBits(receiver, amount)) {
                 sendLine('Changed balance of user with nick: "' + receiver + '" by ' + amount + ' bits ');
                 sendLine('Your bits balance was changed by the amount ' + amount + ' bits by user with nick: "' + user.nick + '"', receiver);
+                modLogger.logBitsChange(myNick, receiver, amount, oldBalance, User.hasBits(receiver), User.get(receiver).obj);
             } else {
                 sendLine("Failed to change user's bits balance");
             }
@@ -521,6 +626,13 @@ function handleCommand(cmd, myNick, user) {
             sendLine('/move takes a room and a nickname');
             return;
         }
+    // moderation log
+    } else if (isMod && cmd.substr(0, 6) === 'modlog') {
+        var count = parseInt(cmd.substr(7)) || 10;
+        user.send({
+            type: 'mod_log',
+            items: modLogger.getLast(count)
+        });
     // unknown
     } else {
         sendLine('Unknown command');

@@ -1339,6 +1339,32 @@
                 case 'console_msg':
                     logConsoleMessageInChat(msg.msg);
                 break;
+                case 'mod_log':
+                    var popup = makePopup('.mod-log', 'Moderation log', true, 250, 250, true, function () {
+                        container.removeChild(popup.container);
+                    });
+                    var ul = document.createElement('ul');
+                    msg.items.reverse();
+                    for (var i = 0; i < msg.items.length; i++) {
+                        var item = msg.items[i];
+                        var li = document.createElement('li');
+                        var pre = document.createElement('pre');
+                        li.appendChild(document.createTextNode({
+                            ban: 'Ban',
+                            kick: 'Kick',
+                            move: 'Move room',
+                            broadcast: 'Broadcast message',
+                            bits_change: 'Bits balance change'
+                        }[item.type] + ' by ' + item.mod + ' at ' + (new Date(item.date)).toLocaleString()));
+                        delete item.type;
+                        delete item.date;
+                        delete item.mod;
+                        pre.appendChild(document.createTextNode(JSON.stringify(item, null, 2)));
+                        li.appendChild(pre);
+                        ul.appendChild(li);
+                    }
+                    popup.content.appendChild(ul);
+                break;
                 case 'priv_msg':
                     logPrivmsgInChat(msg.from_nick, msg.msg, msg.from_special);
                 break;
