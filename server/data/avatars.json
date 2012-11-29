@@ -75,6 +75,10 @@
         "spike_left_float.gif",
         "spike_right_float.gif"
     ],
+    "screwball": [
+        "screwball_left.gif",
+        "screwball_right.gif"
+    ],
     "carrottop": [
         "carrottop_left.gif",
         "carrottop_right.gif",
