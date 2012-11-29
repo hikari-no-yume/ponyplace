@@ -671,6 +671,13 @@
                         onshow();
                     }
                 }
+            },
+            destroy: function () {
+                container.removeChild(this.container);
+                var keys = Object.keys(this);
+                for (var i = 0; i < keys.length; i++) {
+                    delete this[keys];
+                }
             }
         };
 
@@ -1066,7 +1073,7 @@
                     (function (images, name) {
                         preview.onclick = function () {
                             var subChooser = makePopup('.chooser', 'Change avatar - ' + name, true, 300, 300, true, function () {
-                                container.removeChild(subChooser.container);
+                                subChooser.destroy();
                             }, null);
                             for (var i = 0; i < images.length; i++) {
                                 var preview = document.createElement('img');
@@ -1343,7 +1350,7 @@
                 break;
                 case 'mod_log':
                     var popup = makePopup('.mod-log', 'Moderation log', true, 250, 250, true, function () {
-                        container.removeChild(popup.container);
+                        popup.destroy();
                     });
                     var ul = document.createElement('ul');
                     msg.items.reverse();
