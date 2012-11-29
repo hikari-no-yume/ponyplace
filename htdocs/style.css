@@ -53,6 +53,11 @@ h1 {
     -o-transform: rotate(180deg);
 }
 
+.mod-log {
+    width: 400px;
+    height: 400px;
+}
+
 .popup {
     position: absolute;
     border: 4px solid rgb(255, 103, 213);
