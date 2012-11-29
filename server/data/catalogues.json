@@ -437,6 +437,17 @@
         {
             "items": [
                 {
+                    "type": "avatar",
+                    "avatar_name": "screwball"
+                }
+            ],
+            "name_full": "Screwball",
+            "price": 25,
+            "img": "/media/avatars/screwball_right.gif"
+        },
+        {
+            "items": [
+                {
                     "type": "inventory_item",
                     "item_name": "roombg_cherry_jubilees_guest_room"
                 }
