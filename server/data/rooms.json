@@ -457,6 +457,20 @@
     },
     {
         "type": "real",
+        "name": "crystal_kingdom",
+        "name_full": "Crystal Kingdom",
+        "background": {
+            "data": "/media/rooms/crystal-kingdom.png",
+            "width": 1320,
+            "height": 660
+        },
+        "widgets": [],
+        "user_count": 0,
+        "user_noun": "crystal <3s",
+        "unlisted": false
+    },
+    {
+        "type": "real",
         "name": "credits",
         "name_full": "ponyplace credits",
         "background": {
