@@ -1,53 +1,6 @@
 [
     {
         "type": "real",
-        "name": "map",
-        "name_full": "World Map",
-        "background": {
-            "data": "/media/rooms/map.jpg",
-            "width": 1111,
-            "height": 660
-        },
-        "widgets": [
-            {
-                "left": 350,
-                "top": 144,
-                "width": 130,
-                "height": 115,
-                "type": "portal",
-                "to": "cloudsdale"
-            },
-            {
-                "left": 480,
-                "top": 205,
-                "width": 120,
-                "height": 90,
-                "type": "portal",
-                "to": "canterlot"
-            },
-            {
-                "left": 440,
-                "top": 335,
-                "width": 100,
-                "height": 48,
-                "type": "portal",
-                "to": "ponyville"
-            },
-            {
-                "left": 442,
-                "top": 386,
-                "width": 120,
-                "height": 40,
-                "type": "portal",
-                "to": "everfree_forest"
-            }
-        ],
-        "user_count": 0,
-        "user_noun": "cartographers",
-        "unlisted": false
-    },
-    {
-        "type": "real",
         "name": " party_barn",
         "name_full": "Party Barn",
         "background": {
