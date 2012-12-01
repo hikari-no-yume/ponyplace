@@ -127,7 +127,9 @@
         "rainbowdash_left_fly.gif",
         "rainbowdash_right_fly.gif",
         "rainbowdash_left_sleep.gif",
-        "rainbowdash_right_sleep.gif"
+        "rainbowdash_right_sleep.gif",
+        "rainbowdash_left_gala.png",
+        "rainbowdash_right_gala.png"
     ],
     "rainbowdash_shades": [
         "rainbowdash_left_shades.gif",
@@ -175,7 +177,9 @@
         "fluttershy_left_hover.gif",
         "fluttershy_right_hover.gif",
         "fluttershy_left_sleep.gif",
-        "fluttershy_right_sleep.gif"
+        "fluttershy_right_sleep.gif",
+        "fluttershy_left_gala.gif",
+        "fluttershy_right_gala.gif"
     ],
     "fillyfluttershy": [
         "fillyfluttershy_left.gif",
@@ -327,7 +331,9 @@
         "twilight_left_crazy.gif",
         "twilight_right_crazy.gif",
         "twilight_left_read.gif",
-        "twilight_right_read.gif"
+        "twilight_right_read.gif",
+        "twilight_left_gala.png",
+        "twilight_right_gala.png"
     ],
     "fillytwilight": [
         "fillytwilight_left.gif",
@@ -347,7 +353,9 @@
         "rarity_left_hover.gif",
         "rarity_right_hover.gif",
         "rarity_left_sleep.gif",
-        "rarity_right_sleep.gif"
+        "rarity_right_sleep.gif",
+        "rarity_left_gala.png",
+        "rarity_right_gala.png"
     ],
     "fillyrarity": [
         "fillyrarity_left.gif",
@@ -393,7 +401,9 @@
         "pinkiepie_left_bounce_happy.gif",
         "pinkiepie_right_bounce_happy.gif",
         "pinkiepie_left_dance.gif",
-        "pinkiepie_right_dance.gif"
+        "pinkiepie_right_dance.gif",
+        "pinkiepie_left_gala.gif",
+        "pinkiepie_right_gala.gif"
     ],
     "crazypie": [
         "crazypie_left.gif",
@@ -465,7 +475,9 @@
         "applejack_left_conga.gif",
         "applejack_right_conga.gif",
         "applejack_left_gallop.gif",
-        "applejack_right_gallop.gif"
+        "applejack_right_gallop.gif",
+        "applejack_left_gala.png",
+        "applejack_right_gala.png"
     ],
     "fillyapplejack": [
         "fillyapplejack_left.gif",
