@@ -823,6 +823,22 @@ wsServer.on('request', function(request) {
                     moderator_mode: User.isModerator(myNick)
                 });
             break;
+            case 'friend_add':
+                if (User.hasAccount(myNick)) {
+                    User.addFriend(myNick, msg.nick);
+                    user.sendAccountState();
+                } else {
+                    user.kick('protocol_error');
+                }
+            break;
+            case 'friend_remove':
+                if (User.hasAccount(myNick)) {
+                    User.removeFriend(myNick, msg.nick);
+                    user.sendAccountState();
+                } else {
+                    user.kick('protocol_error');
+                }
+            break;
             case 'get_catalogue':
                 user.send({
                     type: 'catalogue_content',

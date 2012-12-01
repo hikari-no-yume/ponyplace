@@ -23,6 +23,7 @@ User.prototype.sendAccountState = function () {
         bits: User.hasBits(this.nick),
         avatar_inventory: User.getAvatarInventory(this.nick),
         inventory: User.getInventory(this.nick),
+        friends: User.getFriends(this.nick),
         have_account: User.hasAccount(this.nick)
     });
 };
@@ -216,6 +217,27 @@ User.getProfile = function (nick) {
     }
     return profile;
 };
+User.getFriends = function (nick) {
+    return this.getUserData(nick, 'friends', []);
+};
+User.hasFriend = function (nick, friend) {
+    return this.getFriends(nick).indexOf(friend) !== -1;
+};
+User.addFriend = function (nick, friend) {
+    var friends = this.getFriends(nick);
+    if (friends.indexOf(friend) === -1) {
+        friends.push(friend);
+    }
+    this.setUserData(nick, 'friends', friends);
+};
+User.removeFriend = function (nick, friend) {
+    var friends = this.getFriends(nick);
+    var index;
+    if ((index = friends.indexOf(friend)) !== -1) {
+        friends.splice(index, 1);
+    }
+    this.setUserData(nick, 'friends', friends);
+};
 
 User.getHouse = function (nick) {
     return this.getUserData(nick, 'house', {
@@ -258,7 +280,7 @@ User.hasInventoryItem = function (nick, item) {
     return this.getInventory(nick).indexOf(item) !== -1;
 };
 User.giveInventoryItem = function (nick, item) {
-    inventory = this.getInventory(nick);
+    var inventory = this.getInventory(nick);
     if (inventory.indexOf(item) === -1) {
         inventory.push(item);
     }
