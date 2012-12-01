@@ -19,7 +19,7 @@
         lastmove = (new Date().getTime()),
         globalUserCount = 0,
         catalogueCallback = null,
-        openProfiles = {};
+        openProfiles = {}, openPMLogs = {};
 
     var container,
         overlay,
@@ -262,11 +262,11 @@
         span.appendChild(document.createTextNode(line));
     }
 
-    function chatPrint(originpart, line, type, showInShortLog) {
-        function digitPad(n) {
-            return n = (n < 10) ? ("0" + n) : n;
-        }
+    function digitPad(n) {
+        return n = (n < 10) ? ("0" + n) : n;
+    }
 
+    function chatPrint(originpart, line, type, showInShortLog) {
         var date = new Date();
         var timepart = '[' + digitPad(date.getHours()) + ':' + digitPad(date.getMinutes()) + ']';
 
@@ -311,10 +311,6 @@
         var className = highlightCheck(msg) || '';
         className += ' ' + (special || '');
         chatPrint('<' + nick + '> ', msg, className, true);
-    }
-
-    function logPrivmsgInChat(nick, msg, special) {
-        chatPrint(nick + ' ->', msg, 'privmsg ' + special, true);
     }
 
     function logBroadcastInChat(msg) {
@@ -631,9 +627,104 @@
             pushAndUpdateState(me);
             lastmove = cur;
         } else {
-
             chatPrint('You are doing that too often.');
         }
+    }
+
+    function showPMLog(nick) {
+        if (openPMLogs.hasOwnProperty(nick)) {
+            openPMLogs[nick].popup.show();
+        } else {
+            var log = function (from, body, special) {
+                var date = new Date();
+
+                var msg = document.createElement('p');
+                msg.className = 'message';
+                msg.appendChild(document.createTextNode('' + digitPad(date.getHours()) + ':' + digitPad(date.getMinutes()) + ' - '));
+                var nickname = document.createElement('span');
+                nickname.className = 'nickname' + (from === myNick ? ' own' : '');
+                if (special !== false) {
+                    nickname.className += ' ' + special;
+                }
+                nickname.appendChild(document.createTextNode(from));
+                msg.appendChild(nickname);
+                msg.appendChild(document.createTextNode(': ' + body));
+
+                messages.appendChild(msg);
+
+                messages.scrollTop = messages.scrollHeight;
+            };
+
+            var logFail = function (from) {
+                var msg = document.createElement('p');
+                msg.className = 'message message-fail';
+                msg.appendChild(document.createTextNode('(warning: sending the previous message failed - user with nick: "' + from + '" is not online)'));
+                messages.appendChild(msg);
+                messages.scrollTop = messages.scrollHeight;
+            };
+
+            var doSend = function () {
+                socket.send(JSON.stringify({
+                    type: 'priv_msg',
+                    nick: nick,
+                    msg: replybox.value
+                }));
+
+                log(myNick, replybox.value, mySpecialStatus);
+
+                replybox.value = '';
+            };
+
+            var popup = makePopup('.pm-log', 'PRIVMSG - ' + nick, true, 250, 250, true, function () {
+                delete openPMLogs[nick];
+                popup.destroy();
+            });
+
+            var messages = document.createElement('div');
+            messages.className = 'pm-log-messages';
+            popup.content.appendChild(messages);
+
+            var replybox = document.createElement('input');
+            replybox.className = 'pm-log-replybox';
+            replybox.onkeypress = function (e) {
+                // enter
+                if (e.which === 13) {
+                    doSend();
+                    e.preventDefault();
+                    return false;
+                }
+            };
+            popup.content.appendChild(replybox);
+
+            var replybtn = document.createElement('button');
+            replybtn.className = 'pm-log-replybtn';
+            replybtn.appendChild(document.createTextNode('Send'));
+            replybtn.onclick = function () {
+                doSend();
+            };
+            popup.content.appendChild(replybtn);
+
+            var pmlog = {
+                popup: popup,
+                replybox: replybox,
+                replybtn: replybtn,
+                messages: messages,
+                log: log,
+                logFail: logFail
+            };
+
+            openPMLogs[nick] = pmlog;
+        }
+    }
+
+    function logPrivmsgInChat(nick, msg, special) {
+        showPMLog(nick);
+        openPMLogs[nick].log(nick, msg, special);
+    }
+
+    function logPrivmsgFailInChat(nick) {
+        showPMLog(nick);
+        openPMLogs[nick].logFail(nick);
     }
 
     function showProfile(profile, modMode) {
@@ -643,6 +734,7 @@
 
         var popup = makePopup('.profile', 'Profile - ' + profile.nick, true, 250, 250, true, function () {
             delete openProfiles[profile.nick];
+            popup.destroy();
         });
 
         var h3 = document.createElement('h3');
@@ -708,8 +800,7 @@
             button = document.createElement('button');
             button.appendChild(document.createTextNode('Send private message'));
             button.onclick = function (e) {
-                chatbox.value = '/msg ' + profile.nick + ' ';
-                chatbox.focus();
+                showPMLog(profile.nick);
                 popup.hide();
             };
             popup.content.appendChild(button);
@@ -1353,13 +1444,6 @@
 
     function initGUI() {
         document.body.innerHTML = '';
-        document.body.onkeypress = function (e) {
-            if (e.which == 13) {
-                chatbox.focus();
-                e.preventDefault();
-                return false;
-            }
-        };
 
         container = document.createElement('div');
         container.id = 'container';
@@ -1547,6 +1631,9 @@
                 break;
                 case 'priv_msg':
                     logPrivmsgInChat(msg.from_nick, msg.msg, msg.from_special);
+                break;
+                case 'priv_msg_fail':
+                    logPrivmsgFailInChat(msg.nick);
                 break;
                 case 'die':
                     userManager.kill(msg.nick);

@@ -451,9 +451,6 @@ a {
 #chatlog .highlight .innertext, #fullchatlog-content .highlight {
     background-color: fuchsia !important;
 }
-#chatlog .privmsg .innertext, #fullchatlog-content .privmsg {
-    background-color: rgb(128, 8, 128) !important;
-}
 #chatlog .broadcast .innertext, #fullchatlog-content .broadcast {
     background-color: darkorange !important;
 }
@@ -534,6 +531,9 @@ a {
 .nickname:hover {
     cursor: pointer;
 }
+.message .nickname:hover {
+    cursor: default;
+}
 
 .nickname.own {
     color: #FF67D5;
@@ -548,6 +548,46 @@ a {
 }
 .house-link:hover {
     cursor: pointer;
+}
+
+.pm-log {
+    width: 300px;
+    height: 250px;
+}
+.pm-log .popup-content {
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+}
+.pm-log-messages {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 26px;
+    overflow: auto;
+}
+.message {
+    margin: 0 1px;
+}
+.message-fail {
+    font-style: italic;
+}
+.pm-log-replybox {
+    position: absolute;
+    left: 0;
+    right: 90px;
+    bottom: 1px;
+    height: 24px;
+
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+}
+.pm-log-replybtn {
+    position: absolute;
+    bottom: 1px;
+    width: 90px;
+    right: 1px;
 }
 
 .profile {

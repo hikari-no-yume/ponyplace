@@ -350,11 +350,10 @@ function handleCommand(cmd, myNick, user) {
     // help
     if (cmd.substr(0, 4) === 'help') {
         sendMultiLine([
-            'Four user commands are available: 1) profile, 2) list, 3) join, 4) msg',
+            'Three user commands are available: 1) profile, 2) list, 3) join',
             "1. profile - Brings up someone's profile, e.g. /profile someguy",
             '2. list - Lists available rooms, e.g. /list',
-            "3. join - Joins a room, e.g. /join library - if room doesn't exist, an ephemeral room will be created - you can also enter people's houses, e.g. /join house ajf",
-            '4. msg - Lets you send a private message to someone, e.g. /msg cool_guy Meet up at your house?'
+            "3. join - Joins a room, e.g. /join library - if room doesn't exist, an ephemeral room will be created - you can also enter people's houses, e.g. /join house ajf"
         ]);
         if (haveHouse) {
             sendMultiLine([
@@ -407,25 +406,6 @@ function handleCommand(cmd, myNick, user) {
             }
         }
         sendLine(roomList.length + ' rooms available: ' + roomNames.join(', '));
-    } else if (cmd.substr(0, 4) === 'msg ') {
-        var pos = cmd.indexOf(' ', 4);
-        if (pos !== -1) {
-            var to = cmd.substr(4, pos-4);
-            var msg = cmd.substr(pos+1);
-            if (!User.has(to)) {
-                sendLine('There is no online user with nick: "' + to + '"');
-                return;
-            }
-            User.get(to).send({
-                type: 'priv_msg',
-                from_nick: myNick,
-                from_special: user.special,
-                msg: msg
-            });
-        } else {
-            sendLine('/msg takes a nickname and a message');
-            return;
-        }
     // empty house
     } else if (haveHouse && cmd.substr(0, 5) === 'empty') {
         var count = 0;
@@ -822,6 +802,22 @@ wsServer.on('request', function(request) {
                     data: User.getProfile(msg.nick),
                     moderator_mode: User.isModerator(myNick)
                 });
+            break;
+            case 'priv_msg':
+                if (!User.has(msg.nick)) {
+                    user.send({
+                        type: 'priv_msg_fail',
+                        nick: msg.nick
+                    });
+                    return;
+                } else {
+                    User.get(msg.nick).send({
+                        type: 'priv_msg',
+                        from_nick: myNick,
+                        from_special: user.special,
+                        msg: msg.msg
+                    });
+                }
             break;
             case 'friend_add':
                 if (User.hasAccount(myNick)) {
