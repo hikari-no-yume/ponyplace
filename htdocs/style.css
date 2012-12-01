@@ -226,13 +226,14 @@ input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover, button:
     cursor: pointer;
 }
 
-#room-refresh-button, #home-button, #account-settings-button, #inventory-list-button {
+#room-refresh-button, #home-button, #friends-list-button, #account-settings-button, #inventory-list-button {
     position: absolute;
     top: 6px;
 }
 
 #room-refresh-button { left: 160px; }
 #home-button { left: 270px; width: 24px; }
+#friends-list-button { left: 300px; }
 
 #account-settings-button { right: 6px; width: 150px; }
 #inventory-list-button { right: 160px; }
@@ -555,6 +556,23 @@ a {
 }
 .profile h3 {
     margin: 0;
+}
+
+#friends-list {
+    width: 200px;
+    height: 300px;
+}
+
+#friends-list ul {
+    margin: 0;
+    padding-left: 20px;
+    list-style-type: square;
+}
+#friends-list .friend {
+    color: black;
+}
+#friends-list .friend:hover {
+    cursor: pointer;
 }
 
 .nickname.creator, .creator .originpart {

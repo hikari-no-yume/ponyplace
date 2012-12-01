@@ -13,7 +13,7 @@
     var avatars = [], inventoryItems = [];
 
     var socket, connected = false, ignoreDisconnect = false, pageFocussed = false, unseenHighlights = 0,
-        me, myNick, myRoom = null, mySpecialStatus, avatarInventory, inventory = [], haveAccount = false,
+        me, myNick, myRoom = null, mySpecialStatus, avatarInventory, inventory = [], friends = [], haveAccount = false,
         roomwidgetstate = [],
         currentUser = null,
         lastmove = (new Date().getTime()),
@@ -28,6 +28,7 @@
         bitcount,
         chooser, chooserbutton,
         inventorylist, inventorylistbutton,
+        friendslist, friendslistbutton,
         roomlist, refreshbutton, homebutton,
         roomedit, roomeditbutton, roomeditreset, roomeditvisible,
         background, roomwidgets,
@@ -655,6 +656,32 @@
 
         var button;
 
+        if (haveAccount) {
+            if (friends.indexOf(profile.nick) !== -1) {
+                button = document.createElement('button');
+                button.appendChild(document.createTextNode('Remove friend'));
+                button.onclick = function (e) {
+                    socket.send(JSON.stringify({
+                        type: 'friend_remove',
+                        nick: profile.nick
+                    }));
+                    popup.hide();
+                };
+                popup.content.appendChild(button);
+            } else {
+                button = document.createElement('button');
+                button.appendChild(document.createTextNode('Add friend'));
+                button.onclick = function (e) {
+                    socket.send(JSON.stringify({
+                        type: 'friend_add',
+                        nick: profile.nick
+                    }));
+                    popup.hide();
+                };
+                popup.content.appendChild(button);
+            }
+        }
+
         if (profile.has_account) {
             button = document.createElement('button');
             var icon = document.createElement('img');
@@ -830,6 +857,111 @@
         container.appendChild(popup.container);
 
         return popup;
+    }
+
+    function renderFriendsList() {
+        friendslist.content.innerHTML = '';
+        if (friends.length) {
+            var ul = document.createElement('ul');
+            for (var i = 0; i < friends.length; i++) {
+                var li = document.createElement('li');
+                var a = document.createElement('a');
+                a.className = 'friend';
+                a.appendChild(document.createTextNode(friends[i]));
+                (function (friend) {
+                    a.onclick = function () {
+                        socket.send(JSON.stringify({
+                            type: 'profile_get',
+                            nick: friend
+                        }));
+                    };
+                }(friends[i]));
+                li.appendChild(a);
+                ul.appendChild(li);
+            }
+            friendslist.content.appendChild(ul);
+        } else {
+            friendslist.content.appendChild(document.createTextNode('You have no friends.'));
+        }
+    }
+
+    function renderChooser() {
+        chooser.content.innerHTML = '';
+        var ad = document.createElement('img');
+        ad.src = '/media/store/buy-more.png';
+        ad.className = 'chooser-preview';
+        ad.title = 'Buy some avatars!';
+        ad.onclick = function () {
+            socket.send(JSON.stringify({
+                type: 'room_change',
+                name: 'carousel_boutique'
+            }));
+            chooser.hide();
+        };
+        chooser.content.appendChild(ad);
+        for (var i = 0; i < avatarInventory.length; i++) {
+            var name = avatarInventory[i];
+            if (avatars.hasOwnProperty(name)) {
+                var preview = document.createElement('img');
+                preview.src = '/media/avatars/' + avatars[name][0];
+                preview.className = 'chooser-preview';
+                (function (images, name) {
+                    preview.onclick = function () {
+                        var subChooser = makePopup('.chooser', 'Change avatar - ' + name, true, 300, 300, true, function () {
+                            subChooser.destroy();
+                        }, null);
+                        for (var i = 0; i < images.length; i++) {
+                            var preview = document.createElement('img');
+                            preview.src = '/media/avatars/' + images[i];
+                            preview.className = 'chooser-preview';
+                            (function (imgid) {
+                                preview.onclick = function () {
+                                    me.img_name = name;
+                                    me.img_index = imgid;
+                                    localStorage.setItem('last-avatar', name);
+                                    pushAndUpdateState(me);
+                                    subChooser.hide();
+                                    if (images[imgid].indexOf('_upsidedown') !== -1) {
+                                        container.className = 'upside-down';
+                                    } else {
+                                        container.className = '';
+                                    }
+                                };
+                            }(i));
+                            subChooser.content.appendChild(preview);
+                        }
+                    };
+
+                }(avatars[name], name));
+                chooser.content.appendChild(preview);
+            }
+        }
+    }
+
+    function renderInventoryList() {
+        inventorylist.content.innerHTML = '';
+        if (inventory.length) {
+            for (var i = 0; i < inventory.length; i++) {
+                var name = inventory[i];
+                if (inventoryItems.hasOwnProperty(name)) {
+                    var preview = document.createElement('img');
+                    preview.src = inventoryItems[name].img;
+                    preview.title = inventoryItems[name].name_full;
+                    preview.className = 'inventory-item-preview';
+                    if (inventoryItems[name].type !== 'useless') {
+                        preview.className += ' inventory-item-clickable';
+                        (function (itemName, item) {
+                            preview.onclick = function () {
+                                handleItemClick(itemName, item);
+                            };
+                        }(name, inventoryItems[name]));
+                    }
+                    inventorylist.content.appendChild(preview);
+                }
+            }
+        } else {
+            inventorylist.content.appendChild(document.createTextNode('You have no inventory items.'));
+        }
     }
 
     function initGUI_stage() {
@@ -1017,6 +1149,15 @@
         homebutton.style.display = 'none';
         overlay.appendChild(homebutton);
 
+        friendslistbutton = document.createElement('button');
+        friendslistbutton.id = 'friends-list-button';
+        friendslistbutton.appendChild(document.createTextNode('Friends'));
+        friendslistbutton.onclick = function () {
+            friendslist.show();
+        };
+        friendslistbutton.style.display = 'none';
+        overlay.appendChild(friendslistbutton);
+
         inventorylistbutton = document.createElement('input');
         inventorylistbutton.id = 'inventory-list-button';
         inventorylistbutton.type = 'submit';
@@ -1127,84 +1268,19 @@
         accountsettings.content.appendChild(rmpassbutton);
 
         chooser = makePopup('.chooser', 'Avatar inventory', true, 200, 200, true, null, function () {
-            chooser.content.innerHTML = '';
-            var ad = document.createElement('img');
-            ad.src = '/media/store/buy-more.png';
-            ad.className = 'chooser-preview';
-            ad.title = 'Buy some avatars!';
-            ad.onclick = function () {
-                socket.send(JSON.stringify({
-                    type: 'room_change',
-                    name: 'carousel_boutique'
-                }));
-                chooser.hide();
-            };
-            chooser.content.appendChild(ad);
-            for (var i = 0; i < avatarInventory.length; i++) {
-                var name = avatarInventory[i];
-                if (avatars.hasOwnProperty(name)) {
-                    var preview = document.createElement('img');
-                    preview.src = '/media/avatars/' + avatars[name][0];
-                    preview.className = 'chooser-preview';
-                    (function (images, name) {
-                        preview.onclick = function () {
-                            var subChooser = makePopup('.chooser', 'Change avatar - ' + name, true, 300, 300, true, function () {
-                                subChooser.destroy();
-                            }, null);
-                            for (var i = 0; i < images.length; i++) {
-                                var preview = document.createElement('img');
-                                preview.src = '/media/avatars/' + images[i];
-                                preview.className = 'chooser-preview';
-                                (function (imgid) {
-                                    preview.onclick = function () {
-                                        me.img_name = name;
-                                        me.img_index = imgid;
-                                        localStorage.setItem('last-avatar', name);
-                                        pushAndUpdateState(me);
-                                        subChooser.hide();
-                                        if (images[imgid].indexOf('_upsidedown') !== -1) {
-                                            container.className = 'upside-down';
-                                        } else {
-                                            container.className = '';
-                                        }
-                                    };
-                                }(i));
-                                subChooser.content.appendChild(preview);
-                            }
-                        };
-                    }(avatars[name], name));
-                    chooser.content.appendChild(preview);
-                }
-            }
+            renderChooser();
         });
         chooser.hide();
 
-        inventorylist = makePopup('.chooser', 'Item inventory', true, 200, 200, true, function () {
-            inventorylist.content.innerHTML = '';
-            if (inventory.length) {
-                for (var i = 0; i < inventory.length; i++) {
-                    var name = inventory[i];
-                    if (inventoryItems.hasOwnProperty(name)) {
-                        var preview = document.createElement('img');
-                        preview.src = inventoryItems[name].img;
-                        preview.title = inventoryItems[name].name_full;
-                        preview.className = 'inventory-item-preview';
-                        if (inventoryItems[name].type !== 'useless') {
-                            preview.className += ' inventory-item-clickable';
-                            (function (itemName, item) {
-                                preview.onclick = function () {
-                                    handleItemClick(itemName, item);
-                                };
-                            }(name, inventoryItems[name]));
-                        }
-                        inventorylist.content.appendChild(preview);
-                    }
-                }
-            } else {
-                inventorylist.content.appendChild(document.createTextNode('You have no inventory items.'));
-            }
-        }, null);
+        inventorylist = makePopup('.chooser', 'Item inventory', true, 200, 200, true, null, function () {
+            renderInventoryList();
+        });
         inventorylist.hide();
+
+        friendslist = makePopup('#friends-list', 'Friends', true, 200, 200, true, null, function () {
+            renderFriendsList();
+        });
+        friendslist.hide();
     }
 
     function doLogin(authenticated, assertion) {
@@ -1381,7 +1457,9 @@
                         bitcount.appendChild(document.createTextNode(msg.bits));
                     }
                     avatarInventory = msg.avatar_inventory;
+                    renderChooser();
                     inventory = msg.inventory;
+                    friends = msg.friends;
                     chooserbutton.disabled = false;
                     haveAccount = msg.have_account;
                     accountsettingsbutton.disabled = false;
@@ -1390,6 +1468,9 @@
                         changepassbutton.style.display = 'block';
                         rmpassbutton.style.display = 'block';
                         inventorylistbutton.style.display = 'block';
+                        renderInventoryList();
+                        friendslistbutton.style.display = 'block';
+                        renderFriendsList();
                         bitcount.style.display = 'block';
                         homebutton.style.display = 'block';
                     } else {
@@ -1398,6 +1479,8 @@
                         rmpassbutton.style.display = 'none';
                         inventorylistbutton.style.display = 'none';
                         inventorylist.hide();
+                        friendslistbutton.style.display = 'none';
+                        friendslist.hide();
                         bitcount.style.display = 'none';
                         homebutton.style.display = 'none';
                         localStorage.setItem('last-avatar', '');
