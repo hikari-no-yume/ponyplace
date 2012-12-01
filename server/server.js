@@ -31,6 +31,8 @@ function originIsAllowed(origin) {
 
 var badRegex = /fuck|shit|milf|bdsm|fag|faggot|nigga|nigger|clop|(\[\]\(\/[a-zA-Z0-9\-_]+\))/gi;
 
+var validNickRegex = /^[a-zA-Z0-9_]+$/g;
+
 var fs = require('fs');
 
 function sanitiseChat(chat) {
@@ -368,11 +370,16 @@ function handleCommand(cmd, myNick, user) {
         }
     // profile
     } else if (cmd.substr(0, 8) === 'profile ') {
-        user.send({
-            type: 'profile',
-            data: User.getProfile(cmd.substr(8)),
-            moderator_mode: isMod
-        });
+        var nick = cmd.substr(8);
+        if (!!nick.match(validNickRegex)) {
+            user.send({
+                type: 'profile',
+                data: User.getProfile(nick),
+                moderator_mode: isMod
+            });
+        } else {
+            sendLine('"' + nick + '" is not a valid nickname.');
+        }
     // join room
     } else if (cmd.substr(0, 5) === 'join ') {
         var roomName = cmd.substr(5);
@@ -1044,7 +1051,7 @@ wsServer.on('request', function(request) {
                 connection.close();
                 return;
             // Prefent profane/long/short/additional whitespace nicks
-            } else if ((!!msg.nick.match(badRegex)) || msg.nick.length > 18 || msg.nick.length < 3 || !/^[a-zA-Z0-9_]+$/g.test(msg.nick)) {
+            } else if ((!!msg.nick.match(badRegex)) || msg.nick.length > 18 || msg.nick.length < 3 || !msg.nick.match(validNickRegex)) {
                 connection.sendUTF(JSON.stringify({
                     type: 'kick',
                     reason: 'bad_nick'
