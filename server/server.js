@@ -309,16 +309,14 @@ function doRoomChange(roomName, user) {
                     type: 'appear',
                     obj: iterUser.obj,
                     nick: iterUser.nick,
-                    special: iterUser.special,
-                    has_house: User.hasAccount(iterUser.nick)
+                    special: iterUser.special
                 });
                 // tell other clients in room about client
                 iterUser.send({
                     type: 'appear',
                     obj: user.obj,
                     nick: user.nick,
-                    special: user.special,
-                    has_house: User.hasAccount(user.nick)
+                    special: user.special
                 });
             }
         }
@@ -352,8 +350,8 @@ function handleCommand(cmd, myNick, user) {
     // help
     if (cmd.substr(0, 4) === 'help') {
         sendMultiLine([
-            'Four user commands are available: 1) whereis, 2) list, 3) join, 4) msg',
-            '1. whereis - Takes a nick, tells you what room someone is in, e.g. /whereis someguy',
+            'Four user commands are available: 1) profile, 2) list, 3) join, 4) msg',
+            "1. profile - Brings up someone's profile, e.g. /profile someguy",
             '2. list - Lists available rooms, e.g. /list',
             "3. join - Joins a room, e.g. /join library - if room doesn't exist, an ephemeral room will be created - you can also enter people's houses, e.g. /join house ajf",
             '4. msg - Lets you send a private message to someone, e.g. /msg cool_guy Meet up at your house?'
@@ -369,26 +367,13 @@ function handleCommand(cmd, myNick, user) {
         if (isMod) {
             sendLine('See also: /modhelp');
         }
-    // where is
-    } else if (cmd.substr(0, 8) === 'whereis ') {
-        var unfound = cmd.substr(8);
-        if (!User.has(unfound)) {
-            sendLine('There is no online user with nick: "' + unfound + '"');
-            return;
-        }
-        var unfoundUser = User.get(unfound);
-        if (unfoundUser.room === null) {
-            sendLine('User "' + unfound + '" is not in a room.');
-        } else {
-            if (roomManager.has(unfoundUser.room)) {
-                sendLine('User "' + unfound + '" is in ' + unfoundUser.room + ' ("' + roomManager.get(unfoundUser.room).name_full + '") - join them with /join ' + unfoundUser.room);
-            } else if (unfoundUser.room.substr(0, 6) === 'house ') {
-                sendLine('User "' + unfound + '" is in the house of the user with nick: "' + unfoundUser.room.substr(6) + '" - join them with /join ' + unfoundUser.room);
-            } else {
-                sendLine('User "' + unfound + '" is in the ephemeral room "' + unfoundUser.room + '" - join them with /join ' + unfoundUser.room);
-            }
-        }
-
+    // profile
+    } else if (cmd.substr(0, 8) === 'profile ') {
+        user.send({
+            type: 'profile',
+            data: User.getProfile(cmd.substr(8)),
+            moderator_mode: isMod
+        });
     // join room
     } else if (cmd.substr(0, 5) === 'join ') {
         var roomName = cmd.substr(5);
@@ -829,6 +814,13 @@ wsServer.on('request', function(request) {
                     type: 'room_list',
                     list: roomManager.getList(),
                     user_count: User.userCount
+                });
+            break;
+            case 'profile_get':
+                user.send({
+                    type: 'profile',
+                    data: User.getProfile(msg.nick),
+                    moderator_mode: User.isModerator(myNick)
                 });
             break;
             case 'get_catalogue':

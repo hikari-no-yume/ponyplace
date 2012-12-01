@@ -48,7 +48,7 @@
         showUserCounter: function () {
             this.userCounter.style.display = 'block';
         },
-        add: function (nick, obj, special, hasHouse, me) {
+        add: function (nick, obj, special, me) {
             if (this.has(nick)) {
                 throw new Error("There is already a user with the same nick.");
             }
@@ -64,19 +64,6 @@
 
             var nickTag = document.createElement('p');
             nickTag.className = 'nick-tag';
-            if (hasHouse) {
-                var houseLink = document.createElement('img');
-                houseLink.src = '/media/icons/house.png';
-                houseLink.className = 'house-link';
-                houseLink.title = 'Go to their house';
-                houseLink.onclick = function (e) {
-                    socket.send(JSON.stringify({
-                        type: 'room_change',
-                        name: 'house ' + nick
-                    }));
-                };
-                nickTag.appendChild(houseLink);
-            }
 
             var nickName = document.createElement('span');
             nickName.className = 'nickname' + (isOwnNick ? ' own' : '');
@@ -86,8 +73,10 @@
             }
             if (!isOwnNick) {
                 nickName.onclick = function () {
-                    chatbox.value = '/msg ' + nick + ' ';
-                    chatbox.focus();
+                    socket.send(JSON.stringify({
+                        type: 'profile_get',
+                        nick: nick
+                    }));
                 };
             }
             nickTag.appendChild(nickName);
@@ -586,7 +575,7 @@
         myRoom = room;
 
         // add me
-        userManager.add(myNick, me, mySpecialStatus, false, true);
+        userManager.add(myNick, me, mySpecialStatus, true);
 
         // go to random position
         if (room.type === 'ephemeral') {
@@ -643,6 +632,107 @@
         } else {
 
             chatPrint('You are doing that too often.');
+        }
+    }
+
+    function showProfile(profile, modMode) {
+        var popup = makePopup('.profile', 'Profile - ' + profile.nick, true, 250, 250, true, function () {
+            popup.destroy();
+        });
+
+        var h3 = document.createElement('h3');
+        h3.appendChild(document.createTextNode(profile.nick));
+        popup.content.appendChild(h3);
+
+        if (profile.online) {
+            popup.content.appendChild(document.createTextNode(profile.nick + ' is online'));
+        } else {
+            if (profile.has_account) {
+                popup.content.appendChild(document.createTextNode(profile.nick + " isn't online"));
+            } else {
+                popup.content.appendChild(document.createTextNode('There is no online user with the nick: "' + profile.nick + '"'));
+            }
+        }
+
+        var button;
+
+        if (profile.has_account) {
+            button = document.createElement('button');
+            var icon = document.createElement('img');
+            icon.src = '/media/icons/house.png';
+            icon.className = 'house-link';
+            button.appendChild(icon);
+            button.appendChild(document.createTextNode('Visit house'));
+            button.onclick = function (e) {
+                socket.send(JSON.stringify({
+                    type: 'room_change',
+                    name: 'house ' + profile.nick
+                }));
+                popup.hide();
+            };
+            popup.content.appendChild(button);
+        }
+
+        if (profile.online) {
+            button = document.createElement('button');
+            button.appendChild(document.createTextNode('Send private message'));
+            button.onclick = function (e) {
+                chatbox.value = '/msg ' + profile.nick + ' ';
+                chatbox.focus();
+                popup.hide();
+            };
+            popup.content.appendChild(button);
+
+            button = document.createElement('button');
+            button.appendChild(document.createTextNode('Go to current room'));
+            button.onclick = function (e) {
+                socket.send(JSON.stringify({
+                    type: 'room_change',
+                    name: profile.room
+                }));
+                popup.hide();
+            };
+            if (profile.room === null) {
+                button.disabled = true;
+            }
+            popup.content.appendChild(button);
+
+            if (modMode) {
+                popup.content.appendChild(document.createElement('hr'));
+
+                button = document.createElement('button');
+                button.appendChild(document.createTextNode('Kick'));
+                button.onclick = function (e) {
+                    socket.send(JSON.stringify({
+                        type: 'console_command',
+                        cmd: 'kick ' + profile.nick
+                    }));
+                    popup.hide();
+                };
+                popup.content.appendChild(button);
+
+                button = document.createElement('button');
+                button.appendChild(document.createTextNode('Kickban'));
+                button.onclick = function (e) {
+                    socket.send(JSON.stringify({
+                        type: 'console_command',
+                        cmd: 'kickban ' + profile.nick
+                    }));
+                    popup.hide();
+                };
+                popup.content.appendChild(button);
+
+                button = document.createElement('button');
+                button.appendChild(document.createTextNode('List Aliases'));
+                button.onclick = function (e) {
+                    socket.send(JSON.stringify({
+                        type: 'console_command',
+                        cmd: 'aliases ' + profile.nick
+                    }));
+                    popup.hide();
+                };
+                popup.content.appendChild(button);
+            }
         }
     }
 
@@ -1274,7 +1364,8 @@
             var msg = JSON.parse(e.data);
             switch (msg.type) {
                 case 'appear':
-                    userManager.add(msg.nick, msg.obj, msg.special, msg.has_house, false);
+
+                    userManager.add(msg.nick, msg.obj, msg.special, false);
                 break;
                 case 'update':
                     if (msg.nick !== myNick) {
@@ -1373,6 +1464,9 @@
                         ul.appendChild(li);
                     }
                     popup.content.appendChild(ul);
+                break;
+                case 'profile':
+                    showProfile(msg.data, msg.moderator_mode);
                 break;
                 case 'priv_msg':
                     logPrivmsgInChat(msg.from_nick, msg.msg, msg.from_special);
