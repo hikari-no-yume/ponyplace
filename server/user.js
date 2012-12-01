@@ -205,6 +205,18 @@ User.changeBits = function (nick, amount) {
     return false;
 };
 
+User.getProfile = function (nick) {
+    var profile = {
+        nick: nick,
+        online: this.has(nick),
+        has_account: this.hasAccount(nick)
+    };
+    if (profile.online) {
+        profile.room = this.get(nick).room;
+    }
+    return profile;
+};
+
 User.getHouse = function (nick) {
     return this.getUserData(nick, 'house', {
         type: 'house',
@@ -233,7 +245,7 @@ User.hasAvatar = function (nick, avatar) {
     return this.getAvatarInventory(nick).indexOf(avatar) !== -1;
 };
 User.giveAvatar = function (nick, avatar) {
-    inventory = this.getAvatarInventory(nick);
+    var inventory = this.getAvatarInventory(nick);
     if (inventory.indexOf(avatar) === -1) {
         inventory.push(avatar);
     }
