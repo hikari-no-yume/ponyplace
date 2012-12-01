@@ -646,6 +646,12 @@
                 if (special !== false) {
                     nickname.className += ' ' + special;
                 }
+                nickname.onclick = function () {
+                    socket.send(JSON.stringify({
+                        type: 'profile_get',
+                        nick: nick
+                    }));
+                };
                 nickname.appendChild(document.createTextNode(from));
                 msg.appendChild(nickname);
                 msg.appendChild(document.createTextNode(': ' + body));

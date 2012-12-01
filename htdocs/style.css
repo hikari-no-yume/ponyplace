@@ -531,9 +531,6 @@ a {
 .nickname:hover {
     cursor: pointer;
 }
-.message .nickname:hover {
-    cursor: default;
-}
 
 .nickname.own {
     color: #FF67D5;
