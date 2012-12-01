@@ -18,7 +18,8 @@
         currentUser = null,
         lastmove = (new Date().getTime()),
         globalUserCount = 0,
-        catalogueCallback = null;
+        catalogueCallback = null,
+        openProfiles = {};
 
     var container,
         overlay,
@@ -636,8 +637,12 @@
     }
 
     function showProfile(profile, modMode) {
+        if (openProfiles.hasOwnProperty(profile.nick)) {
+            openProfiles[profile.nick].hide();
+        }
+
         var popup = makePopup('.profile', 'Profile - ' + profile.nick, true, 250, 250, true, function () {
-            popup.destroy();
+            delete openProfiles[profile.nick];
         });
 
         var h3 = document.createElement('h3');
@@ -760,6 +765,8 @@
                 popup.content.appendChild(button);
             }
         }
+
+        openProfiles[profile.nick] = popup;
     }
 
     function makePopup(tag, title, moveable, x, y, hideable, onhide, onshow) {
@@ -1269,6 +1276,7 @@
 
         chooser = makePopup('.chooser', 'Avatar inventory', true, 200, 200, true, null, function () {
             renderChooser();
+
         });
         chooser.hide();
 
