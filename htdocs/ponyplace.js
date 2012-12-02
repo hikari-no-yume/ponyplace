@@ -670,15 +670,17 @@
             };
 
             var doSend = function () {
-                socket.send(JSON.stringify({
-                    type: 'priv_msg',
-                    nick: nick,
-                    msg: replybox.value
-                }));
+                if (replybox.length) {
+                    socket.send(JSON.stringify({
+                        type: 'priv_msg',
+                        nick: nick,
+                        msg: replybox.value
+                    }));
 
-                log(myNick, replybox.value, mySpecialStatus);
+                    log(myNick, replybox.value, mySpecialStatus);
 
-                replybox.value = '';
+                    replybox.value = '';
+                }
             };
 
             var popup = makePopup('.pm-log', 'PRIVMSG - ' + nick, true, 250, 250, true, function () {

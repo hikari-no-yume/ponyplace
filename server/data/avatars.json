@@ -612,5 +612,17 @@
         "nurseredheart_right.gif",
         "nurseredheart_left_walk.gif",
         "nurseredheart_right_walk.gif"
+    ],
+    "aloe": [
+        "aloe_left.gif",
+        "aloe_right.gif",
+        "aloe_left_walk.gif",
+        "aloe_right_walk.gif"
+    ],
+    "lotus": [
+        "lotus_left.gif",
+        "lotus_right.gif",
+        "lotus_left_walk.gif",
+        "lotus_right_walk.gif"
     ]
 }

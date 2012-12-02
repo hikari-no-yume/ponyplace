@@ -438,6 +438,28 @@
             "items": [
                 {
                     "type": "avatar",
+                    "avatar_name": "lotus"
+                }
+            ],
+            "name_full": "Lotus",
+            "price": 35,
+            "img": "/media/avatars/lotus_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "aloe"
+                }
+            ],
+            "name_full": "Aloe",
+            "price": 35,
+            "img": "/media/avatars/aloe_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
                     "avatar_name": "screwball"
                 }
             ],
