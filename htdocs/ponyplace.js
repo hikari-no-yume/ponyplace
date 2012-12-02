@@ -670,7 +670,7 @@
             };
 
             var doSend = function () {
-                if (replybox.length) {
+                if (replybox.value) {
                     socket.send(JSON.stringify({
                         type: 'priv_msg',
                         nick: nick,
