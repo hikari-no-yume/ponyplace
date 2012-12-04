@@ -1402,6 +1402,7 @@
         loginbox = makePopup('#loginbox', 'Log in');
         loginbox.content.innerHTML = "<h1>Welcome to ponyplace!</h1>\
         <p>ponyplace is a My Little Pony-themed chatroom! You can hang out, play games and earn bits and customise your avatar and house. It's all free, forever. You'll never have to pay a cent!</p>\
+        <p class=important><strong>By logging in you assert that you are at least 13 years of age, or have obtained parental permission, and understand that ponyplace is a public chatroom and may occasionally feature content unsuitable for children.</strong></p>\
         <p>If you already have a ponyplace and Persona account, log in. If you want to create a ponyplace account, sign in anonymously first, then go to Account Settings.</p>";
 
         personasubmit = document.createElement('input');
