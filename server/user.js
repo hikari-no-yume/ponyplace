@@ -35,10 +35,11 @@ User.prototype.kill = function () {
 User.prototype.send = function (msg) {
     this.conn.sendUTF(JSON.stringify(msg));
 };
-User.prototype.kick = function (reason) {
+User.prototype.kick = function (reason, msg) {
     this.send({
         type: 'kick',
-        reason: reason
+        reason: reason,
+        msg: msg
     });
     this.conn.close();
 };

@@ -333,6 +333,30 @@
         ], highlightCheck(msg));
     }
 
+    function logKickNoticeInChat(modNick, modSpecial, kickeeNick, kickeeSpecial, reason) {
+        var lines = [
+            ['nick', kickeeNick, kickeeSpecial],
+            ['text', ' was kicked by '],
+            ['nick', modNick, modSpecial]
+        ];
+        if (reason) {
+            lines.push(['text', ' because: "' + reason + '"']);
+        }
+        chatPrint(['chatlog', 'fullchatlog'], lines, 'kick');
+    }
+
+    function logKickNoticeInChat(modNick, modSpecial, kickeeNick, kickeeSpecial, reason) {
+        var lines = [
+            ['nick', kickeeNick, kickeeSpecial],
+            ['text', ' was kicked and banned by '],
+            ['nick', modNick, modSpecial]
+        ];
+        if (reason) {
+            lines.push(['text', ' because: "' + reason + '"']);
+        }
+        chatPrint(['chatlog', 'fullchatlog'], lines, 'kick');
+    }
+
     function logBroadcastInChat(msg) {
         chatPrint(['chatlog', 'fullchatlog'], [
             ['text', '* BROADCAST: ' + msg]
@@ -1692,6 +1716,12 @@
                         catalogueCallback = null;
                     }
                 break;
+                case 'kick_notice':
+                    logKickNoticeInChat(msg.mod_nick, msg.mod_special, msg.kickee_nick, msg.kickee_special, msg.reason);
+                break;
+                case 'ban_notice':
+                    logBanNoticeInChat(msg.mod_nick, msg.mod_special, msg.kickee_nick, msg.kickee_special, msg.reason);
+                break;
                 case 'kick':
                     if (msg.reason === 'nick_in_use') {
                         alert('That nickname was already in use. Reload and choose a different one.');
@@ -1720,9 +1750,17 @@
                     } else if (msg.reason === 'dont_have_item') {
                         alert("You do not have the item you tried to use. This is probably a bug.");
                     } else if (msg.reason === 'kick') {
-                        alert('You were kicked!');
+                        if (msg.msg) {
+                            alert('You were kicked!\nReason: "' + msg.msg + '"');
+                        } else {
+                            alert('You were kicked!');
+                        }
                     } else if (msg.reason === 'ban') {
-                        alert('You were banned!');
+                        if (msg.msg) {
+                            alert('You were banned!\nReason: "' + msg.msg + '"');
+                        } else {
+                            alert('You were banned!');
+                        }
                     } else if (msg.reason === 'update') {
                         ignoreDisconnect = true;
                         window.setTimeout(function () {

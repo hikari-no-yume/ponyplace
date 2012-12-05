@@ -198,23 +198,25 @@ var modLogger = {
         return (new Date()).toISOString();
     },
 
-    logBan: function (mod, IP, aliases) {
+    logBan: function (mod, IP, aliases, reason) {
         this.log.push({
             type: 'ban',
             date: this.timestamp(),
             mod: mod,
             IP: IP,
-            aliases: aliases
+            aliases: aliases,
+            reason: reason
         });
         this.save();
     },
-    logKick: function (mod, IP, aliases) {
+    logKick: function (mod, IP, aliases, reason) {
         this.log.push({
             type: 'kick',
             date: this.timestamp(),
             mod: mod,
             IP: IP,
-            aliases: aliases
+            aliases: aliases,
+            reason: reason
         });
         this.save();
     },
@@ -454,6 +456,7 @@ function handleCommand(cmd, myNick, user) {
         sendMultiLine([
             'Seven mod commands available: 1) kick, 2) kickban, 3) broadcast, 4) aliases, 5) move, 6) bits, 7) modlog',
             '1. kick - Takes the nick of someone, they (& any aliases) will be kicked, e.g. /kick sillyfilly',
+            "kick and kickban can also take a second parameter for a reason message, e.g. /kick silly Don't spam the chat!",
             '2. kickban - Like /kick but also permabans by IP, e.g. /kickban stupidfilly',
             '3. broadcast - Sends a message to everyone on the server, e.g. /broadcast Hello all!',
             "4. aliases - Lists someone's aliases (people with same IP address), e.g. /aliases joebloggs",
@@ -464,7 +467,13 @@ function handleCommand(cmd, myNick, user) {
         ]);
     // kickbanning
     } else if (isMod && cmd.substr(0, 8) === 'kickban ') {
-        var kickee = cmd.substr(8);
+        var kickee, reason = null;
+        if (pos !== -1) {
+            kickee = cmd.substr(8, pos-8);
+            reason = cmd.substr(pos+1);
+        } else {
+            kickee = cmd.substr(5);
+        }
         if (!User.has(kickee)) {
             sendLine('There is no online user with nick: "' + kickee + '"');
             return;
@@ -481,7 +490,7 @@ function handleCommand(cmd, myNick, user) {
         User.forEach(function (iterUser) {
             if (iterUser.conn.remoteAddress === IP) {
                 // kick
-                iterUser.kick('ban');
+                iterUser.kick('ban', reason);
                 console.log('Kicked alias "' + iterUser.nick + '" of user with IP ' + IP);
                 sendLine('Kicked alias "' + iterUser.nick + '" of user with IP ' + IP);
                 aliases.push({
@@ -489,12 +498,34 @@ function handleCommand(cmd, myNick, user) {
                     room: iterUser.room,
                     state: iterUser.obj
                 });
+                // broadcast kickban message
+                if (iterUser.room !== null) {
+                    User.forEach(function (other) {
+                        if (other.room === iterUser.room) {
+                            other.send({
+                                type: 'kickban_notice',
+                                mod_nick: user.nick,
+                                mod_special: user.special,
+                                kickee_nick: iterUser.nick,
+                                kickee_special: iterUser.special,
+                                reason: reason
+                            })
+                        }
+                    });
+                }
             }
         });
-        modLogger.logBan(myNick, IP, aliases);
+        modLogger.logBan(myNick, IP, aliases, reason);
     // kicking
     } else if (isMod && cmd.substr(0, 5) === 'kick ') {
-        var kickee = cmd.substr(5);
+        var pos = cmd.indexOf(' ', 5);
+        var kickee, reason = null;
+        if (pos !== -1) {
+            kickee = cmd.substr(5, pos-5);
+            reason = cmd.substr(pos+1);
+        } else {
+            kickee = cmd.substr(5);
+        }
         if (!User.has(kickee)) {
             sendLine('There is no online user with nick: "' + kickee + '"');
             return;
@@ -505,7 +536,7 @@ function handleCommand(cmd, myNick, user) {
         User.forEach(function (iterUser) {
             if (iterUser.conn.remoteAddress === IP) {
                 // kick
-                iterUser.kick('kick');
+                iterUser.kick('kick', reason);
                 console.log('Kicked alias "' + iterUser.nick + '" of user with IP ' + IP);
                 sendLine('Kicked alias "' + iterUser.nick + '" of user with IP ' + IP);
                 aliases.push({
@@ -513,9 +544,24 @@ function handleCommand(cmd, myNick, user) {
                     room: iterUser.room,
                     state: iterUser.obj
                 });
+                // broadcast kick message
+                if (iterUser.room !== null) {
+                    User.forEach(function (other) {
+                        if (other.room === iterUser.room) {
+                            other.send({
+                                type: 'kick_notice',
+                                mod_nick: user.nick,
+                                mod_special: user.special,
+                                kickee_nick: iterUser.nick,
+                                kickee_special: iterUser.special,
+                                reason: reason
+                            })
+                        }
+                    });
+                }
             }
         });
-        modLogger.logKick(myNick, IP, aliases);
+        modLogger.logKick(myNick, IP, aliases, reason);
     // forced move
     } else if (isMod && cmd.substr(0, 5) === 'move ') {
         var pos = cmd.indexOf(' ', 5);

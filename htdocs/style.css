@@ -444,6 +444,9 @@ a {
 .broadcast {
     background-color: orange !important;
 }
+.kick {
+    color: red;
+}
 
 .pony {
     position: absolute;
