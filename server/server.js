@@ -94,6 +94,12 @@ var banManager = {
             this.save();
         }
     },
+    unbanIP: function (IP) {
+        if (this.isIPBanned(IP)) {
+            this.bannedIPs.splice(this.bannedIPs.indexOf(IP), 1);
+            this.save();
+        }
+    },
     isIPBanned: function (IP) {
         return (this.bannedIPs.indexOf(IP) !== -1);
     }
@@ -206,6 +212,15 @@ var modLogger = {
             IP: IP,
             aliases: aliases,
             reason: reason
+        });
+        this.save();
+    },
+    logUnban: function (mod, IP) {
+        this.log.push({
+            type: 'unban',
+            date: this.timestamp(),
+            mod: mod,
+            IP: IP
         });
         this.save();
     },
@@ -454,17 +469,28 @@ function handleCommand(cmd, myNick, user) {
     // mod help
     } else if (isMod && cmd.substr(0, 7) === 'modhelp') {
         sendMultiLine([
-            'Seven mod commands available: 1) kick, 2) kickban, 3) broadcast, 4) aliases, 5) move, 6) bits, 7) modlog',
+            'Eight mod commands available: 1) kick, 2) kickban, 3) unban, 4) broadcast, 5) aliases, 6) move, 7) bits, 8) modlog',
             '1. kick - Takes the nick of someone, they (& any aliases) will be kicked, e.g. /kick sillyfilly',
             "kick and kickban can also take a second parameter for a reason message, e.g. /kick silly Don't spam the chat!",
             '2. kickban - Like /kick but also permabans by IP, e.g. /kickban stupidfilly',
-            '3. broadcast - Sends a message to everyone on the server, e.g. /broadcast Hello all!',
-            "4. aliases - Lists someone's aliases (people with same IP address), e.g. /aliases joebloggs",
-            '5. move - Forcibly moves a user to a room, e.g. /move canterlot sillyfilly',
-            "6. bits - Adds to or removes from someone's bits balance, e.g. /bits 20 ajf, /bits -10 otherguy",
-            "7. modlog - Shows moderator activity log. Can optionally specify how many items you want to see (default 10), e.g. /modlog 15",
+            '3. unban - Unbans an IP, e.g. /unban 192.168.1.1',
+            '4. broadcast - Sends a message to everyone on the server, e.g. /broadcast Hello all!',
+            "5. aliases - Lists someone's aliases (people with same IP address), e.g. /aliases joebloggs",
+            '6. move - Forcibly moves a user to a room, e.g. /move canterlot sillyfilly',
+            "7. bits - Adds to or removes from someone's bits balance, e.g. /bits 20 ajf, /bits -10 otherguy",
+            "8. modlog - Shows moderator activity log. Can optionally specify how many items you want to see (default 10), e.g. /modlog 15",
             'See also: /help'
         ]);
+    // unbanning
+    } else if (isMod && cmd.substr(0, 6) === 'unban ') {
+        var IP = cmd.substr(6);
+        if (!banManager.isIPBanned(IP)) {
+            sendLine('The IP ' + IP + ' is not banned.');
+            return;
+        }
+        banManager.unbanIP(IP);
+        sendLine('Unbanned IP ' + IP);
+        modLogger.logUnban(myNick, IP);
     // kickbanning
     } else if (isMod && cmd.substr(0, 8) === 'kickban ') {
         var pos = cmd.indexOf(' ', 8);

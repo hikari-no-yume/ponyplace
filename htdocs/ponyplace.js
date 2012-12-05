@@ -1669,6 +1669,7 @@
                         var pre = document.createElement('pre');
                         appendText(li, {
                             ban: 'Ban',
+                            unban: 'Unban',
                             kick: 'Kick',
                             move: 'Move room',
                             broadcast: 'Broadcast message',
