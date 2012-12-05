@@ -69,7 +69,7 @@
 
             var nickName = document.createElement('span');
             nickName.className = 'nickname' + (isOwnNick ? ' own' : '');
-            nickName.appendChild(document.createTextNode(nick));
+            appendText(nickName, nick);
             if (special) {
                 nickName.className += ' ' + special;
             }
@@ -142,7 +142,7 @@
             }
 
             user.elem.chat.innerHTML = '';
-            user.elem.chat.appendChild(document.createTextNode(obj.chat));
+            appendText(user.elem.chat, obj.chat);
             if (obj.chat !== user.obj.chat && obj.chat !== '') {
                 logInChat(nick, obj.chat, user.special);
             }
@@ -180,23 +180,23 @@
             this.userCounter.innerHTML = '';
             if (myRoom !== null) {
                 if (myRoom.type === 'real') {
-                    this.userCounter.appendChild(document.createTextNode('You are in ' + myRoom.name + ' ("' + myRoom.name_full + '")'));
+                    appendText(this.userCounter, 'You are in ' + myRoom.name + ' ("' + myRoom.name_full + '")');
                 } else if (myRoom.type === 'ephemeral') {
-                    this.userCounter.appendChild(document.createTextNode('You are in the ephemeral room "' + myRoom.name + '"'));
+                    appendText(this.userCounter, 'You are in the ephemeral room "' + myRoom.name + '"');
                 } else if (myRoom.type === 'house') {
                     if (myRoom.user_nick === myNick) {
-                        this.userCounter.appendChild(document.createTextNode('You are in your house'));
+                        appendText(this.userCounter, 'You are in your house');
                     } else {
-                        this.userCounter.appendChild(document.createTextNode('You are in the house of user with nick: "' + myRoom.user_nick + '"'));
+                        appendText(this.userCounter, 'You are in the house of user with nick: "' + myRoom.user_nick + '"');
                     }
                 }
                 this.userCounter.appendChild(document.createElement('br'));
-                this.userCounter.appendChild(document.createTextNode(this.userCount + ' users in room'));
+                appendText(this.userCounter, this.userCount + ' users in room');
             } else {
-                this.userCounter.appendChild(document.createTextNode('You are not in a room'));
+                appendText(this.userCounter, 'You are not in a room');
             }
             this.userCounter.appendChild(document.createElement('br'));
-            this.userCounter.appendChild(document.createTextNode(globalUserCount + ' users online total'));
+            appendText(this.userCounter, globalUserCount + ' users online total');
         }
     };
 
@@ -221,7 +221,7 @@
         td.className = 'timepart';
         span = document.createElement('span');
         span.className = 'innertext';
-        span.appendChild(document.createTextNode(timepart));
+        appendText(span, timepart);
         td.appendChild(span);
         parent.appendChild(td);
 
@@ -229,7 +229,7 @@
         td.className = 'originpart';
         span = document.createElement('span');
         span.className = 'innertext';
-        span.appendChild(document.createTextNode(originpart));
+        appendText(span, originpart);
         td.appendChild(span);
         parent.appendChild(td);
 
@@ -247,23 +247,27 @@
             anchor.className = 'chat-link';
             anchor.target = '_blank';
             if (pos2 === -1) {
-                span.appendChild(document.createTextNode(line.substr(0, pos)));
+                appendText(span, line.substr(0, pos));
                 anchor.href = line.substr(pos);
-                anchor.appendChild(document.createTextNode(line.substr(pos)));
+                appendText(anchor, line.substr(pos));
                 line = '';
             } else {
-                span.appendChild(document.createTextNode(line.substr(0, pos)));
+                appendText(span, line.substr(0, pos));
                 anchor.href = line.substr(pos, pos2 - pos);
-                anchor.appendChild(document.createTextNode(line.substr(pos, pos2 - pos)));
+                appendText(anchor, line.substr(pos, pos2 - pos));
                 line = line.substr(pos2);
             }
             span.appendChild(anchor);
         }
-        span.appendChild(document.createTextNode(line));
+        appendText(span, line);
     }
 
     function digitPad(n) {
         return n = (n < 10) ? ("0" + n) : n;
+    }
+
+    function appendText(parent, text) {
+        parent.appendChild(document.createTextNode(text));
     }
 
     function chatPrint(originpart, line, type, showInShortLog) {
@@ -356,7 +360,7 @@
         // special, "blank" option
         option = document.createElement('option');
         option.value = '[no choice]';
-        option.appendChild(document.createTextNode('Choose a room...'));
+        appendText(option, 'Choose a room...');
         roomlist.appendChild(option);
 
         for (var i = 0; i < rooms.length; i++) {
@@ -364,9 +368,9 @@
             option = document.createElement('option');
             option.value = data.name;
             if (data.type !== 'ephemeral') {
-                option.appendChild(document.createTextNode('⇨ ' + data.name_full + ' (' + data.user_count + ' ' + data.user_noun + ')'));
+                appendText(option, '⇨ ' + data.name_full + ' (' + data.user_count + ' ' + data.user_noun + ')');
             } else {
-                option.appendChild(document.createTextNode('⇨ "' + data.name + '" (ephemeral; ' + data.user_count + ' users)'));
+                appendText(option, '⇨ "' + data.name + '" (ephemeral; ' + data.user_count + ' users)');
             }
             roomlist.appendChild(option);
         }
@@ -374,7 +378,7 @@
         // special, "create new" option
         option = document.createElement('option');
         option.value = '[create new]';
-        option.appendChild(document.createTextNode('[create new ephemeral room]'));
+        appendText(option, '[create new ephemeral room]');
         roomlist.appendChild(option);
 
         // show list, refresh buttons
@@ -411,7 +415,7 @@
         if (!haveAccount) {
             var p = document.createElement('p');
             p.id = 'no-account-note';
-            p.appendChild(document.createTextNode("You need to create an account (top-right, Account Settings) to get avatars or items. You can get free bits in the dungeon, and you'll get a little each day if you keep coming back. :)"));
+            appendText(p, "You need to create an account (top-right, Account Settings) to get avatars or items. You can get free bits in the dungeon, and you'll get a little each day if you keep coming back. :)");
             root.appendChild(p);
             return;
         }
@@ -443,12 +447,12 @@
                 catalogueitem.appendChild(img);
 
                 var h2 = document.createElement('h2');
-                h2.appendChild(document.createTextNode(item.name_full));
+                appendText(h2, item.name_full);
                 catalogueitem.appendChild(h2);
 
                 if (alreadyHave) {
                     var p = document.createElement('p');
-                    p.appendChild(document.createTextNode('You already have: ' + alreadyHave + '/' + total + ' items of this product'));
+                    appendText(p, 'You already have: ' + alreadyHave + '/' + total + ' items of this product');
                     catalogueitem.appendChild(p);
                 }
 
@@ -640,7 +644,7 @@
 
                 var msg = document.createElement('p');
                 msg.className = 'message';
-                msg.appendChild(document.createTextNode('' + digitPad(date.getHours()) + ':' + digitPad(date.getMinutes()) + ' - '));
+                appendText(msg, '' + digitPad(date.getHours()) + ':' + digitPad(date.getMinutes()) + ' - ');
                 var nickname = document.createElement('span');
                 nickname.className = 'nickname' + (from === myNick ? ' own' : '');
                 if (special !== false) {
@@ -652,9 +656,9 @@
                         nick: nick
                     }));
                 };
-                nickname.appendChild(document.createTextNode(from));
+                appendText(nickname, from);
                 msg.appendChild(nickname);
-                msg.appendChild(document.createTextNode(': ' + body));
+                appendText(msg, ': ' + body);
 
                 messages.appendChild(msg);
 
@@ -664,7 +668,7 @@
             var logFail = function (from) {
                 var msg = document.createElement('p');
                 msg.className = 'message message-fail';
-                msg.appendChild(document.createTextNode('(warning: sending the previous message failed - user with nick: "' + from + '" is not online)'));
+                appendText(msg, '(warning: sending the previous message failed - user with nick: "' + from + '" is not online)');
                 messages.appendChild(msg);
                 messages.scrollTop = messages.scrollHeight;
             };
@@ -706,7 +710,7 @@
 
             var replybtn = document.createElement('button');
             replybtn.className = 'pm-log-replybtn';
-            replybtn.appendChild(document.createTextNode('Send'));
+            appendText(replybtn, 'Send');
             replybtn.onclick = function () {
                 doSend();
             };
@@ -746,16 +750,16 @@
         });
 
         var h3 = document.createElement('h3');
-        h3.appendChild(document.createTextNode(profile.nick));
+        appendText(h3, profile.nick);
         popup.content.appendChild(h3);
 
         if (profile.online) {
-            popup.content.appendChild(document.createTextNode(profile.nick + ' is online'));
+            appendText(popup.content, profile.nick + ' is online');
         } else {
             if (profile.has_account) {
-                popup.content.appendChild(document.createTextNode(profile.nick + " isn't online"));
+                appendText(popup.content, profile.nick + " isn't online");
             } else {
-                popup.content.appendChild(document.createTextNode('There is no online user with the nick: "' + profile.nick + '"'));
+                appendText(popup.content, 'There is no online user with the nick: "' + profile.nick + '"');
             }
         }
 
@@ -764,7 +768,7 @@
         if (haveAccount) {
             if (friends.indexOf(profile.nick) !== -1) {
                 button = document.createElement('button');
-                button.appendChild(document.createTextNode('Remove friend'));
+                appendText(button, 'Remove friend');
                 button.onclick = function (e) {
                     socket.send(JSON.stringify({
                         type: 'friend_remove',
@@ -775,7 +779,7 @@
                 popup.content.appendChild(button);
             } else {
                 button = document.createElement('button');
-                button.appendChild(document.createTextNode('Add friend'));
+                appendText(button, 'Add friend');
                 button.onclick = function (e) {
                     socket.send(JSON.stringify({
                         type: 'friend_add',
@@ -793,7 +797,7 @@
             icon.src = '/media/icons/house.png';
             icon.className = 'house-link';
             button.appendChild(icon);
-            button.appendChild(document.createTextNode('Visit house'));
+            appendText(button, 'Visit house');
             button.onclick = function (e) {
                 socket.send(JSON.stringify({
                     type: 'room_change',
@@ -806,7 +810,7 @@
 
         if (profile.online) {
             button = document.createElement('button');
-            button.appendChild(document.createTextNode('Send private message'));
+            appendText(button, 'Send private message');
             button.onclick = function (e) {
                 showPMLog(profile.nick);
                 popup.hide();
@@ -814,7 +818,7 @@
             popup.content.appendChild(button);
 
             button = document.createElement('button');
-            button.appendChild(document.createTextNode('Go to current room'));
+            appendText(button, 'Go to current room');
             button.onclick = function (e) {
                 socket.send(JSON.stringify({
                     type: 'room_change',
@@ -831,7 +835,7 @@
                 popup.content.appendChild(document.createElement('hr'));
 
                 button = document.createElement('button');
-                button.appendChild(document.createTextNode('Kick'));
+                appendText(button, 'Kick');
                 button.onclick = function (e) {
                     socket.send(JSON.stringify({
                         type: 'console_command',
@@ -842,7 +846,7 @@
                 popup.content.appendChild(button);
 
                 button = document.createElement('button');
-                button.appendChild(document.createTextNode('Kickban'));
+                appendText(button, 'Kickban');
                 button.onclick = function (e) {
                     socket.send(JSON.stringify({
                         type: 'console_command',
@@ -853,7 +857,7 @@
                 popup.content.appendChild(button);
 
                 button = document.createElement('button');
-                button.appendChild(document.createTextNode('List Aliases'));
+                appendText(button, 'List Aliases');
                 button.onclick = function (e) {
                     socket.send(JSON.stringify({
                         type: 'console_command',
@@ -916,7 +920,7 @@
         popup.container.appendChild(popup.titlebar);
 
         popup.title = document.createElement('h2');
-        popup.title.appendChild(document.createTextNode(title));
+        appendText(popup.title, title);
         popup.titlebar.appendChild(popup.title);
 
         if (moveable) {
@@ -952,7 +956,7 @@
             popup.hidebutton.onclick = function () {
                 popup.hide();
             };
-            popup.hidebutton.appendChild(document.createTextNode('x'));
+            appendText(popup.hidebutton, 'x');
             popup.titlebar.appendChild(popup.hidebutton);
         }
 
@@ -973,7 +977,7 @@
                 var li = document.createElement('li');
                 var a = document.createElement('a');
                 a.className = 'friend';
-                a.appendChild(document.createTextNode(friends[i]));
+                appendText(a, friends[i]);
                 (function (friend) {
                     a.onclick = function () {
                         socket.send(JSON.stringify({
@@ -987,7 +991,7 @@
             }
             friendslist.content.appendChild(ul);
         } else {
-            friendslist.content.appendChild(document.createTextNode('You have no friends.'));
+            appendText(friendslist.content, 'You have no friends.');
         }
     }
 
@@ -1066,7 +1070,7 @@
                 }
             }
         } else {
-            inventorylist.content.appendChild(document.createTextNode('You have no inventory items.'));
+            appendText(inventorylist.content, 'You have no inventory items.');
         }
     }
 
@@ -1257,7 +1261,7 @@
 
         friendslistbutton = document.createElement('button');
         friendslistbutton.id = 'friends-list-button';
-        friendslistbutton.appendChild(document.createTextNode('Friends'));
+        appendText(friendslistbutton, 'Friends');
         friendslistbutton.onclick = function () {
             friendslist.show();
         };
@@ -1277,7 +1281,7 @@
         bitcount = document.createElement('div');
         bitcount.id = 'bit-count';
         bitcount.title = 'bits';
-        bitcount.appendChild(document.createTextNode('???'));
+        appendText(bitcount, '???');
         bitcount.style.display = 'none';
         overlay.appendChild(bitcount);
 
@@ -1310,7 +1314,7 @@
         roomedit = document.createElement('div');
         roomedit.id = 'room-edit';
         roomedit.style.display = 'none';
-        roomedit.appendChild(document.createTextNode('Buy house backgrounds from the Carousel Boutique. Change your house background by clicking one in your inventory.'));
+        appendText(roomedit, 'Buy house backgrounds from the Carousel Boutique. Change your house background by clicking one in your inventory.');
         roomeditvisible = false;
         overlay.appendChild(roomedit);
 
@@ -1353,7 +1357,7 @@
         changepassbutton.href = 'https://login.persona.org';
         changepassbutton.className = 'button';
         changepassbutton.target = '_blank';
-        changepassbutton.appendChild(document.createTextNode('Change password etc.'));
+        appendText(changepassbutton, 'Change password etc.');
         changepassbutton.onclick = function () {
             accountsettings.hide();
             return true;
@@ -1422,7 +1426,7 @@
         };
         loginbox.content.appendChild(personasubmit);
 
-        loginbox.content.appendChild(document.createTextNode("Otherwise, you can log in anonymously. Choose a nickname (3 to 18 characters; digits, letters and underscores (_) only)."));
+        appendText(loginbox.content, "Otherwise, you can log in anonymously. Choose a nickname (3 to 18 characters; digits, letters and underscores (_) only).");
 
         nickbox = document.createElement('input');
         nickbox.type = 'text';
@@ -1447,7 +1451,7 @@
         var a = document.createElement('a');
         a.href = '/credits.html';
         a.target = '_blank';
-        a.appendChild(document.createTextNode("Disclaimer and Credits"));
+        appendText(a, "Disclaimer and Credits");
         loginbox.content.appendChild(a);
     }
 
@@ -1555,7 +1559,7 @@
                     mySpecialStatus = msg.special;
                     bitcount.innerHTML = '';
                     if (msg.bits !== null) {
-                        bitcount.appendChild(document.createTextNode(msg.bits));
+                        appendText(bitcount, msg.bits);
                     }
                     avatarInventory = msg.avatar_inventory;
                     renderChooser();
@@ -1619,17 +1623,17 @@
                         var item = msg.items[i];
                         var li = document.createElement('li');
                         var pre = document.createElement('pre');
-                        li.appendChild(document.createTextNode({
+                        appendText(li, {
                             ban: 'Ban',
                             kick: 'Kick',
                             move: 'Move room',
                             broadcast: 'Broadcast message',
                             bits_change: 'Bits balance change'
-                        }[item.type] + ' by ' + item.mod + ' at ' + (new Date(item.date)).toLocaleString()));
+                        }[item.type] + ' by ' + item.mod + ' at ' + (new Date(item.date)).toLocaleString());
                         delete item.type;
                         delete item.date;
                         delete item.mod;
-                        pre.appendChild(document.createTextNode(JSON.stringify(item, null, 2)));
+                        appendText(pre, JSON.stringify(item, null, 2));
                         li.appendChild(pre);
                         ul.appendChild(li);
                     }
