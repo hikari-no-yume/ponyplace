@@ -345,7 +345,7 @@
         chatPrint(['chatlog', 'fullchatlog'], lines, 'kick');
     }
 
-    function logKickNoticeInChat(modNick, modSpecial, kickeeNick, kickeeSpecial, reason) {
+    function logBanNoticeInChat(modNick, modSpecial, kickeeNick, kickeeSpecial, reason) {
         var lines = [
             ['nick', kickeeNick, kickeeSpecial],
             ['text', ' was kicked and banned by '],
