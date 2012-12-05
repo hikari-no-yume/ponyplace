@@ -473,7 +473,7 @@ function handleCommand(cmd, myNick, user) {
             kickee = cmd.substr(8, pos-8);
             reason = cmd.substr(pos+1);
         } else {
-            kickee = cmd.substr(5);
+            kickee = cmd.substr(8);
         }
         if (!User.has(kickee)) {
             sendLine('There is no online user with nick: "' + kickee + '"');

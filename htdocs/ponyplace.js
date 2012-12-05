@@ -345,7 +345,7 @@
         chatPrint(['chatlog', 'fullchatlog'], lines, 'kick');
     }
 
-    function logBanNoticeInChat(modNick, modSpecial, kickeeNick, kickeeSpecial, reason) {
+    function logKickBanNoticeInChat(modNick, modSpecial, kickeeNick, kickeeSpecial, reason) {
         var lines = [
             ['nick', kickeeNick, kickeeSpecial],
             ['text', ' was kicked and banned by '],
@@ -1719,8 +1719,8 @@
                 case 'kick_notice':
                     logKickNoticeInChat(msg.mod_nick, msg.mod_special, msg.kickee_nick, msg.kickee_special, msg.reason);
                 break;
-                case 'ban_notice':
-                    logBanNoticeInChat(msg.mod_nick, msg.mod_special, msg.kickee_nick, msg.kickee_special, msg.reason);
+                case 'kickban_notice':
+                    logKickBanNoticeInChat(msg.mod_nick, msg.mod_special, msg.kickee_nick, msg.kickee_special, msg.reason);
                 break;
                 case 'kick':
                     if (msg.reason === 'nick_in_use') {
