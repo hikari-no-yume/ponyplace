@@ -467,6 +467,7 @@ function handleCommand(cmd, myNick, user) {
         ]);
     // kickbanning
     } else if (isMod && cmd.substr(0, 8) === 'kickban ') {
+        var pos = cmd.indexOf(' ', 8);
         var kickee, reason = null;
         if (pos !== -1) {
             kickee = cmd.substr(8, pos-8);
