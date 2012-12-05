@@ -157,7 +157,8 @@ var roomManager = {
                     name: this.rooms[i].name,
                     name_full: this.rooms[i].name_full,
                     user_count: this.rooms[i].user_count,
-                    user_noun: this.rooms[i].user_noun
+                    user_noun: this.rooms[i].user_noun,
+                    thumbnail: this.rooms[i].thumbnail
                 });
             }
         }
@@ -166,7 +167,8 @@ var roomManager = {
                 list.push({
                     type: 'ephemeral',
                     name: name,
-                    user_count: this.ephemeralRooms[name]
+                    user_count: this.ephemeralRooms[name],
+                    thumbnail: '/media/rooms/cave-thumb.png'
                 });
             }
         }

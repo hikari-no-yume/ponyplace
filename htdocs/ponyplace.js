@@ -30,7 +30,7 @@
         chooser, chooserbutton,
         inventorylist, inventorylistbutton,
         friendslist, friendslistbutton,
-        roomlist, refreshbutton, homebutton,
+        roomlistbutton, roomlist, refreshbutton, homebutton,
         roomedit, roomeditbutton, roomeditreset, roomeditvisible,
         background, roomwidgets,
         chatbox, chatboxholder, chatbutton, chatlog, fullchatlog, fullchatlogcontent, fullchatlogbutton;
@@ -418,36 +418,60 @@
     }
 
     function updateRoomList(rooms) {
-        var option;
-        roomlist.innerHTML = '';
+        var preview, img, title;
+        roomlist.content.innerHTML = '';
 
-        // special, "blank" option
-        option = document.createElement('option');
-        option.value = '[no choice]';
-        appendText(option, 'Choose a room...');
-        roomlist.appendChild(option);
+        // create new button
+        var newbtn = document.createElement('button');
+        appendText(newbtn, 'Create new ephemeral room');
+        newbtn.onclick = function () {
+            var roomName = prompt('Choose a room name (cannot contain spaces)', '');
+            if (roomName.indexOf(' ') === -1) {
+                socket.send(JSON.stringify({
+                    type: 'room_change',
+                    name: roomName
+                }));
+                roomlist.hide();
+            } else {
+                alert('Room names cannot contain spaces.');
+            }
+        };
+        roomlist.content.appendChild(newbtn);
 
         for (var i = 0; i < rooms.length; i++) {
             var data = rooms[i];
-            option = document.createElement('option');
-            option.value = data.name;
-            if (data.type !== 'ephemeral') {
-                appendText(option, '⇨ ' + data.name_full + ' (' + data.user_count + ' ' + data.user_noun + ')');
-            } else {
-                appendText(option, '⇨ "' + data.name + '" (ephemeral; ' + data.user_count + ' users)');
-            }
-            roomlist.appendChild(option);
-        }
+            var preview = document.createElement('div');
+            preview.className = 'room-preview';
+            
+            var img = document.createElement('img');
+            img.src = data.thumbnail;
+            preview.appendChild(img);
 
-        // special, "create new" option
-        option = document.createElement('option');
-        option.value = '[create new]';
-        appendText(option, '[create new ephemeral room]');
-        roomlist.appendChild(option);
+            var title = document.createElement('div');
+            title.className = 'room-title';
+            if (data.type !== 'ephemeral') {
+                appendText(title, data.name_full + ' (' + data.user_count + ' ' + data.user_noun + ')');
+            } else {
+                appendText(title, '"' + data.name + '" (ephemeral; ' + data.user_count + ' users)');
+            }
+            preview.appendChild(title);
+            
+            (function (name) {
+                preview.onclick = function () {
+                    socket.send(JSON.stringify({
+                        type: 'room_change',
+                        name: name
+                    }));
+                    roomlist.hide();
+                };
+            }(data.name));
+            
+            roomlist.content.appendChild(preview);
+        }
 
         // show list, refresh buttons
         refreshbutton.disabled = false;
-        roomlist.disabled = false;
+        roomlistbutton.disabled = false;
     }
 
     function getCatalogue (name, callback) {
@@ -1251,30 +1275,16 @@
     }
 
     function initGUI_topbar() {
-        roomlist = document.createElement('select');
-        roomlist.id = 'room-list';
-        roomlist.onchange = function () {
-            if (roomlist.value === '[create new]') {
-                var roomName = prompt('Choose a room name (cannot contain spaces)', '');
-                if (roomName.indexOf(' ') === -1) {
-                    socket.send(JSON.stringify({
-                        type: 'room_change',
-                        name: roomName
-                    }));
-                } else {
-                    alert('Room names cannot contain spaces.');
-                }
-            } else if (roomlist.value !== '[no choice]') {
-                socket.send(JSON.stringify({
-                    type: 'room_change',
-                    name: roomlist.value
-                }));
-            }
-            roomlist.value = '[no choice]';
+        roomlist = makePopup('#room-list', 'Rooms', true, 200, 200, true);
+        roomlist.hide();
+        roomlistbutton = document.createElement('button');
+        roomlistbutton.id = 'room-list-button';
+        appendText(roomlistbutton, 'Choose room');
+        roomlistbutton.onclick = function () {
+            roomlist.show();
         };
-        roomlist.value = '[no choice]';
-        roomlist.disabled = true;
-        overlay.appendChild(roomlist);
+        roomlistbutton.disabled = true;
+        overlay.appendChild(roomlistbutton);
 
         refreshbutton = document.createElement('input');
         refreshbutton.type = 'submit';
