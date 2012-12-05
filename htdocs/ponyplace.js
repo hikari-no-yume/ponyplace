@@ -312,7 +312,11 @@
     }
 
     function highlightCheck(msg) {
-        return msg.indexOf(myNick) !== -1 ? 'highlight' : '';
+        if (msg.indexOf(myNick) !== -1) {
+            tabNotify();
+            return 'highlight';
+        }
+        return '';
     }
 
     function logMineInChat(nick, msg) {
@@ -686,17 +690,17 @@
             messages.scrollTop = messages.scrollHeight;
         }
         function doSend () {
-                if (replybox.value) {
-                    socket.send(JSON.stringify({
-                        type: 'priv_msg',
-                        nick: nick,
-                        msg: replybox.value
-                    }));
+            if (replybox.value) {
+                socket.send(JSON.stringify({
+                    type: 'priv_msg',
+                    nick: nick,
+                    msg: replybox.value
+                }));
 
-                    log(myNick, replybox.value, mySpecialStatus);
+                log(myNick, replybox.value, mySpecialStatus);
 
-                    replybox.value = '';
-                }
+                replybox.value = '';
+            }
         }
 
         if (openPMLogs.hasOwnProperty(nick)) {
@@ -747,6 +751,7 @@
     function logPrivmsgInChat(nick, msg, special) {
         showPMLog(nick);
         openPMLogs[nick].log(nick, msg, special);
+        tabNotify();
     }
 
     function logPrivmsgFailInChat(nick) {
