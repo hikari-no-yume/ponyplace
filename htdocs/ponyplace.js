@@ -103,7 +103,7 @@
             this.update(nick, obj);
             this.userCount++;
             this.updateCounter();
-            logJoinInChat(nick);
+            logJoinInChat(nick, special);
         },
         update: function (nick, obj) {
             this.hasCheck(nick);
@@ -155,7 +155,7 @@
             var user = this.users[nick];
             this.userCount--;
             this.updateCounter();
-            logLeaveInChat(nick);
+            logLeaveInChat(nick, user.special);
             stage.removeChild(user.elem.root);
             delete this.users[nick];
         },
@@ -214,54 +214,6 @@
         pushState();
     }
 
-    function chatPopulateLine(timepart, originpart, line, parent) {
-        var span, td;
-
-        td = document.createElement('td');
-        td.className = 'timepart';
-        span = document.createElement('span');
-        span.className = 'innertext';
-        appendText(span, timepart);
-        td.appendChild(span);
-        parent.appendChild(td);
-
-        td = document.createElement('td');
-        td.className = 'originpart';
-        span = document.createElement('span');
-        span.className = 'innertext';
-        appendText(span, originpart);
-        td.appendChild(span);
-        parent.appendChild(td);
-
-        td = document.createElement('td');
-        td.className = 'msgpart';
-        span = document.createElement('span');
-        span.className = 'innertext';
-        td.appendChild(span);
-        parent.appendChild(td);
-
-        var pos;
-        while (((pos = line.indexOf('http://')) !== -1) || ((pos = line.indexOf('https://')) !== -1)) {
-            var pos2 = line.indexOf(' ', pos);
-            var anchor = document.createElement('a');
-            anchor.className = 'chat-link';
-            anchor.target = '_blank';
-            if (pos2 === -1) {
-                appendText(span, line.substr(0, pos));
-                anchor.href = line.substr(pos);
-                appendText(anchor, line.substr(pos));
-                line = '';
-            } else {
-                appendText(span, line.substr(0, pos));
-                anchor.href = line.substr(pos, pos2 - pos);
-                appendText(anchor, line.substr(pos, pos2 - pos));
-                line = line.substr(pos2);
-            }
-            span.appendChild(anchor);
-        }
-        appendText(span, line);
-    }
-
     function digitPad(n) {
         return n = (n < 10) ? ("0" + n) : n;
     }
@@ -270,86 +222,170 @@
         parent.appendChild(document.createTextNode(text));
     }
 
-    function chatPrint(originpart, line, type, showInShortLog) {
+    function appendTimestamp(parent) {
         var date = new Date();
-        var timepart = '[' + digitPad(date.getHours()) + ':' + digitPad(date.getMinutes()) + ']';
+        appendText(parent, '[' + digitPad(date.getHours()) + ':' + digitPad(date.getMinutes()) + '] ');
+    }
 
-        var tr;
-        if (showInShortLog) {
-            tr = document.createElement('tr');
-            tr.className = 'chatline';
-            if (type) {
-                tr.className += ' ' + type;
-            }
-            chatPopulateLine(timepart, originpart, line, tr);
-            chatlog.appendChild(tr);
-            while (chatlog.children.length > 12) {
-                chatlog.removeChild(chatlog.firstChild);
-            }
+    function appendNickname(parent, nick, special) {
+        var nickname = document.createElement('span');
+        nickname.className = 'nickname' + (nick === myNick ? ' own' : '');
+        if (special !== false) {
+            nickname.className += ' ' + special;
         }
+        nickname.onclick = function () {
+            socket.send(JSON.stringify({
+                type: 'profile_get',
+                nick: nick
+            }));
+        };
+        appendText(nickname, nick);
+        parent.appendChild(nickname);
+    }
 
-        tr = document.createElement('tr');
-        if (type) {
-            tr.className = type;
+    function appendTextAutoLink(parent, text) {
+        var pos;
+        while (((pos = text.indexOf('http://')) !== -1) || ((pos = text.indexOf('https://')) !== -1)) {
+            var pos2 = text.indexOf(' ', pos);
+            var anchor = document.createElement('a');
+            anchor.className = 'chat-link';
+            anchor.target = '_blank';
+            if (pos2 === -1) {
+                appendText(span, text.substr(0, pos));
+                anchor.href = text.substr(pos);
+                appendText(anchor, text.substr(pos));
+
+                text = '';
+            } else {
+                appendText(span, text.substr(0, pos));
+                anchor.href = text.substr(pos, pos2 - pos);
+                appendText(anchor, text.substr(pos, pos2 - pos));
+                text = text.substr(pos2);
+            }
+            parent.appendChild(anchor);
         }
-        chatPopulateLine(timepart, originpart, line, tr);
-        fullchatlogcontent.appendChild(tr);
+        appendText(parent, text);
+    }
 
+    function tabNotify() {
         if (!pageFocussed && (type === 'highlight' || type === 'privmsg')) {
             unseenHighlights++;
             document.title = '(' + unseenHighlights + ') ponyplace';
         }
     }
 
+    function chatPrint(targets, bits, className) {
+        for (var i = 0; i < targets.length; i++) {
+            var target = targets[i];
+
+            var span = document.createElement('span');
+            span.className = 'chat-line';
+
+            if (className) {
+                span.className += ' ' + className;
+            }
+
+            appendTimestamp(span);
+            for (var j = 0; j < bits.length; j++) {
+                var bit = bits[j];
+
+                if (bit[0] === 'nick') {
+                    appendNickname(span, bit[1], bit[2]);
+                } else if (bit[0] === 'text') {
+                    appendTextAutoLink(span, bit[1]);
+                }
+            }
+
+            span.appendChild(document.createElement('br'));
+
+            if (target === 'chatlog') {
+                chatlog.appendChild(span);
+                while (chatlog.children.length > 12) {
+                    chatlog.removeChild(chatlog.firstChild);
+                }
+            } else if (target === 'fullchatlog') {
+                fullchatlog.content.appendChild(span);
+            } else {
+                target.appendChild(span);
+            }
+        }
+    }
+
     function highlightCheck(msg) {
-        return (msg.indexOf(myNick) !== -1) ? 'highlight' : false;
+        return msg.indexOf(myNick) !== -1 ? 'highlight' : '';
     }
 
     function logMineInChat(nick, msg) {
-        var className = highlightCheck(msg) || '';
-        className += ' mine ' + (mySpecialStatus || '');
-        chatPrint('<' + nick + '> ', msg, className, true);
+        chatPrint(['chatlog', 'fullchatlog'], [
+            ['nick', nick, mySpecialStatus],
+            ['text', ': ' + msg]
+        ], highlightCheck(msg));
     }
 
     function logInChat(nick, msg, special) {
-        var className = highlightCheck(msg) || '';
-        className += ' ' + (special || '');
-        chatPrint('<' + nick + '> ', msg, className, true);
+        chatPrint(['chatlog', 'fullchatlog'], [
+            ['nick', nick, special],
+            ['text', ': ' + msg]
+        ], highlightCheck(msg));
     }
 
     function logBroadcastInChat(msg) {
-        chatPrint('BROADCAST', msg, 'broadcast', true);
+        chatPrint(['chatlog', 'fullchatlog'], [
+            ['text', '* BROADCAST: ' + msg]
+        ], 'broadcast');
     }
 
     function logSentConsoleCommandInChat(msg) {
-        chatPrint('CONSOLE <-', msg, 'console', true);
+        chatPrint(['chatlog', 'fullchatlog'], [
+            ['text', '* CONSOLE <- /' + msg]
+        ], 'console');
     }
 
     function logConsoleMessageInChat(msg) {
-        chatPrint('CONSOLE ->', msg, 'console', true);
+        chatPrint(['chatlog', 'fullchatlog'], [
+            ['text', '* CONSOLE -> ' + msg]
+        ], 'console');
     }
 
-    function logJoinInChat(nick) {
-        chatPrint('*', nick + ' appeared', 'info', false);
+    function logJoinInChat(nick, special) {
+        chatPrint(['fullchatlog'], [
+            ['nick', nick, special],
+            ['text', ' joined']
+        ]);
     }
 
-    function logLeaveInChat(nick) {
-        chatPrint('*', nick + ' left', 'info', false);
+    function logLeaveInChat(nick, special) {
+        chatPrint(['fullchatlog'], [
+            ['nick', nick, special],
+            ['text', ' left']
+        ]);
     }
 
     function logRoomJoinInChat(name, name_full) {
-        chatPrint('*', 'You joined the room ' + name + ' ("' + name_full + '")', 'info', true);
+        chatPrint(['chatlog', 'fullchatlog'], [
+            ['nick', myNick, mySpecialStatus],
+            ['text', ' joined the room ' + name + ' ("' + name_full + '")']
+        ]);
     }
 
     function logEphemeralRoomJoinInChat(name) {
-        chatPrint('*', 'You joined the ephemeral room "' + name + '"', 'info', true);
+        chatPrint(['chatlog', 'fullchatlog'], [
+            ['nick', myNick, special],
+            ['text', ' joined the ephemeral room "' + name + '"']
+        ]);
     }
 
     function logHouseRoomJoinInChat(nick) {
         if (nick !== myNick) {
-            chatPrint('*', 'You entered the house of user with nick: "' + nick + '"', 'info', true);
+            chatPrint(['chatlog', 'fullchatlog'], [
+                ['nick', myNick, special],
+                ['text', ' entered the house of user with nick: "' + nick + '"']
+            ]);
         } else {
-            chatPrint('*', 'You entered your house', 'info', true);
+            chatPrint(['chatlog', 'fullchatlog'], [
+                ['nick', myNick, special],
+                ['text', ' entered your house']
+            ]);
         }
     }
 
@@ -636,44 +672,20 @@
     }
 
     function showPMLog(nick) {
-        if (openPMLogs.hasOwnProperty(nick)) {
-            openPMLogs[nick].popup.show();
-        } else {
-            var log = function (from, body, special) {
-                var date = new Date();
-
-                var msg = document.createElement('p');
-                msg.className = 'message';
-                appendText(msg, '' + digitPad(date.getHours()) + ':' + digitPad(date.getMinutes()) + ' - ');
-                var nickname = document.createElement('span');
-                nickname.className = 'nickname' + (from === myNick ? ' own' : '');
-                if (special !== false) {
-                    nickname.className += ' ' + special;
-                }
-                nickname.onclick = function () {
-                    socket.send(JSON.stringify({
-                        type: 'profile_get',
-                        nick: nick
-                    }));
-                };
-                appendText(nickname, from);
-                msg.appendChild(nickname);
-                appendText(msg, ': ' + body);
-
-                messages.appendChild(msg);
-
-                messages.scrollTop = messages.scrollHeight;
-            };
-
-            var logFail = function (from) {
-                var msg = document.createElement('p');
-                msg.className = 'message message-fail';
-                appendText(msg, '(warning: sending the previous message failed - user with nick: "' + from + '" is not online)');
-                messages.appendChild(msg);
-                messages.scrollTop = messages.scrollHeight;
-            };
-
-            var doSend = function () {
+        function log (from, body, special) {
+            chatPrint([messages], [
+                ['nick', from, special],
+                ['text', ': ' + body]
+            ]);
+            messages.scrollTop = messages.scrollHeight;
+        }
+        function logFail () {
+            chatPrint([messages], [
+                ['text', '* warning: sending the previous message failed - user is not online' + body]
+            ]);
+            messages.scrollTop = messages.scrollHeight;
+        }
+        function doSend () {
                 if (replybox.value) {
                     socket.send(JSON.stringify({
                         type: 'priv_msg',
@@ -685,8 +697,11 @@
 
                     replybox.value = '';
                 }
-            };
+        }
 
+        if (openPMLogs.hasOwnProperty(nick)) {
+            openPMLogs[nick].popup.show();
+        } else {
             var popup = makePopup('.pm-log', 'PRIVMSG - ' + nick, true, 250, 250, true, function () {
                 delete openPMLogs[nick];
                 popup.destroy();
@@ -736,7 +751,7 @@
 
     function logPrivmsgFailInChat(nick) {
         showPMLog(nick);
-        openPMLogs[nick].logFail(nick);
+        openPMLogs[nick].logFail();
     }
 
     function showProfile(profile, modMode) {
@@ -1119,7 +1134,7 @@
     }
 
     function initGUI_chatbar() {
-        chatlog = document.createElement('table');
+        chatlog = document.createElement('div');
         chatlog.id = 'chatlog';
         overlay.appendChild(chatlog);
 
@@ -1128,7 +1143,7 @@
         });
         fullchatlog.hide();
 
-        fullchatlogcontent = document.createElement('table');
+        fullchatlogcontent = document.createElement('div');
         fullchatlogcontent.id = 'fullchatlog-content';
         fullchatlog.content.appendChild(fullchatlogcontent);
 

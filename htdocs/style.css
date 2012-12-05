@@ -429,52 +429,20 @@ a {
     pointer-events: auto;
 }
 
-.timepart {
-    text-align: right;
-    width: 4em;
-    font-family: monospace;
-}
-.originpart {
-    text-align: right;
-    width: 16em;
-    font-family: monospace;
-}
-.msgpart {
-    text-align: left;
-}
-#fullchatlog-content .originpart {
-    padding-right: 4px;
-    border-right: 1px solid rgba(255, 255, 255, 0.5);
-}
-#fullchatlog-content .msgpart {
-    padding-left: 4px;
-}
-#chatlog .innertext {
-    background-color: rgba(0, 0, 0, 0.5);
+#chatlog .chat-line {
+    background-color: rgba(0,0,0,0.7);
 }
 
-.mine .originpart {
-    font-weight: bold;
-}
-#chatlog .highlight .innertext, #fullchatlog-content .highlight {
+.highlight {
     background-color: fuchsia !important;
 }
-#chatlog .broadcast .innertext, #fullchatlog-content .broadcast {
-    background-color: darkorange !important;
-}
-#chatlog .console .innertext, #fullchatlog-content .console {
-    color: lime;
-    background-color: rgba(0,0,0,0.7) !important;
-}
-.info {
-    color: lightgray;
-}
-.console .originpart, .console .msgpart {
+.console {
     font-family: monospace;
+    color: lime;
+    font-weight: bold;
 }
-
-.offscreen-chatline {
-    opacity: 0.6;
+.broadcast {
+    background-color: orange !important;
 }
 
 .pony {
