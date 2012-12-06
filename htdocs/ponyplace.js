@@ -251,13 +251,13 @@
             anchor.className = 'chat-link';
             anchor.target = '_blank';
             if (pos2 === -1) {
-                appendText(span, text.substr(0, pos));
+                appendText(parent, text.substr(0, pos));
                 anchor.href = text.substr(pos);
                 appendText(anchor, text.substr(pos));
 
                 text = '';
             } else {
-                appendText(span, text.substr(0, pos));
+                appendText(parent, text.substr(0, pos));
                 anchor.href = text.substr(pos, pos2 - pos);
                 appendText(anchor, text.substr(pos, pos2 - pos));
                 text = text.substr(pos2);
