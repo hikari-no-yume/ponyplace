@@ -1672,7 +1672,6 @@
                         popup.destroy();
                     });
                     var ul = document.createElement('ul');
-                    msg.items.reverse();
                     for (var i = 0; i < msg.items.length; i++) {
                         var item = msg.items[i];
                         var li = document.createElement('li');

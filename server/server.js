@@ -198,8 +198,18 @@ var modLogger = {
         }));
         console.log('Saved moderation log');
     },
-    getLast: function (count) {
-        return this.log.slice(-count);
+    getLast: function (count, filter) {
+        var retrieved = 0;
+        var slice = [];
+        for (var i = this.log.length - 1; i >= 0; i--) {
+            if (!filter || this.log[i].type === filter) {
+                slice.push(this.log[i]);
+                if (++retrieved === count) {
+                    break;
+                }
+            }
+        }
+        return slice;
     },
 
     timestamp: function () {
@@ -472,15 +482,13 @@ function handleCommand(cmd, myNick, user) {
     } else if (isMod && cmd.substr(0, 7) === 'modhelp') {
         sendMultiLine([
             'Eight mod commands available: 1) kick, 2) kickban, 3) unban, 4) broadcast, 5) aliases, 6) move, 7) bits, 8) modlog',
-            '1. kick - Takes the nick of someone, they (& any aliases) will be kicked, e.g. /kick sillyfilly',
-            "kick and kickban can also take a second parameter for a reason message, e.g. /kick silly Don't spam the chat!",
-            '2. kickban - Like /kick but also permabans by IP, e.g. /kickban stupidfilly',
+            "1. kick & 2. kickban - kick takes the nick of someone, they (& any aliases) will be kicked, e.g. /kick sillyfilly. kickban is like kick but also permabans by IP. kick and kickban can also take a second parameter for a reason message, e.g. /kick sillyfilly Don't spam the chat!",
             '3. unban - Unbans an IP, e.g. /unban 192.168.1.1',
             '4. broadcast - Sends a message to everyone on the server, e.g. /broadcast Hello all!',
             "5. aliases - Lists someone's aliases (people with same IP address), e.g. /aliases joebloggs",
             '6. move - Forcibly moves a user to a room, e.g. /move canterlot sillyfilly',
             "7. bits - Adds to or removes from someone's bits balance, e.g. /bits 20 ajf, /bits -10 otherguy",
-            "8. modlog - Shows moderator activity log. Can optionally specify how many items you want to see (default 10), e.g. /modlog 15",
+            "8. modlog - Shows moderator activity log. Optionally specify count (default 10), e.g. /modlog 15. You can also specify filter (ban/unban/kick/move/broadcast/bits_change), e.g. /modlog 25 unban",
             'See also: /help'
         ]);
     // unbanning
@@ -675,10 +683,20 @@ function handleCommand(cmd, myNick, user) {
         }
     // moderation log
     } else if (isMod && cmd.substr(0, 6) === 'modlog') {
-        var count = parseInt(cmd.substr(7)) || 10;
+        var pos = cmd.indexOf(' ', 7);
+        var count, filter;
+        if (pos !== -1) {
+            count = cmd.substr(6, pos-6);
+            filter = cmd.substr(pos+1);
+        } else {
+            count = cmd.substr(6);
+        }
+        count = parseInt(count) || 10;
+        var items = modLogger.getLast(count, filter);
+        sendLine('Showing ' + items.length + ' log items' + (filter ? ' filtered by type "' + filter + '"' : ''));
         user.send({
             type: 'mod_log',
-            items: modLogger.getLast(count)
+            items: items
         });
     // unknown
     } else {
