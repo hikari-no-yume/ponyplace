@@ -268,7 +268,7 @@
     }
 
     function tabNotify() {
-        if (!pageFocussed && (type === 'highlight' || type === 'privmsg')) {
+        if (!pageFocussed) {
             unseenHighlights++;
             document.title = '(' + unseenHighlights + ') ponyplace';
         }
