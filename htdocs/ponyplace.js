@@ -906,11 +906,13 @@
                 appendText(button, 'Kick');
                 button.onclick = function (e) {
                     var reason = prompt('Kick reason:', '');
-                    socket.send(JSON.stringify({
-                        type: 'console_command',
-                        cmd: 'kick ' + profile.nick + (reason ? ' ' + reason : '')
-                    }));
-                    popup.hide();
+                    if (reason !== null) {
+                        socket.send(JSON.stringify({
+                            type: 'console_command',
+                            cmd: 'kick ' + profile.nick + (reason ? ' ' + reason : '')
+                        }));
+                        popup.hide();
+                    }
                 };
                 popup.content.appendChild(button);
 
@@ -918,11 +920,13 @@
                 appendText(button, 'Kickban');
                 button.onclick = function (e) {
                     var reason = prompt('Kickban reason:', '');
-                    socket.send(JSON.stringify({
-                        type: 'console_command',
-                        cmd: 'kickban ' + profile.nick + (reason ? ' ' + reason : '')
-                    }));
-                    popup.hide();
+                    if (reason !== null) {
+                        socket.send(JSON.stringify({
+                            type: 'console_command',
+                            cmd: 'kickban ' + profile.nick + (reason ? ' ' + reason : '')
+                        }));
+                        popup.hide();
+                    }
                 };
                 popup.content.appendChild(button);
 
