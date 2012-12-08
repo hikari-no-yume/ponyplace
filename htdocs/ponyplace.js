@@ -999,16 +999,16 @@
 
             popup.titlebar.onmousedown = function (e) {
                 down = true;
-                oX = e.x;
-                oY = e.y;
+                oX = e.clientX;
+                oY = e.clientY;
                 popupX = parseInt(popup.container.style.left);
                 popupY = parseInt(popup.container.style.top);
                 document.body.onmousemove = popup.titlebar.onmousemove;
             };
             popup.titlebar.onmousemove = function (e) {
                 if (down) {
-                    popup.container.style.left = (e.x - oX) + popupX + 'px';
-                    popup.container.style.top = (e.y - oY) + popupY + 'px';
+                    popup.container.style.left = (e.clientX - oX) + popupX + 'px';
+                    popup.container.style.top = (e.clientY - oY) + popupY + 'px';
                 }
             };
             popup.titlebar.onmouseup = function () {
