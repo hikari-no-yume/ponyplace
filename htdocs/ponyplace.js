@@ -905,9 +905,10 @@
                 button = document.createElement('button');
                 appendText(button, 'Kick');
                 button.onclick = function (e) {
+                    var reason = prompt('Kick reason:', '');
                     socket.send(JSON.stringify({
                         type: 'console_command',
-                        cmd: 'kick ' + profile.nick
+                        cmd: 'kick ' + profile.nick + (reason ? ' ' + reason : '')
                     }));
                     popup.hide();
                 };
@@ -916,9 +917,10 @@
                 button = document.createElement('button');
                 appendText(button, 'Kickban');
                 button.onclick = function (e) {
+                    var reason = prompt('Kickban reason:', '');
                     socket.send(JSON.stringify({
                         type: 'console_command',
-                        cmd: 'kickban ' + profile.nick
+                        cmd: 'kickban ' + profile.nick + (reason ? ' ' + reason : '')
                     }));
                     popup.hide();
                 };
