@@ -195,12 +195,12 @@
                     }
                 }
                 this.userCounter.appendChild(document.createElement('br'));
-                appendText(this.userCounter, this.userCount + ' users in room');
+                appendText(this.userCounter, this.userCount + '/' + globalUserCount + ' users in room');
             } else {
+                this.userCounter.appendChild(document.createElement('br'));
                 appendText(this.userCounter, 'You are not in a room');
+                appendText(this.userCounter, globalUserCount + ' users online')
             }
-            this.userCounter.appendChild(document.createElement('br'));
-            appendText(this.userCounter, globalUserCount + ' users online total');
         }
     };
 
