@@ -868,7 +868,7 @@ wsServer.on('request', function(request) {
                         moderator_mode: User.isModerator(myNick)
                     });
                 } else {
-                    sendLine('There is no user with nick: "' + nick + '"');
+                    sendLine('There is no user with nick: "' + msg.nick + '"');
                 }
             break;
             case 'priv_msg':
