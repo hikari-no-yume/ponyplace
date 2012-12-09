@@ -359,6 +359,13 @@ function doRoomChange(roomName, user) {
     } else if (room.name.substr(0, 6) !== 'house ') {
         roomManager.onEphemeralJoin(room.name);
     }
+
+    // tell client about room list & user count
+    user.send({
+        type: 'room_list',
+        list: roomManager.getList(),
+        user_count: User.userCount
+    });
 }
 
 function handleCommand(cmd, myNick, user) {
@@ -490,6 +497,7 @@ function handleCommand(cmd, myNick, user) {
             "7. bits - Adds to or removes from someone's bits balance, e.g. /bits 20 ajf, /bits -10 otherguy",
             "8. modlog - Shows moderator activity log. Optionally specify count (default 10), e.g. /modlog 15. You can also specify filter (ban/unban/kick/move/broadcast/bits_change), e.g. /modlog 25 unban",
             'See also: /help'
+
         ]);
     // unbanning
     } else if (isMod && cmd.substr(0, 6) === 'unban ') {
