@@ -432,6 +432,9 @@ input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover, button:
     text-decoration: underline;
 }
 
+.modspeak {
+    background-color: #EDFFD4 !important;
+}
 .leave-join {
     background-color: khaki !important;
 }

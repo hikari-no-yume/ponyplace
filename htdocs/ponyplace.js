@@ -308,18 +308,25 @@
         return '';
     }
 
+    function modCheck(special) {
+        if (special !== false) {
+            return 'modspeak';
+        }
+        return '';
+    }
+
     function logMineInChat(nick, msg) {
         chatPrint(['chatlog'], [
             ['nick', nick, mySpecialStatus],
             ['text', ': ' + msg]
-        ], highlightCheck(msg));
+        ], highlightCheck(msg) + ' ' + modCheck(mySpecialStatus));
     }
 
     function logInChat(nick, msg, special) {
         chatPrint(['chatlog'], [
             ['nick', nick, special],
             ['text', ': ' + msg]
-        ], highlightCheck(msg));
+        ], highlightCheck(msg) + ' ' + modCheck(special));
     }
 
     function logKickNoticeInChat(modNick, modSpecial, kickeeNick, kickeeSpecial, reason) {
