@@ -1662,6 +1662,9 @@
                                 type: 'room_change',
                                 name: window.location.hash.substr(1)
                             }));
+                        // otherwise show room chooser popup
+                        } else {
+                            roomlist.show();
                         }
                     }
 
