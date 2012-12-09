@@ -229,7 +229,7 @@ input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover, button:
     cursor: pointer;
 }
 
-#room-list-button, #home-button, #friends-list-button, #account-settings-button, #inventory-list-button {
+#room-list-button, #home-button, #friends-list-button, #account-settings-button {
     position: absolute;
     top: 6px;
 }
@@ -237,8 +237,7 @@ input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover, button:
 #room-list-button { left: 35px; }
 #home-button { left: 5px; width: 25px; }
 #friends-list-button { left: 145px; }
-#inventory-list-button { left: 255px; }
-#account-settings-button { left: 365px; }
+#account-settings-button { right: 6px; }
 
 #room-edit-button {
     position: absolute;
@@ -254,7 +253,7 @@ input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover, button:
     font-size: 14pt;
     position: absolute;
     top: 6px;
-    left: 475px;
+    right: 115px;
     padding: 2px;
     height: 24px;
     vertical-align: middle;
@@ -381,7 +380,7 @@ input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover, button:
 #chatbox-holder {
     position: absolute;
     left: 6px;
-    right: 226px;
+    right: 336px;
     bottom: 6px;
 }
 #chatbox {
@@ -393,9 +392,15 @@ input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover, button:
 
 #chatbutton {
     position: absolute;
-    right: 116px;
+    right: 226px;
     bottom: 6px;
     max-width: 10%;
+}
+
+#inventory-list-button {
+    position: absolute;
+    bottom: 6px;
+    right: 116px;
 }
 
 #chooser-button {
@@ -408,7 +413,7 @@ input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover, button:
     position: absolute;
     right: 0;
     width: 250px;
-    top: 0;
+    top: 36px;
     bottom: 36px;
     background-color: white;
     overflow: auto;
