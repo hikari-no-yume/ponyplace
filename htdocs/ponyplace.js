@@ -1275,7 +1275,7 @@
                 name: 'house ' + myNick
             }));
         };
-        homebutton.style.display = 'none';
+        homebutton.disabled = true;
         overlay.appendChild(homebutton);
 
         friendslistbutton = document.createElement('button');
@@ -1284,7 +1284,7 @@
         friendslistbutton.onclick = function () {
             friendslist.show();
         };
-        friendslistbutton.style.display = 'none';
+        friendslistbutton.disabled = true;
         overlay.appendChild(friendslistbutton);
 
         inventorylistbutton = document.createElement('input');
@@ -1294,20 +1294,19 @@
         inventorylistbutton.onclick = function () {
             inventorylist.show();
         };
-        inventorylistbutton.style.display = 'none';
+        inventorylistbutton.disabled = true;
         overlay.appendChild(inventorylistbutton);
 
         bitcount = document.createElement('div');
         bitcount.id = 'bit-count';
         bitcount.title = 'bits';
         appendText(bitcount, '???');
-        bitcount.style.display = 'none';
         overlay.appendChild(bitcount);
 
         accountsettingsbutton = document.createElement('input');
         accountsettingsbutton.id = 'account-settings-button';
         accountsettingsbutton.type = 'submit';
-        accountsettingsbutton.value = 'Account Settings';
+        accountsettingsbutton.value = 'My Account';
         accountsettingsbutton.onclick = function () {
             accountsettings.show();
         };
@@ -1588,12 +1587,11 @@
                     accountsettingsbutton.disabled = false;
                     changepassbutton.style.display = 'block';
                     rmpassbutton.style.display = 'block';
-                    inventorylistbutton.style.display = 'block';
+                    inventorylistbutton.disabled = false;
                     renderInventoryList();
-                    friendslistbutton.style.display = 'block';
+                    friendslistbutton.disabled = false;
                     renderFriendsList();
-                    bitcount.style.display = 'block';
-                    homebutton.style.display = 'block';
+                    homebutton.disabled = false;
 
                     stage.style.display = 'block';
                     if (myRoom === null) {

@@ -155,7 +155,7 @@ h1 {
     position: absolute;
     left: 0;
     right: 250px;
-    top: 36px;
+    top: 0;
     bottom: 36px;
     background-color: rgb(230, 230, 230);
     overflow: auto;
@@ -220,7 +220,7 @@ input[type=submit], .button, button {
     width: 105px;
     height: 24px;
 }
-input[type=submit][disabled], .button[disabled] {
+input[type=submit][disabled], .button[disabled], button[disabled] {
     color: gray;
 }
 
@@ -237,9 +237,8 @@ input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover, button:
 #room-list-button { left: 6px; }
 #home-button { left: 115px; width: 25px; }
 #friends-list-button { left: 145px; }
-
-#account-settings-button { right: 6px; width: 150px; }
-#inventory-list-button { right: 160px; }
+#inventory-list-button { left: 255px; }
+#account-settings-button { left: 365px; }
 
 #room-edit-button {
     position: absolute;
@@ -255,7 +254,7 @@ input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover, button:
     font-size: 14pt;
     position: absolute;
     top: 6px;
-    right: 270px;
+    left: 475px;
     padding: 2px;
     height: 24px;
     vertical-align: middle;
@@ -409,7 +408,7 @@ input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover, button:
     position: absolute;
     right: 0;
     width: 250px;
-    top: 36px;
+    top: 0;
     bottom: 36px;
     background-color: white;
     overflow: auto;
