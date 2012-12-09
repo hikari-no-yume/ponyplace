@@ -295,7 +295,7 @@
             if (target === 'chatlog') {
                 chatlog.insertBefore(span, chatlog.firstChild);
             } else {
-                target.insertBefore(span, target.firstChild);
+                target.appendChild(span);
             }
         }
     }
@@ -649,7 +649,7 @@
 
         // clear users
         userManager.forEach(function (nick) {
-            userManager.kill(nick);
+            userManager.kill(nick, false);
         });
 
         myRoom = room;
@@ -1537,7 +1537,7 @@
             var msg = JSON.parse(e.data);
             switch (msg.type) {
                 case 'appear':
-                    userManager.add(msg.nick, msg.obj, msg.special, false, !msg.joining);
+                    userManager.add(msg.nick, msg.obj, msg.special, false, msg.joining);
                 break;
                 case 'update':
                     if (msg.nick !== myNick) {
@@ -1641,7 +1641,7 @@
                     logPrivmsgFailInChat(msg.nick);
                 break;
                 case 'die':
-                    userManager.kill(msg.nick);
+                    userManager.kill(msg.nick, true);
                 break;
                 case 'room_list':
                     updateRoomList(msg.list);
