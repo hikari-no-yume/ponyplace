@@ -340,16 +340,14 @@ function doRoomChange(roomName, user) {
                     type: 'appear',
                     obj: iterUser.obj,
                     nick: iterUser.nick,
-                    special: iterUser.special,
-                    joining: false
+                    special: iterUser.special
                 });
                 // tell other clients in room about client
                 iterUser.send({
                     type: 'appear',
                     obj: user.obj,
                     nick: user.nick,
-                    special: user.special,
-                    joining: true
+                    special: user.special
                 });
             }
         }
@@ -870,10 +868,7 @@ wsServer.on('request', function(request) {
                         moderator_mode: User.isModerator(myNick)
                     });
                 } else {
-                    user.send({
-                        type: 'console_msg',
-                        msg: 'There is no user with nick: "' + msg.nick + '"'
-                    });
+                    sendLine('There is no user with nick: "' + nick + '"');
                 }
             break;
             case 'priv_msg':

@@ -24,7 +24,6 @@
     var container,
         overlay,
         loginbox, nickbox, personasubmit, loginsubmit,
-        topbuttons,
         accountsettings, accountsettingsbutton, changepassbutton, rmpassbutton,
         outerstage, stage,
         bitcount,
@@ -34,7 +33,7 @@
         roomlistbutton, roomlist, refreshbutton, homebutton,
         roomedit, roomeditbutton, roomeditreset, roomeditvisible,
         background, roomwidgets,
-        chatbox, chatboxholder, chatbutton, chatlog;
+        chatbox, chatboxholder, chatbutton, chatlog, fullchatlog, fullchatlogcontent, fullchatlogbutton;
 
     var userManager = {
         users: {},
@@ -51,7 +50,7 @@
         showUserCounter: function () {
             this.userCounter.style.display = 'block';
         },
-        add: function (nick, obj, special, me, doLog) {
+        add: function (nick, obj, special, me) {
             if (this.has(nick)) {
                 throw new Error("There is already a user with the same nick.");
             }
@@ -104,9 +103,7 @@
             this.update(nick, obj);
             this.userCount++;
             this.updateCounter();
-            if (doLog) {
-                logJoinInChat(nick, special);
-            }
+            logJoinInChat(nick, special);
         },
         update: function (nick, obj) {
             this.hasCheck(nick);
@@ -152,15 +149,13 @@
 
             user.obj = obj;
         },
-        kill: function (nick, doLog) {
+        kill: function (nick) {
             this.hasCheck(nick);
 
             var user = this.users[nick];
             this.userCount--;
             this.updateCounter();
-            if (doLog) {
-                logLeaveInChat(nick, user.special);
-            }
+            logLeaveInChat(nick, user.special);
             stage.removeChild(user.elem.root);
             delete this.users[nick];
         },
@@ -196,12 +191,12 @@
                     }
                 }
                 this.userCounter.appendChild(document.createElement('br'));
-                appendText(this.userCounter, this.userCount + '/' + globalUserCount + ' users in room');
+                appendText(this.userCounter, this.userCount + ' users in room');
             } else {
                 appendText(this.userCounter, 'You are not in a room');
-                this.userCounter.appendChild(document.createElement('br'));
-                appendText(this.userCounter, globalUserCount + ' users online')
             }
+            this.userCounter.appendChild(document.createElement('br'));
+            appendText(this.userCounter, globalUserCount + ' users online total');
         }
     };
 
@@ -219,8 +214,17 @@
         pushState();
     }
 
+    function digitPad(n) {
+        return n = (n < 10) ? ("0" + n) : n;
+    }
+
     function appendText(parent, text) {
         parent.appendChild(document.createTextNode(text));
+    }
+
+    function appendTimestamp(parent) {
+        var date = new Date();
+        appendText(parent, '[' + digitPad(date.getHours()) + ':' + digitPad(date.getMinutes()) + '] ');
     }
 
     function appendNickname(parent, nick, special) {
@@ -281,6 +285,7 @@
                 span.className += ' ' + className;
             }
 
+            appendTimestamp(span);
             for (var j = 0; j < bits.length; j++) {
                 var bit = bits[j];
 
@@ -294,7 +299,12 @@
             span.appendChild(document.createElement('br'));
 
             if (target === 'chatlog') {
-                chatlog.insertBefore(span, chatlog.firstChild);
+                chatlog.appendChild(span);
+                while (chatlog.children.length > 12) {
+                    chatlog.removeChild(chatlog.firstChild);
+                }
+            } else if (target === 'fullchatlog') {
+                fullchatlog.content.appendChild(span);
             } else {
                 target.appendChild(span);
             }
@@ -309,25 +319,18 @@
         return '';
     }
 
-    function modCheck(special) {
-        if (special !== false) {
-            return 'modspeak';
-        }
-        return '';
-    }
-
     function logMineInChat(nick, msg) {
-        chatPrint(['chatlog'], [
+        chatPrint(['chatlog', 'fullchatlog'], [
             ['nick', nick, mySpecialStatus],
             ['text', ': ' + msg]
-        ], highlightCheck(msg) + ' ' + modCheck(mySpecialStatus));
+        ], highlightCheck(msg));
     }
 
     function logInChat(nick, msg, special) {
-        chatPrint(['chatlog'], [
+        chatPrint(['chatlog', 'fullchatlog'], [
             ['nick', nick, special],
             ['text', ': ' + msg]
-        ], highlightCheck(msg) + ' ' + modCheck(special));
+        ], highlightCheck(msg));
     }
 
     function logKickNoticeInChat(modNick, modSpecial, kickeeNick, kickeeSpecial, reason) {
@@ -339,7 +342,7 @@
         if (reason) {
             lines.push(['text', ' because: "' + reason + '"']);
         }
-        chatPrint(['chatlog'], lines, 'kick');
+        chatPrint(['chatlog', 'fullchatlog'], lines, 'kick');
     }
 
     function logKickBanNoticeInChat(modNick, modSpecial, kickeeNick, kickeeSpecial, reason) {
@@ -351,66 +354,66 @@
         if (reason) {
             lines.push(['text', ' because: "' + reason + '"']);
         }
-        chatPrint(['chatlog'], lines, 'kick');
+        chatPrint(['chatlog', 'fullchatlog'], lines, 'kick');
     }
 
     function logBroadcastInChat(msg) {
-        chatPrint(['chatlog'], [
-            ['text', 'BROADCAST: ' + msg]
+        chatPrint(['chatlog', 'fullchatlog'], [
+            ['text', '* BROADCAST: ' + msg]
         ], 'broadcast');
     }
 
     function logSentConsoleCommandInChat(msg) {
-        chatPrint(['chatlog'], [
-            ['text', 'CONSOLE <- /' + msg]
+        chatPrint(['chatlog', 'fullchatlog'], [
+            ['text', '* CONSOLE <- /' + msg]
         ], 'console');
     }
 
     function logConsoleMessageInChat(msg) {
-        chatPrint(['chatlog'], [
-            ['text', 'CONSOLE -> ' + msg]
+        chatPrint(['chatlog', 'fullchatlog'], [
+            ['text', '* CONSOLE -> ' + msg]
         ], 'console');
     }
 
     function logJoinInChat(nick, special) {
-        chatPrint(['chatlog'], [
+        chatPrint(['fullchatlog'], [
             ['nick', nick, special],
             ['text', ' joined']
-        ], 'leave-join');
+        ]);
     }
 
     function logLeaveInChat(nick, special) {
-        chatPrint(['chatlog'], [
+        chatPrint(['fullchatlog'], [
             ['nick', nick, special],
             ['text', ' left']
-        ], 'leave-join');
+        ]);
     }
 
     function logRoomJoinInChat(name, name_full) {
-        chatPrint(['chatlog'], [
+        chatPrint(['chatlog', 'fullchatlog'], [
             ['nick', myNick, mySpecialStatus],
             ['text', ' joined the room ' + name + ' ("' + name_full + '")']
-        ], 'leave-join');
+        ]);
     }
 
     function logEphemeralRoomJoinInChat(name) {
-        chatPrint(['chatlog'], [
+        chatPrint(['chatlog', 'fullchatlog'], [
             ['nick', myNick, special],
             ['text', ' joined the ephemeral room "' + name + '"']
-        ], 'leave-join');
+        ]);
     }
 
     function logHouseRoomJoinInChat(nick) {
         if (nick !== myNick) {
-            chatPrint(['chatlog'], [
+            chatPrint(['chatlog', 'fullchatlog'], [
                 ['nick', myNick, special],
                 ['text', ' entered the house of user with nick: "' + nick + '"']
-            ], 'leave-join');
+            ]);
         } else {
-            chatPrint(['chatlog'], [
+            chatPrint(['chatlog', 'fullchatlog'], [
                 ['nick', myNick, special],
                 ['text', ' entered your house']
-            ], 'leave-join');
+            ]);
         }
     }
 
@@ -657,13 +660,13 @@
 
         // clear users
         userManager.forEach(function (nick) {
-            userManager.kill(nick, false);
+            userManager.kill(nick);
         });
 
         myRoom = room;
 
         // add me
-        userManager.add(myNick, me, mySpecialStatus, true, false);
+        userManager.add(myNick, me, mySpecialStatus, true);
 
         // go to random position
         if (room.type === 'ephemeral') {
@@ -1188,6 +1191,15 @@
         chatlog.id = 'chatlog';
         overlay.appendChild(chatlog);
 
+        fullchatlog = makePopup('#fullchatlog', 'Full chat log', true, 200, 200, true, null, function () {
+            fullchatlog.content.scrollTop = fullchatlog.content.scrollHeight;
+        });
+        fullchatlog.hide();
+
+        fullchatlogcontent = document.createElement('div');
+        fullchatlogcontent.id = 'fullchatlog-content';
+        fullchatlog.content.appendChild(fullchatlogcontent);
+
         chatboxholder = document.createElement('div');
         chatboxholder.id = 'chatbox-holder';
         overlay.appendChild(chatboxholder);
@@ -1241,15 +1253,15 @@
         chatbutton.disabled = true;
         overlay.appendChild(chatbutton);
 
-        inventorylistbutton = document.createElement('input');
-        inventorylistbutton.id = 'inventory-list-button';
-        inventorylistbutton.type = 'submit';
-        inventorylistbutton.value = 'Inventory';
-        inventorylistbutton.onclick = function () {
-            inventorylist.show();
+        fullchatlogbutton = document.createElement('input');
+        fullchatlogbutton.id = 'fullchatlog-button';
+        fullchatlogbutton.type = 'submit';
+        fullchatlogbutton.value = 'Full chatlog';
+        fullchatlogbutton.onclick = function () {
+            fullchatlog.show();
         };
-        inventorylistbutton.disabled = true;
-        overlay.appendChild(inventorylistbutton);
+        fullchatlogbutton.disabled = true;
+        overlay.appendChild(fullchatlogbutton);
 
         chooserbutton = document.createElement('input');
         chooserbutton.id = 'chooser-button';
@@ -1263,9 +1275,16 @@
     }
 
     function initGUI_topbar() {
-        topbuttons = document.createElement('div');
-        topbuttons.id = 'top-buttons';
-        overlay.appendChild(topbuttons);
+        roomlist = makePopup('#room-list', 'Rooms', true, 200, 200, true);
+        roomlist.hide();
+        roomlistbutton = document.createElement('button');
+        roomlistbutton.id = 'room-list-button';
+        appendText(roomlistbutton, 'Choose room');
+        roomlistbutton.onclick = function () {
+            roomlist.show();
+        };
+        roomlistbutton.disabled = true;
+        overlay.appendChild(roomlistbutton);
 
         homebutton = document.createElement('button');
         var icon = document.createElement('img');
@@ -1279,19 +1298,8 @@
                 name: 'house ' + myNick
             }));
         };
-        homebutton.disabled = true;
-        topbuttons.appendChild(homebutton);
-
-        roomlist = makePopup('#room-list', 'Rooms', true, 200, 200, true);
-        roomlist.hide();
-        roomlistbutton = document.createElement('button');
-        roomlistbutton.id = 'room-list-button';
-        appendText(roomlistbutton, 'Choose room');
-        roomlistbutton.onclick = function () {
-            roomlist.show();
-        };
-        roomlistbutton.disabled = true;
-        topbuttons.appendChild(roomlistbutton);
+        homebutton.style.display = 'none';
+        overlay.appendChild(homebutton);
 
         friendslistbutton = document.createElement('button');
         friendslistbutton.id = 'friends-list-button';
@@ -1299,24 +1307,35 @@
         friendslistbutton.onclick = function () {
             friendslist.show();
         };
-        friendslistbutton.disabled = true;
-        topbuttons.appendChild(friendslistbutton);
+        friendslistbutton.style.display = 'none';
+        overlay.appendChild(friendslistbutton);
 
-        accountsettingsbutton = document.createElement('input');
-        accountsettingsbutton.id = 'account-settings-button';
-        accountsettingsbutton.type = 'submit';
-        accountsettingsbutton.value = 'My Account';
-        accountsettingsbutton.onclick = function () {
-            accountsettings.show();
+        inventorylistbutton = document.createElement('input');
+        inventorylistbutton.id = 'inventory-list-button';
+        inventorylistbutton.type = 'submit';
+        inventorylistbutton.value = 'Inventory';
+        inventorylistbutton.onclick = function () {
+            inventorylist.show();
         };
-        accountsettingsbutton.disabled = true;
-        topbuttons.appendChild(accountsettingsbutton);
+        inventorylistbutton.style.display = 'none';
+        overlay.appendChild(inventorylistbutton);
 
         bitcount = document.createElement('div');
         bitcount.id = 'bit-count';
         bitcount.title = 'bits';
         appendText(bitcount, '???');
-        topbuttons.appendChild(bitcount);
+        bitcount.style.display = 'none';
+        overlay.appendChild(bitcount);
+
+        accountsettingsbutton = document.createElement('input');
+        accountsettingsbutton.id = 'account-settings-button';
+        accountsettingsbutton.type = 'submit';
+        accountsettingsbutton.value = 'Account Settings';
+        accountsettingsbutton.onclick = function () {
+            accountsettings.show();
+        };
+        accountsettingsbutton.disabled = true;
+        overlay.appendChild(accountsettingsbutton);
 
         roomeditbutton = document.createElement('input');
         roomeditbutton.id = 'room-edit-button';
@@ -1468,14 +1487,6 @@
         a.target = '_blank';
         appendText(a, "Disclaimer and Credits");
         loginbox.content.appendChild(a);
-
-        appendText(loginbox.content, ' + ');
-
-        a = document.createElement('a');
-        a.href = 'http://phconline.net/';
-        a.target = '_blank';
-        appendText(a, "check out PHC, too :)");
-        loginbox.content.appendChild(a);
     }
 
     function initGUI() {
@@ -1556,7 +1567,7 @@
             var msg = JSON.parse(e.data);
             switch (msg.type) {
                 case 'appear':
-                    userManager.add(msg.nick, msg.obj, msg.special, false, msg.joining);
+                    userManager.add(msg.nick, msg.obj, msg.special, false);
                 break;
                 case 'update':
                     if (msg.nick !== myNick) {
@@ -1577,6 +1588,7 @@
 
                     chatbox.disabled = false;
                     chatbutton.disabled = false;
+                    fullchatlogbutton.disabled = false;
 
                     myNick = msg.nick;
                     mySpecialStatus = msg.special;
@@ -1592,11 +1604,12 @@
                     accountsettingsbutton.disabled = false;
                     changepassbutton.style.display = 'block';
                     rmpassbutton.style.display = 'block';
-                    inventorylistbutton.disabled = false;
+                    inventorylistbutton.style.display = 'block';
                     renderInventoryList();
-                    friendslistbutton.disabled = false;
+                    friendslistbutton.style.display = 'block';
                     renderFriendsList();
-                    homebutton.disabled = false;
+                    bitcount.style.display = 'block';
+                    homebutton.style.display = 'block';
 
                     stage.style.display = 'block';
                     if (myRoom === null) {
@@ -1659,7 +1672,7 @@
                     logPrivmsgFailInChat(msg.nick);
                 break;
                 case 'die':
-                    userManager.kill(msg.nick, true);
+                    userManager.kill(msg.nick);
                 break;
                 case 'room_list':
                     updateRoomList(msg.list);
