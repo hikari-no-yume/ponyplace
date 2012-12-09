@@ -154,9 +154,9 @@ h1 {
 #outer-stage {
     position: absolute;
     left: 0;
-    right: 250px;
+    right: 255px;
     top: 0;
-    bottom: 36px;
+    bottom: 0;
     background-color: rgb(230, 230, 230);
     overflow: auto;
     user-select: none;
@@ -381,9 +381,9 @@ input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover, button:
 
 #chatbox-holder {
     position: absolute;
-    left: 6px;
-    right: 336px;
-    bottom: 6px;
+    right: 6px;
+    width: 245px;
+    bottom: 36px;
 }
 #chatbox {
     width: 100%;
@@ -394,29 +394,31 @@ input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover, button:
 
 #chatbutton {
     position: absolute;
-    right: 226px;
+    right: 170px;
     bottom: 6px;
-    max-width: 10%;
+    width: 80px;
 }
 
 #inventory-list-button {
     position: absolute;
     bottom: 6px;
-    right: 116px;
+    right: 90px;
+    width: 76px;
 }
 
 #chooser-button {
     position: absolute;
     bottom: 6px;
     right: 6px;
+    width: 80px;
 }
 
 #chatlog {
     position: absolute;
     right: 0;
-    width: 250px;
+    width: 255px;
     top: 0;
-    bottom: 36px;
+    bottom: 66px;
     background-color: white;
     overflow: auto;
     border-left: 3px solid black;
