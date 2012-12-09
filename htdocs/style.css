@@ -4,6 +4,12 @@
 	src: url("media/font.ttf");
 }
 
+* {
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+}
+
 body {
     font-family: sans-serif;
     font-size: 10pt;
@@ -76,9 +82,6 @@ h1 {
 
 .popup-titlebar {
     background-color: pink;
-    box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
     padding: 6px;
     overflow: hidden;
     position: absolute;
@@ -106,9 +109,6 @@ h1 {
     right: 0;
     top: 36px;
     bottom: 0;
-    box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
     padding: 6px;
     overflow: auto;
     background-color: white;
@@ -132,9 +132,6 @@ h1 {
 .profile .popup-content button, #loginbox .popup-content input, #account-settings .popup-content input, #account-settings .popup-content .button, #room-list .popup-content button {
     display: block;
     width: 100%;
-    box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
     margin-bottom: 6px;
 }
 
@@ -157,9 +154,9 @@ h1 {
 #outer-stage {
     position: absolute;
     left: 0;
-    right: 0;
-    top: 36px;
-    bottom: 36px;
+    right: 255px;
+    top: 0;
+    bottom: 0;
     background-color: rgb(230, 230, 230);
     overflow: auto;
     user-select: none;
@@ -215,9 +212,6 @@ input[type=submit], .button, button {
     padding: 4px;
     display: block;
     text-align: center;
-    box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
     color: white;
     background-color: rgb(255, 103, 213);
     border: none;
@@ -226,7 +220,7 @@ input[type=submit], .button, button {
     width: 105px;
     height: 24px;
 }
-input[type=submit][disabled], .button[disabled] {
+input[type=submit][disabled], .button[disabled], button[disabled] {
     color: gray;
 }
 
@@ -235,23 +229,20 @@ input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover, button:
     cursor: pointer;
 }
 
-#room-list-button, #home-button, #friends-list-button, #account-settings-button, #inventory-list-button {
+#top-buttons {
     position: absolute;
+    overflow: hidden;
+    left: 6px;
     top: 6px;
 }
 
-#room-list-button { left: 6px; }
-#home-button { left: 115px; width: 25px; }
-#friends-list-button { left: 145px; }
-
-#account-settings-button { right: 6px; width: 150px; }
-#inventory-list-button { right: 160px; }
-
-#room-edit-button {
-    position: absolute;
-    top: 42px;
-    right: 6px;
+#room-list-button, #home-button, #friends-list-button, #account-settings-button, #bit-count {
+    float: left;
+    margin-right: 6px;
+    width: auto;
 }
+
+#home-button { width: 25px; }
 
 #bit-count {
     color: white;
@@ -259,16 +250,19 @@ input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover, button:
     font-weight: bold;
     font-family: 'Consolas', monospace;
     font-size: 14pt;
-    position: absolute;
-    top: 6px;
-    right: 270px;
     padding: 2px;
-    height: 20px;
+    height: 24px;
     vertical-align: middle;
 }
 #bit-count::after {
     margin-left: 4px;
     content: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAASCAYAAABit09LAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAXklEQVQoz2NkgIKP9/P/w9gf7u+EMRnknW4wMjAwMDCiK8KlmAmbBDbAxEAkYMJmLQMDA4OAojuc/XCfxn8mmLXIEpRZPXIVCii6E45CfsWJjBRZjTP1EIpCRmITLgDj5Skiz9Zq8QAAAABJRU5ErkJggg==);
+}
+
+#room-edit-button {
+    position: absolute;
+    top: 42px;
+    right: 6px;
 }
 
 #usercounter {
@@ -387,83 +381,77 @@ input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover, button:
 
 #chatbox-holder {
     position: absolute;
-    left: 6px;
-    right: 336px;
-    bottom: 6px;
+    right: 6px;
+    width: 245px;
+    bottom: 36px;
 }
 #chatbox {
     width: 100%;
     height: 24px;
-    box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
     border: 1px solid black;
     margin: 0;
 }
 
 #chatbutton {
     position: absolute;
-    right: 226px;
+    right: 170px;
     bottom: 6px;
-    max-width: 10%;
+    width: 80px;
 }
 
-#fullchatlog-button {
+#inventory-list-button {
     position: absolute;
     bottom: 6px;
-    right: 116px;
+    right: 90px;
+    width: 76px;
 }
 
 #chooser-button {
     position: absolute;
     bottom: 6px;
     right: 6px;
-}
-
-#fullchatlog {
-    position: absolute;
-    left: 100px;
-    top: 100px;
-    height: 400px;
-    width: 400px;
-}
-
-#fullchatlog .popup-content {
-    background-color: rgba(0,0,0,0.7);
-    color: white;
+    width: 80px;
 }
 
 #chatlog {
     position: absolute;
-    left: 5px;
-    bottom: 58px;
-    width: 80%;
-    color: white;
-    pointer-events: none;
-    overflow: hidden;
+    right: 0;
+    width: 255px;
+    top: 0;
+    bottom: 66px;
+    background-color: white;
+    overflow: auto;
+    border-left: 3px solid black;
 }
 
-#chatlog, #fullchatlog-content {
-    border-collapse: collapse;
-}
-
-a {
-    color: orange;
-    text-decoration: underline;
+.chat-line {
+    display: block;
+    margin-bottom: 5px;
+    padding: 2px;
+    border: 1px solid black;
+    background-color: white;
+    color: black;
+    font-size: 11pt;
+    overflow-x: hidden;
 }
 
 .chat-link {
     pointer-events: auto;
+    color: orange;
+    text-decoration: underline;
 }
 
-#chatlog .chat-line {
-    background-color: rgba(0,0,0,0.7);
+.modspeak {
+    background-color: #EDFFD4 !important;
 }
-
+.leave-join {
+    background-color: khaki !important;
+}
 .highlight {
     background-color: fuchsia !important;
 }
 .console {
+    background-color: black !important;
     font-family: monospace;
     color: lime;
     font-weight: bold;
@@ -530,12 +518,15 @@ a {
 
 .nickname {
     font-weight: bold;
-    text-shadow: 1px 1px black, -1px -1px black, 1px -1px black, -1px 1px black;
-    color: white;
     pointer-events: auto;
 }
 .nickname:hover {
     cursor: pointer;
+}
+
+.pony .nickname {
+    text-shadow: 1px 1px black, -1px -1px black, 1px -1px black, -1px 1px black;
+    color: white;
 }
 
 .nickname.own {
@@ -558,8 +549,8 @@ a {
     height: 250px;
 }
 .pm-log .popup-content {
-    background-color: rgba(0, 0, 0, 0.7);
-    color: white;
+    background-color: white;
+    color: black;
 }
 .pm-log-messages {
     position: absolute;
@@ -581,10 +572,6 @@ a {
     right: 90px;
     bottom: 1px;
     height: 24px;
-
-    box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
 }
 .pm-log-replybtn {
     position: absolute;
@@ -618,42 +605,41 @@ a {
     cursor: pointer;
 }
 
-.nickname.creator, .creator .originpart {
-    color: gold !important;
-}
-.nickname.creator::after, .creator .originpart .innertext::after {
-    font-weight: normal !important;
+.nickname::after {
     font-family: sans-serif;
+}
+.pony .nickname::after {
     color: white !important;
+}
+.chat-line .nickname::after {
+    color: black !important;
+}
+
+.nickname.creator {
+    color: goldenrod !important;
+}
+.nickname.creator::after {
     content: ' (pp creator)';
 }
 
-.nickname.developer, .developer .originpart {
-    color: orange !important;
+.nickname.developer {
+    color: orangered !important;
 }
-.nickname.developer::after, .developer .originpart .innertext::after {
-    font-weight: normal !important;
-    font-family: sans-serif;
-    color: white !important;
+.nickname.developer::after {
     content: ' (pp dev)';
 }
 
-.nickname.moderator, .moderator .originpart {
-    color: rgb(204, 255, 0) !important;
+.nickname.moderator {
+    color: forestgreen !important;
 }
-.nickname.moderator::after, .moderator .originpart .innertext::after {
-    font-weight: normal !important;
-    font-family: sans-serif;
-    color: white !important;
+.nickname.moderator::after {
     content: ' (mod)';
 }
 
 .nickname.bot, .bot .originpart {
     color: red !important;
 }
-.nickname.bot::after, .bot .originpart .innertext::after {
-    font-weight: normal !important;
-    color: white !important;
+.nickname.bot::after {
     content: ' (bot)';
 }
 
