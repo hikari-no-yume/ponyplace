@@ -6,7 +6,7 @@ Setup
 Configuration
 -------------
 
-1. Make sure you have a `special-users.json` file in the `server/data` directory. Make sure the usernames listed have accounts attached, otherwise anyone can log in with that name and use mod powers. Should be of format:
+1. Make sure you have a `special-users.json` file in the `server/data` directory. Make sure the usernames listed have accounts attached, otherwise anyone can create one with that name and use mod powers. Should be of format:
 
         {
             "joe": "creator",

@@ -13,7 +13,7 @@
     var avatars = [], inventoryItems = [];
 
     var socket, connected = false, ignoreDisconnect = false, pageFocussed = false, unseenHighlights = 0,
-        me, myNick, myRoom = null, mySpecialStatus, avatarInventory, inventory = [], friends = [], haveAccount = false,
+        me, myNick, myRoom = null, mySpecialStatus, avatarInventory, inventory = [], friends = [],
         roomwidgetstate = [],
         currentUser = null,
         lastmove = (new Date().getTime()),
@@ -24,7 +24,7 @@
     var container,
         overlay,
         loginbox, nickbox, personasubmit, loginsubmit,
-        accountsettings, accountsettingsbutton, createaccbutton, changepassbutton, rmpassbutton,
+        accountsettings, accountsettingsbutton, changepassbutton, rmpassbutton,
         outerstage, stage,
         bitcount,
         chooser, chooserbutton,
@@ -509,13 +509,6 @@
     }
 
     function createCatalogueWidget(config, root) {
-        if (!haveAccount) {
-            var p = document.createElement('p');
-            p.id = 'no-account-note';
-            appendText(p, "You need to create an account (top-right, Account Settings) to get avatars or items. You can get free bits in the dungeon, and you'll get a little each day if you keep coming back. :)");
-            root.appendChild(p);
-            return;
-        }
         getCatalogue(config.catalogue_name, function (catalogue) {
             for (var i = 0; i < catalogue.length; i++) {
                 var item = catalogue[i];
@@ -833,57 +826,49 @@
         if (profile.online) {
             appendText(popup.content, profile.nick + ' is online');
         } else {
-            if (profile.has_account) {
-                appendText(popup.content, profile.nick + " isn't online");
-            } else {
-                appendText(popup.content, 'There is no online user with the nick: "' + profile.nick + '"');
-            }
+            appendText(popup.content, profile.nick + " isn't online");
         }
 
         var button;
 
-        if (haveAccount) {
-            if (friends.indexOf(profile.nick) !== -1) {
-                button = document.createElement('button');
-                appendText(button, 'Remove friend');
-                button.onclick = function (e) {
-                    socket.send(JSON.stringify({
-                        type: 'friend_remove',
-                        nick: profile.nick
-                    }));
-                    popup.hide();
-                };
-                popup.content.appendChild(button);
-            } else {
-                button = document.createElement('button');
-                appendText(button, 'Add friend');
-                button.onclick = function (e) {
-                    socket.send(JSON.stringify({
-                        type: 'friend_add',
-                        nick: profile.nick
-                    }));
-                    popup.hide();
-                };
-                popup.content.appendChild(button);
-            }
-        }
-
-        if (profile.has_account) {
+        if (friends.indexOf(profile.nick) !== -1) {
             button = document.createElement('button');
-            var icon = document.createElement('img');
-            icon.src = '/media/icons/house.png';
-            icon.className = 'house-link';
-            button.appendChild(icon);
-            appendText(button, 'Visit house');
+            appendText(button, 'Remove friend');
             button.onclick = function (e) {
                 socket.send(JSON.stringify({
-                    type: 'room_change',
-                    name: 'house ' + profile.nick
+                    type: 'friend_remove',
+                    nick: profile.nick
+                }));
+                popup.hide();
+            };
+            popup.content.appendChild(button);
+        } else {
+            button = document.createElement('button');
+            appendText(button, 'Add friend');
+            button.onclick = function (e) {
+                socket.send(JSON.stringify({
+                    type: 'friend_add',
+                    nick: profile.nick
                 }));
                 popup.hide();
             };
             popup.content.appendChild(button);
         }
+
+        button = document.createElement('button');
+        var icon = document.createElement('img');
+        icon.src = '/media/icons/house.png';
+        icon.className = 'house-link';
+        button.appendChild(icon);
+        appendText(button, 'Visit house');
+        button.onclick = function (e) {
+            socket.send(JSON.stringify({
+                type: 'room_change',
+                name: 'house ' + profile.nick
+            }));
+            popup.hide();
+        };
+        popup.content.appendChild(button);
 
         if (profile.online) {
             button = document.createElement('button');
@@ -1389,27 +1374,6 @@
         accountsettings = makePopup('#account-settings', 'Account Settings', true, 300, 300, true);
         accountsettings.hide();
 
-        createaccbutton = document.createElement('input');
-        createaccbutton.type = 'submit';
-        createaccbutton.value = 'Create account with Persona';
-        createaccbutton.onclick = function () {
-            accountsettings.hide();
-            navigator.id.watch({
-                loggedInUser: currentUser,
-                onlogin: function (assertion) {
-                    socket.send(JSON.stringify({
-                        type: 'create_account',
-                        assertion: assertion
-                    }));
-                },
-                onlogout: function () {
-                    // ???
-                }
-            });
-            navigator.id.request();
-        };
-        accountsettings.content.appendChild(createaccbutton);
-
         changepassbutton = document.createElement('a');
         changepassbutton.href = 'https://login.persona.org';
         changepassbutton.className = 'button';
@@ -1451,11 +1415,11 @@
         friendslist.hide();
     }
 
-    function doLogin(authenticated, assertion) {
-        if (nickbox.value || authenticated) {
+    function doLogin(newAccount, assertion) {
+        if (nickbox.value || !newAccount) {
             nickbox.blur();
             loginbox.hide();
-            initNetwork(authenticated, assertion);
+            initNetwork(newAccount, assertion);
         }
     }
 
@@ -1463,13 +1427,48 @@
         loginbox = makePopup('#loginbox', 'Log in');
         loginbox.content.innerHTML = "<h1>Welcome to ponyplace!</h1>\
         <p>ponyplace is a My Little Pony-themed chatroom! You can hang out, play games and earn bits and customise your avatar and house. It's all free, forever. You'll never have to pay a cent!</p>\
-        <p id=age-disclaimer>By logging in you assert that you are at least 13 years of age or have obtained parental permission, and understand that ponyplace is a public chatroom that may occasionally feature content unsuitable for children. Also, DO NOT ASK TO BECOME A MOD. YOU WILL BE KICKED.</p>\
-        <p>If you already have a ponyplace and Persona account, log in. If you want to create a ponyplace account, sign in anonymously first, then go to Account Settings.</p>";
+        <div id=rules>By creating an account and logging in you must abide by these rules:\
+        <ul>\
+            <li>You must be 13 years or older, or have asked your parents for permission.\
+            <li>You understand that ponyplace is a public chatroom that may occasionally feature content unsuitable for children.\
+            <li>Keep 18+ content in rooms labelled as such.\
+            <li>Do not ask to be a mod (moderator) or pester the mods.\
+            <li>Be nice.\
+            <li>Don't spam or flood the chat.\
+        </ul>\
+        </div>\
+        <p>If you already have a ponyplace and Persona account, log in.</p>";
 
         personasubmit = document.createElement('input');
         personasubmit.type = 'submit';
         personasubmit.value = 'Log in with Persona';
         personasubmit.onclick = function () {
+            navigator.id.watch({
+                loggedInUser: currentUser,
+                onlogin: function (assertion) {
+                    doLogin(false, assertion);
+                },
+                onlogout: function () {
+                    // ???
+                }
+            });
+            navigator.id.request();
+        };
+        loginbox.content.appendChild(personasubmit);
+
+        appendText(loginbox.content, 'Or, create an account. Choose a nickname (3 to 18 characters; digits, letters and underscores (_) only).');
+
+        nickbox = document.createElement('input');
+        nickbox.type = 'text';
+        nickbox.placeholder = 'nickname';
+        nickbox.maxLength = 18;
+        loginbox.content.appendChild(nickbox);
+        nickbox.focus();
+
+        loginsubmit = document.createElement('input');
+        loginsubmit.type = 'submit';
+        loginsubmit.value = 'Create Account using Persona';
+        loginsubmit.onclick = function () {
             navigator.id.watch({
                 loggedInUser: currentUser,
                 onlogin: function (assertion) {
@@ -1480,28 +1479,6 @@
                 }
             });
             navigator.id.request();
-        };
-        loginbox.content.appendChild(personasubmit);
-
-        appendText(loginbox.content, "Otherwise, you can log in anonymously. Choose a nickname (3 to 18 characters; digits, letters and underscores (_) only).");
-
-        nickbox = document.createElement('input');
-        nickbox.type = 'text';
-        nickbox.placeholder = 'nickname';
-        nickbox.maxLength = 18;
-        nickbox.onkeypress = function (e) {
-            if (e.which === 13) {
-                doLogin();
-            }
-        };
-        loginbox.content.appendChild(nickbox);
-        nickbox.focus();
-
-        loginsubmit = document.createElement('input');
-        loginsubmit.type = 'submit';
-        loginsubmit.value = 'Anonymous Login';
-        loginsubmit.onclick = function () {
-            doLogin();
         };
         loginbox.content.appendChild(loginsubmit);
 
@@ -1541,8 +1518,9 @@
         };
     }
 
-    function initNetwork(authenticated, assertion) {
+    function initNetwork(newAccount, assertion) {
         if (window.location.hostname === 'localhost') {
+
             socket = new WebSocket('ws://localhost:9001', 'ponyplace');
         } else {
             socket = new WebSocket('ws://ajf.me:9001', 'ponyplace');
@@ -1558,21 +1536,22 @@
                 chat: ''
             };
 
-            if (authenticated) {
+            if (!newAccount) {
                 socket.send(JSON.stringify({
-                    type: 'appear',
+                    type: 'login',
                     obj: me,
                     assertion: assertion,
-                    authenticated: true
+                    mode: 'existing'
                 }));
             } else {
                 // trim whitespace
                 var nick = nickbox.value.replace(/^\s+|\s+$/g, '');
                 socket.send(JSON.stringify({
-                    type: 'appear',
+                    type: 'login',
                     obj: me,
-                    nick: nick,
-                    authenticated: false
+                    assertion: assertion,
+                    mode: 'create',
+                    nick: nick
                 }));
             }
         };
@@ -1588,7 +1567,6 @@
             var msg = JSON.parse(e.data);
             switch (msg.type) {
                 case 'appear':
-
                     userManager.add(msg.nick, msg.obj, msg.special, false);
                 break;
                 case 'update':
@@ -1623,30 +1601,15 @@
                     inventory = msg.inventory;
                     friends = msg.friends;
                     chooserbutton.disabled = false;
-                    haveAccount = msg.have_account;
                     accountsettingsbutton.disabled = false;
-                    if (haveAccount) {
-                        createaccbutton.style.display = 'none';
-                        changepassbutton.style.display = 'block';
-                        rmpassbutton.style.display = 'block';
-                        inventorylistbutton.style.display = 'block';
-                        renderInventoryList();
-                        friendslistbutton.style.display = 'block';
-                        renderFriendsList();
-                        bitcount.style.display = 'block';
-                        homebutton.style.display = 'block';
-                    } else {
-                        createaccbutton.style.display = 'block';
-                        changepassbutton.style.display = 'none';
-                        rmpassbutton.style.display = 'none';
-                        inventorylistbutton.style.display = 'none';
-                        inventorylist.hide();
-                        friendslistbutton.style.display = 'none';
-                        friendslist.hide();
-                        bitcount.style.display = 'none';
-                        homebutton.style.display = 'none';
-                        localStorage.setItem('last-avatar', '');
-                    }
+                    changepassbutton.style.display = 'block';
+                    rmpassbutton.style.display = 'block';
+                    inventorylistbutton.style.display = 'block';
+                    renderInventoryList();
+                    friendslistbutton.style.display = 'block';
+                    renderFriendsList();
+                    bitcount.style.display = 'block';
+                    homebutton.style.display = 'block';
 
                     stage.style.display = 'block';
                     if (myRoom === null) {
@@ -1739,16 +1702,18 @@
                     logKickBanNoticeInChat(msg.mod_nick, msg.mod_special, msg.kickee_nick, msg.kickee_special, msg.reason);
                 break;
                 case 'kick':
-                    if (msg.reason === 'nick_in_use') {
-                        alert('That nickname was already in use. Reload and choose a different one.');
+                    if (msg.reason === 'account_in_use') {
+                        alert('You are already logged in somewhere else. Log out from there first.');
                     } else if (msg.reason === 'bad_nick') {
                         alert('Bad nickname.\nNicknames must be between 3 and 18 characters long, and contain only letters, digits, and underscores (_).');
-                    } else if (msg.reason === 'protected_nick') {
-                        alert('That nickname is protected.\nChoose a different one, or if you own it, log in.');
                     } else if (msg.reason === 'bad_login') {
-                        alert('Login failed.');
+                        alert('Login with Persona failed.');
                     } else if (msg.reason === 'no_assoc_account') {
-                        alert('There is no account associated with this email address.\nAre you sure you have a ponyplace account? You need to sign in anonymously, then go to the top-right, Account Settings, and click "Create Account with Persona" to create an account.');
+                        alert('There is no account associated with this email address. Are you sure you have a ponyplace account?');
+                    } else if (msg.reason === 'already_email') {
+                        alert('There is already an account associated with this email address. You can only have one ponyplace account for one email address.');
+                    } else if (msg.reason === 'already_account') {
+                        alert('There is already an account with this nickname. Choose a different one.');
                     } else if (msg.reason === 'account_deleted') {
                         alert('Your account was deleted.');
                         navigator.id.logout();
@@ -1784,7 +1749,7 @@
                             window.location.reload();
                         }, (5+Math.floor(Math.random() * 5)) * 1000);
                     } else {
-                        alert('You were kicked for an unrecognised reason: "' + msg.reason + '"');
+                        alert('You were disconnected for an unrecognised reason: "' + msg.reason + '"');
                     }
                 break;
                 default:

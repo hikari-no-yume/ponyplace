@@ -383,7 +383,6 @@ function handleCommand(cmd, myNick, user) {
     }
 
     var isMod = User.isModerator(myNick);
-    var haveHouse = User.hasAccount(myNick);
 
     // help
     if (cmd.substr(0, 4) === 'help') {
@@ -391,30 +390,26 @@ function handleCommand(cmd, myNick, user) {
             'Three user commands are available: 1) profile, 2) list, 3) join',
             "1. profile - Brings up someone's profile, e.g. /profile someguy",
             '2. list - Lists available rooms, e.g. /list',
-            "3. join - Joins a room, e.g. /join library - if room doesn't exist, an ephemeral room will be created - you can also enter people's houses, e.g. /join house ajf"
+            "3. join - Joins a room, e.g. /join library - if room doesn't exist, an ephemeral room will be created - you can also enter people's houses, e.g. /join house ajf",
+            'Three house commands are available: 1) empty, 2) lock, 3) unlock',
+            '1. empty - Removes everyone else from your house, e.g. /empty',
+            '2. lock - Prevents anyone else from joining your house, e.g. /lock',
+            '3. unlock - Lets other people join your house again, e.g. /unlock'
         ]);
-        if (haveHouse) {
-            sendMultiLine([
-                'Three house commands are available: 1) empty, 2) lock, 3) unlock',
-                '1. empty - Removes everyone else from your house, e.g. /empty',
-                '2. lock - Prevents anyone else from joining your house, e.g. /lock',
-                '3. unlock - Lets other people join your house again, e.g. /unlock'
-            ]);
-        }
         if (isMod) {
             sendLine('See also: /modhelp');
         }
     // profile
     } else if (cmd.substr(0, 8) === 'profile ') {
         var nick = cmd.substr(8);
-        if (!!nick.match(validNickRegex)) {
+        if (User.hasAccount(nick)) {
             user.send({
                 type: 'profile',
                 data: User.getProfile(nick),
                 moderator_mode: isMod
             });
         } else {
-            sendLine('"' + nick + '" is not a valid nickname.');
+            sendLine('There is no user with nick: "' + nick + '"');
         }
     // join room
     } else if (cmd.substr(0, 5) === 'join ') {
@@ -423,14 +418,10 @@ function handleCommand(cmd, myNick, user) {
         if (roomName.indexOf(' ') !== -1) {
             if (roomName.substr(0, 6) === 'house ') {
                 var houseName = roomName.substr(6);
-                if (User.hasAccount(houseName)) {
-                    if (User.isHouseLocked(houseName) && myNick !== houseName) {
-                        sendLine('That house is locked.');
-                    } else {
-                        doRoomChange(roomName, user);
-                    }
+                if (User.isHouseLocked(houseName) && myNick !== houseName) {
+                    sendLine('That house is locked.');
                 } else {
-                    sendLine('The user with the nick: "' + houseName + '" does not have a house.');
+                    doRoomChange(roomName, user);
                 }
             } else {
                 sendLine('Room names cannot contain spaces.');
@@ -450,7 +441,7 @@ function handleCommand(cmd, myNick, user) {
         }
         sendLine(roomList.length + ' rooms available: ' + roomNames.join(', '));
     // empty house
-    } else if (haveHouse && cmd.substr(0, 5) === 'empty') {
+    } else if (cmd.substr(0, 5) === 'empty') {
         var count = 0;
         User.forEach(function (iterUser) {
             if (iterUser.room === 'house ' + myNick && iterUser.nick !== myNick) {
@@ -466,7 +457,7 @@ function handleCommand(cmd, myNick, user) {
             sendLine('There are no other users in your house.');
         }
     // lock house
-    } else if (haveHouse && cmd.substr(0, 4) === 'lock') {
+    } else if (cmd.substr(0, 4) === 'lock') {
         var house = User.getHouse(myNick);
         if (house.locked) {
             sendLine('Your house is already locked. Use /unlock to unlock it.');
@@ -476,7 +467,7 @@ function handleCommand(cmd, myNick, user) {
             sendLine('Your house was locked. Use /unlock to unlock it.');
         }
     // unlock house
-    } else if (haveHouse && cmd.substr(0, 6) === 'unlock') {
+    } else if (cmd.substr(0, 6) === 'unlock') {
         var house = User.getHouse(myNick);
         if (!house.locked) {
             sendLine('Your house is already unlocked. Use /lock to lock it.');
@@ -838,37 +829,9 @@ wsServer.on('request', function(request) {
                     }
                 });
             break;
-            case 'create_account':
-                if (!User.hasAccount(myNick)) {
-                    User.assert(msg.assertion, function (good, email) {
-                        if (good) {
-                            if (!User.hasEmail(email)) {
-                                User.createAccount(myNick, email);
-                                user.sendAccountState();
-                            } else {
-                                user.send({
-                                    type: 'console_msg',
-                                    msg: 'Email already in use.'
-                                });
-                            }
-                        } else {
-                            user.send({
-                                type: 'console_msg',
-                                msg: 'Bad login.'
-                            });
-                        }
-                    });
-                } else {
-                    user.kick('protocol_error');
-                }
-            break;
             case 'delete_account':
-                if (User.hasAccount(myNick)) {
-                    User.deleteAccount(myNick);
-                    user.kick('account_deleted');
-                } else {
-                    user.kick('protocol_error');
-                }
+                User.deleteAccount(myNick);
+                user.kick('account_deleted');
             break;
             case 'room_change':
                 if (msg.name.indexOf(' ') === -1) {
@@ -876,20 +839,13 @@ wsServer.on('request', function(request) {
                 } else {
                     if (msg.name.substr(0, 6) === 'house ') {
                         var houseName = msg.name.substr(6);
-                        if (User.hasAccount(houseName)) {
-                            if (User.isHouseLocked(houseName) && myNick !== houseName) {
-                                user.send({
-                                    type: 'console_msg',
-                                    msg: 'That house is locked.'
-                                });
-                            } else {
-                                doRoomChange(msg.name, user);
-                            }
-                        } else {
+                        if (User.isHouseLocked(houseName) && myNick !== houseName) {
                             user.send({
                                 type: 'console_msg',
-                                msg: 'The user with the nick: "' + houseName + '" does not have a house.'
+                                msg: 'That house is locked.'
                             });
+                        } else {
+                            doRoomChange(msg.name, user);
                         }
                     } else {
                         user.kick('protocol_error');
@@ -905,11 +861,15 @@ wsServer.on('request', function(request) {
                 });
             break;
             case 'profile_get':
-                user.send({
-                    type: 'profile',
-                    data: User.getProfile(msg.nick),
-                    moderator_mode: User.isModerator(myNick)
-                });
+                if (User.hasAccount(msg.nick)) {
+                    user.send({
+                        type: 'profile',
+                        data: User.getProfile(msg.nick),
+                        moderator_mode: User.isModerator(myNick)
+                    });
+                } else {
+                    sendLine('There is no user with nick: "' + nick + '"');
+                }
             break;
             case 'priv_msg':
                 if (!User.has(msg.nick)) {
@@ -928,20 +888,12 @@ wsServer.on('request', function(request) {
                 }
             break;
             case 'friend_add':
-                if (User.hasAccount(myNick)) {
-                    User.addFriend(myNick, msg.nick);
-                    user.sendAccountState();
-                } else {
-                    user.kick('protocol_error');
-                }
+                User.addFriend(myNick, msg.nick);
+                user.sendAccountState();
             break;
             case 'friend_remove':
-                if (User.hasAccount(myNick)) {
-                    User.removeFriend(myNick, msg.nick);
-                    user.sendAccountState();
-                } else {
-                    user.kick('protocol_error');
-                }
+                User.removeFriend(myNick, msg.nick);
+                user.sendAccountState();
             break;
             case 'get_catalogue':
                 user.send({
@@ -964,49 +916,45 @@ wsServer.on('request', function(request) {
                 }
             break;
             case 'change_house_background':
-                if (User.hasAccount(myNick)) {
-                    var house = User.getHouse(myNick);
-                    // default
-                    if (msg.bg_name === null) {
-                        house.background = {
-                            data: '/media/rooms/cave.png',
-                            width: 960,
-                            height: 660,
-                            iframe: false
-                        };
-                        User.setHouse(myNick, house);
-                        user.send({
-                            type: 'console_msg',
-                            msg: 'House background reset.'
-                        });
-                        User.forEach(function (iterUser) {
-                            if (iterUser.room === 'house ' + myNick) {
-                                doRoomChange('house ' + myNick, iterUser);
-                            }
-                        });
-                    } else {
-                        if (User.hasInventoryItem(myNick, msg.bg_name)) {
-                            if (User.inventoryItems.hasOwnProperty(msg.bg_name)) {
-                                house.background = User.inventoryItems[msg.bg_name].background_data;
-                                User.setHouse(myNick, house);
-                                user.send({
-                                    type: 'console_msg',
-                                    msg: 'House background changed.'
-                                });
-                                User.forEach(function (iterUser) {
-                                    if (iterUser.room === 'house ' + myNick) {
-                                        doRoomChange('house ' + myNick, iterUser);
-                                    }
-                                });
-                            } else {
-                                user.kick('protocol_error');
-                            }
-                        } else {
-                            user.kick('dont_have_item');
+                var house = User.getHouse(myNick);
+                // default
+                if (msg.bg_name === null) {
+                    house.background = {
+                        data: '/media/rooms/cave.png',
+                        width: 960,
+                        height: 660,
+                        iframe: false
+                    };
+                    User.setHouse(myNick, house);
+                    user.send({
+                        type: 'console_msg',
+                        msg: 'House background reset.'
+                    });
+                    User.forEach(function (iterUser) {
+                        if (iterUser.room === 'house ' + myNick) {
+                            doRoomChange('house ' + myNick, iterUser);
                         }
-                    }
+                    });
                 } else {
-                    user.kick('protocol_error');
+                    if (User.hasInventoryItem(myNick, msg.bg_name)) {
+                        if (User.inventoryItems.hasOwnProperty(msg.bg_name)) {
+                            house.background = User.inventoryItems[msg.bg_name].background_data;
+                            User.setHouse(myNick, house);
+                            user.send({
+                                type: 'console_msg',
+                                msg: 'House background changed.'
+                            });
+                            User.forEach(function (iterUser) {
+                                if (iterUser.room === 'house ' + myNick) {
+                                    doRoomChange('house ' + myNick, iterUser);
+                                }
+                            });
+                        } else {
+                            user.kick('protocol_error');
+                        }
+                    } else {
+                        user.kick('dont_have_item');
+                    }
                 }
             break;
             // handle unexpected packet types
@@ -1018,16 +966,6 @@ wsServer.on('request', function(request) {
 
     function completeRequest(nick, msg) {
         if (!amConnected) {
-            return;
-        }
-
-        // Prevent nickname dupe
-        if (User.has(nick)) {
-            connection.sendUTF(JSON.stringify({
-                type: 'kick',
-                reason: 'nick_in_use'
-            }));
-            connection.close();
             return;
         }
 
@@ -1073,29 +1011,27 @@ wsServer.on('request', function(request) {
         user.sendAccountState();
 
         // give daily reward
-        if (User.hasAccount(nick)) {
-            var date = (new Date()).toISOString().split('T', 1)[0];
-            if (User.getUserData(nick, 'last_reward', '1970-01-01') !== date) {
-                if (User.hasBits(nick) < 500) {
-                    var reward = Math.floor(Math.random()*100);
-                    if (User.changeBits(nick, reward)) {
-                        User.setUserData(nick, 'last_reward', date);
-                        user.send({
-                            type: 'console_msg',
-                            msg: "As a thanks for visiting ponyplace again today, here's " + reward + " free bits! :)"
-                        });
-                    } else {
-                        user.send({
-                            type: 'console_msg',
-                            msg: 'Sorry, something went wrong. Giving you your daily reward failed :('
-                        });
-                    }
+        var date = (new Date()).toISOString().split('T', 1)[0];
+        if (User.getUserData(nick, 'last_reward', '1970-01-01') !== date) {
+            if (User.hasBits(nick) < 500) {
+                var reward = Math.floor(Math.random()*100);
+                if (User.changeBits(nick, reward)) {
+                    User.setUserData(nick, 'last_reward', date);
+                    user.send({
+                        type: 'console_msg',
+                        msg: "As a thanks for visiting ponyplace again today, here's " + reward + " free bits! :)"
+                    });
                 } else {
                     user.send({
                         type: 'console_msg',
-                        msg: "Sorry, you can only get rewards if you have less than 500 bits. :("
+                        msg: 'Sorry, something went wrong. Giving you your daily reward failed :('
                     });
                 }
+            } else {
+                user.send({
+                    type: 'console_msg',
+                    msg: "Sorry, you can only get rewards if you have less than 500 bits. :("
+                });
             }
         }
 
@@ -1131,9 +1067,9 @@ wsServer.on('request', function(request) {
             return;
         }
 
-        // We're expecting an appear packet first
+        // We're expecting a login packet first
         // Anything else is unexpected
-        if (msg.type !== 'appear') {
+        if (msg.type !== 'login') {
             connection.sendUTF(JSON.stringify({
                 type: 'kick',
                 reason: 'protocol_error'
@@ -1142,27 +1078,51 @@ wsServer.on('request', function(request) {
             return;
         }
 
-        if (!msg.authenticated) {
-            // Prevent nickname stealing
-            if (User.hasAccount(msg.nick)) {
-                connection.sendUTF(JSON.stringify({
-                    type: 'kick',
-                    reason: 'protected_nick'
-                }));
-                connection.close();
-                return;
-            // Prefent profane/long/short/additional whitespace nicks
-            } else if ((!!msg.nick.match(badRegex)) || msg.nick.length > 18 || msg.nick.length < 3 || !msg.nick.match(validNickRegex)) {
-                connection.sendUTF(JSON.stringify({
-                    type: 'kick',
-                    reason: 'bad_nick'
-                }));
-                connection.close();
-                return;
-            }
-            completeRequest(msg.nick, msg);
-        } else {
-            if (msg.hasOwnProperty('bypass') && msg.bypass) {
+        switch (msg.mode) {
+            case 'create':
+                // Prefent profane/long/short/additional whitespace nicks
+                if ((!!msg.nick.match(badRegex)) || msg.nick.length > 18 || msg.nick.length < 3 || !msg.nick.match(validNickRegex)) {
+                    connection.sendUTF(JSON.stringify({
+                        type: 'kick',
+                        reason: 'bad_nick'
+                    }));
+                    connection.close();
+                    return;
+                }
+
+                // Check if already account with nick
+                if (User.hasAccount(msg.nick)) {
+                    connection.sendUTF(JSON.stringify({
+                        type: 'kick',
+                        reason: 'already_account'
+                    }));
+                    connection.close();
+                    return;
+                }
+
+                // check with mozilla
+                User.assert(msg.assertion, function (good, email) {
+                    if (good) {
+                        if (!User.hasEmail(email)) {
+                            User.createAccount(msg.nick, email);
+                            completeRequest(msg.nick, msg);
+                        } else {
+                            connection.sendUTF(JSON.stringify({
+                                type: 'kick',
+                                reason: 'already_email'
+                            }));
+                            connection.close();
+                        }
+                    } else {
+                        connection.sendUTF(JSON.stringify({
+                            type: 'kick',
+                            reason: 'bad_login'
+                        }));
+                        connection.close();
+                    }
+                });
+            break;
+            case 'bypass':
                 if (User.checkBypass(msg.nick, msg.bypass)) {
                     completeRequest(msg.nick, msg);
                 } else {
@@ -1172,12 +1132,22 @@ wsServer.on('request', function(request) {
                     }));
                     connection.close();
                 }
-            } else {
+            break;
+            case 'existing':
+                // check with mozilla
                 User.assert(msg.assertion, function (good, email) {
                     var nick;
                     if (good) {
                         if (nick = User.getAccountForEmail(email)) {
-                            completeRequest(nick, msg);
+                            if (User.has(nick)) {
+                                connection.sendUTF(JSON.stringify({
+                                    type: 'kick',
+                                    reason: 'account_in_use'
+                                }));
+                                connection.close();
+                            } else {
+                                completeRequest(nick, msg);
+                            }
                         } else {
                             connection.sendUTF(JSON.stringify({
                                 type: 'kick',
@@ -1193,7 +1163,7 @@ wsServer.on('request', function(request) {
                         connection.close();
                     }
                 });
-            }
+            break;
         }
 
         // call onMessage for subsequent messages

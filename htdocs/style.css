@@ -20,12 +20,13 @@ body {
     background-color: white;
 }
 
-#age-disclaimer {
-    font-weight: bold;
-    color: red;
-    font-size: 110%;
-    background-color: black;
+#rules {
+    font-family: Georgia;
+    color: #333;
+    height: 100px;
+    overflow: auto;
     padding: 4px;
+    border: 1px solid black;
 }
 
 h1 {

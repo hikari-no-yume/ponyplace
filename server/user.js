@@ -23,8 +23,7 @@ User.prototype.sendAccountState = function () {
         bits: User.hasBits(this.nick),
         avatar_inventory: User.getAvatarInventory(this.nick),
         inventory: User.getInventory(this.nick),
-        friends: User.getFriends(this.nick),
-        have_account: User.hasAccount(this.nick)
+        friends: User.getFriends(this.nick)
     });
 };
 User.prototype.kill = function () {
@@ -208,10 +207,12 @@ User.changeBits = function (nick, amount) {
 };
 
 User.getProfile = function (nick) {
+    if (!this.hasAccount(nick)) {
+        return null;
+    }
     var profile = {
         nick: nick,
-        online: this.has(nick),
-        has_account: this.hasAccount(nick)
+        online: this.has(nick)
     };
     if (profile.online) {
         profile.room = this.get(nick).room;
