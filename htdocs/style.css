@@ -618,14 +618,14 @@ input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover, button:
 }
 
 .nickname.moderator {
-    color: olivedrab !important;
+    color: forestgreen !important;
 }
 .nickname.moderator::after {
     content: ' (mod)';
 }
 
 .nickname.bot, .bot .originpart {
-    color: firebrick !important;
+    color: red !important;
 }
 .nickname.bot::after {
     content: ' (bot)';
