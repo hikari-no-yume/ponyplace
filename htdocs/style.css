@@ -234,8 +234,8 @@ input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover, button:
     top: 6px;
 }
 
-#room-list-button { left: 6px; }
-#home-button { left: 115px; width: 25px; }
+#room-list-button { left: 35px; }
+#home-button { left: 5px; width: 25px; }
 #friends-list-button { left: 145px; }
 #inventory-list-button { left: 255px; }
 #account-settings-button { left: 365px; }
