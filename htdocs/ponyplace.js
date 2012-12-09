@@ -421,6 +421,16 @@
         var preview, img, title;
         roomlist.content.innerHTML = '';
 
+        // refresh button
+        var refreshbutton = document.createElement('button');
+        appendText(refreshbutton, 'Refresh list');
+        refreshbutton.onclick = function () {
+            socket.send(JSON.stringify({
+                type: 'room_list'
+            }));
+        };
+        roomlist.content.appendChild(refreshbutton);
+
         // create new button
         var newbtn = document.createElement('button');
         appendText(newbtn, 'Create new ephemeral room');
@@ -469,8 +479,7 @@
             roomlist.content.appendChild(preview);
         }
 
-        // show list, refresh buttons
-        refreshbutton.disabled = false;
+        // show list button
         roomlistbutton.disabled = false;
     }
 
@@ -1291,18 +1300,6 @@
         };
         roomlistbutton.disabled = true;
         overlay.appendChild(roomlistbutton);
-
-        refreshbutton = document.createElement('input');
-        refreshbutton.type = 'submit';
-        refreshbutton.value = 'Refresh list';
-        refreshbutton.id = 'room-refresh-button';
-        refreshbutton.onclick = function () {
-            socket.send(JSON.stringify({
-                type: 'room_list'
-            }));
-        };
-        refreshbutton.disabled = true;
-        overlay.appendChild(refreshbutton);
 
         homebutton = document.createElement('button');
         var icon = document.createElement('img');
