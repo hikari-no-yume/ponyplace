@@ -604,28 +604,28 @@ input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover, button:
 }
 
 .nickname.creator {
-    color: gold !important;
+    color: goldenrod !important;
 }
 .nickname.creator::after {
     content: ' (pp creator)';
 }
 
 .nickname.developer {
-    color: orange !important;
+    color: orangered !important;
 }
 .nickname.developer::after {
     content: ' (pp dev)';
 }
 
 .nickname.moderator {
-    color: rgb(204, 255, 0) !important;
+    color: olivedrab !important;
 }
 .nickname.moderator::after {
     content: ' (mod)';
 }
 
 .nickname.bot, .bot .originpart {
-    color: red !important;
+    color: firebrick !important;
 }
 .nickname.bot::after {
     content: ' (bot)';
