@@ -234,14 +234,15 @@ input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover, button:
     cursor: pointer;
 }
 
-#room-refresh-button, #home-button, #friends-list-button, #account-settings-button, #inventory-list-button {
+#room-list-button, #room-refresh-button, #home-button, #friends-list-button, #account-settings-button, #inventory-list-button {
     position: absolute;
     top: 6px;
 }
 
-#room-refresh-button { left: 160px; }
-#home-button { left: 270px; width: 24px; }
-#friends-list-button { left: 300px; }
+#room-list-button { left: 6px; }
+#room-refresh-button { left: 115px; }
+#home-button { left: 230px; width: 25px; }
+#friends-list-button { left: 260px; }
 
 #account-settings-button { right: 6px; width: 150px; }
 #inventory-list-button { right: 160px; }
@@ -250,14 +251,6 @@ input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover, button:
     position: absolute;
     top: 42px;
     right: 6px;
-}
-
-#room-list-button {
-    position: absolute;
-    top: 6px;
-    left: 5px;
-    height: 25px;
-    width: 150px;
 }
 
 #bit-count {
