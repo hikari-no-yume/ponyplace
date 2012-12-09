@@ -417,11 +417,6 @@ input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover, button:
     border-right: 2px solid black;
 }
 
-a {
-    color: orange;
-    text-decoration: underline;
-}
-
 .chat-line {
     display: block;
     margin-bottom: 5px;
@@ -433,6 +428,8 @@ a {
 
 .chat-link {
     pointer-events: auto;
+    color: orange;
+    text-decoration: underline;
 }
 
 .leave-join {

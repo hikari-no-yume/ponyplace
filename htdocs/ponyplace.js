@@ -1457,6 +1457,14 @@
         a.target = '_blank';
         appendText(a, "Disclaimer and Credits");
         loginbox.content.appendChild(a);
+
+        appendText(loginbox.content, ' + ');
+
+        a = document.createElement('a');
+        a.href = 'http://phconline.net/';
+        a.target = '_blank';
+        appendText(a, "check out PHC, too :)");
+        loginbox.content.appendChild(a);
     }
 
     function initGUI() {
