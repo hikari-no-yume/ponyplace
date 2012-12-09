@@ -33,7 +33,7 @@
         roomlistbutton, roomlist, refreshbutton, homebutton,
         roomedit, roomeditbutton, roomeditreset, roomeditvisible,
         background, roomwidgets,
-        chatbox, chatboxholder, chatbutton, chatlog, fullchatlog, fullchatlogcontent, fullchatlogbutton;
+        chatbox, chatboxholder, chatbutton, chatlog;
 
     var userManager = {
         users: {},
@@ -50,7 +50,7 @@
         showUserCounter: function () {
             this.userCounter.style.display = 'block';
         },
-        add: function (nick, obj, special, me) {
+        add: function (nick, obj, special, me, doLog) {
             if (this.has(nick)) {
                 throw new Error("There is already a user with the same nick.");
             }
@@ -103,7 +103,9 @@
             this.update(nick, obj);
             this.userCount++;
             this.updateCounter();
-            logJoinInChat(nick, special);
+            if (doLog) {
+                logJoinInChat(nick, special);
+            }
         },
         update: function (nick, obj) {
             this.hasCheck(nick);
@@ -149,13 +151,15 @@
 
             user.obj = obj;
         },
-        kill: function (nick) {
+        kill: function (nick, doLog) {
             this.hasCheck(nick);
 
             var user = this.users[nick];
             this.userCount--;
             this.updateCounter();
-            logLeaveInChat(nick, user.special);
+            if (doLog) {
+                logLeaveInChat(nick, user.special);
+            }
             stage.removeChild(user.elem.root);
             delete this.users[nick];
         },
@@ -214,17 +218,8 @@
         pushState();
     }
 
-    function digitPad(n) {
-        return n = (n < 10) ? ("0" + n) : n;
-    }
-
     function appendText(parent, text) {
         parent.appendChild(document.createTextNode(text));
-    }
-
-    function appendTimestamp(parent) {
-        var date = new Date();
-        appendText(parent, '[' + digitPad(date.getHours()) + ':' + digitPad(date.getMinutes()) + '] ');
     }
 
     function appendNickname(parent, nick, special) {
@@ -285,7 +280,6 @@
                 span.className += ' ' + className;
             }
 
-            appendTimestamp(span);
             for (var j = 0; j < bits.length; j++) {
                 var bit = bits[j];
 
@@ -299,14 +293,9 @@
             span.appendChild(document.createElement('br'));
 
             if (target === 'chatlog') {
-                chatlog.appendChild(span);
-                while (chatlog.children.length > 12) {
-                    chatlog.removeChild(chatlog.firstChild);
-                }
-            } else if (target === 'fullchatlog') {
-                fullchatlog.content.appendChild(span);
+                chatlog.insertBefore(span, chatlog.firstChild);
             } else {
-                target.appendChild(span);
+                target.insertBefore(span, target.firstChild);
             }
         }
     }
@@ -320,14 +309,14 @@
     }
 
     function logMineInChat(nick, msg) {
-        chatPrint(['chatlog', 'fullchatlog'], [
+        chatPrint(['chatlog'], [
             ['nick', nick, mySpecialStatus],
             ['text', ': ' + msg]
         ], highlightCheck(msg));
     }
 
     function logInChat(nick, msg, special) {
-        chatPrint(['chatlog', 'fullchatlog'], [
+        chatPrint(['chatlog'], [
             ['nick', nick, special],
             ['text', ': ' + msg]
         ], highlightCheck(msg));
@@ -342,7 +331,7 @@
         if (reason) {
             lines.push(['text', ' because: "' + reason + '"']);
         }
-        chatPrint(['chatlog', 'fullchatlog'], lines, 'kick');
+        chatPrint(['chatlog'], lines, 'kick');
     }
 
     function logKickBanNoticeInChat(modNick, modSpecial, kickeeNick, kickeeSpecial, reason) {
@@ -354,66 +343,66 @@
         if (reason) {
             lines.push(['text', ' because: "' + reason + '"']);
         }
-        chatPrint(['chatlog', 'fullchatlog'], lines, 'kick');
+        chatPrint(['chatlog'], lines, 'kick');
     }
 
     function logBroadcastInChat(msg) {
-        chatPrint(['chatlog', 'fullchatlog'], [
-            ['text', '* BROADCAST: ' + msg]
+        chatPrint(['chatlog'], [
+            ['text', 'BROADCAST: ' + msg]
         ], 'broadcast');
     }
 
     function logSentConsoleCommandInChat(msg) {
-        chatPrint(['chatlog', 'fullchatlog'], [
-            ['text', '* CONSOLE <- /' + msg]
+        chatPrint(['chatlog'], [
+            ['text', 'CONSOLE <- /' + msg]
         ], 'console');
     }
 
     function logConsoleMessageInChat(msg) {
-        chatPrint(['chatlog', 'fullchatlog'], [
-            ['text', '* CONSOLE -> ' + msg]
+        chatPrint(['chatlog'], [
+            ['text', 'CONSOLE -> ' + msg]
         ], 'console');
     }
 
     function logJoinInChat(nick, special) {
-        chatPrint(['fullchatlog'], [
+        chatPrint(['chatlog'], [
             ['nick', nick, special],
             ['text', ' joined']
-        ]);
+        ], 'leave-join');
     }
 
     function logLeaveInChat(nick, special) {
-        chatPrint(['fullchatlog'], [
+        chatPrint(['chatlog'], [
             ['nick', nick, special],
             ['text', ' left']
-        ]);
+        ], 'leave-join');
     }
 
     function logRoomJoinInChat(name, name_full) {
-        chatPrint(['chatlog', 'fullchatlog'], [
+        chatPrint(['chatlog'], [
             ['nick', myNick, mySpecialStatus],
             ['text', ' joined the room ' + name + ' ("' + name_full + '")']
-        ]);
+        ], 'leave-join');
     }
 
     function logEphemeralRoomJoinInChat(name) {
-        chatPrint(['chatlog', 'fullchatlog'], [
+        chatPrint(['chatlog'], [
             ['nick', myNick, special],
             ['text', ' joined the ephemeral room "' + name + '"']
-        ]);
+        ], 'leave-join');
     }
 
     function logHouseRoomJoinInChat(nick) {
         if (nick !== myNick) {
-            chatPrint(['chatlog', 'fullchatlog'], [
+            chatPrint(['chatlog'], [
                 ['nick', myNick, special],
                 ['text', ' entered the house of user with nick: "' + nick + '"']
-            ]);
+            ], 'leave-join');
         } else {
-            chatPrint(['chatlog', 'fullchatlog'], [
+            chatPrint(['chatlog'], [
                 ['nick', myNick, special],
                 ['text', ' entered your house']
-            ]);
+            ], 'leave-join');
         }
     }
 
@@ -666,7 +655,7 @@
         myRoom = room;
 
         // add me
-        userManager.add(myNick, me, mySpecialStatus, true);
+        userManager.add(myNick, me, mySpecialStatus, true, false);
 
         // go to random position
         if (room.type === 'ephemeral') {
@@ -1191,15 +1180,6 @@
         chatlog.id = 'chatlog';
         overlay.appendChild(chatlog);
 
-        fullchatlog = makePopup('#fullchatlog', 'Full chat log', true, 200, 200, true, null, function () {
-            fullchatlog.content.scrollTop = fullchatlog.content.scrollHeight;
-        });
-        fullchatlog.hide();
-
-        fullchatlogcontent = document.createElement('div');
-        fullchatlogcontent.id = 'fullchatlog-content';
-        fullchatlog.content.appendChild(fullchatlogcontent);
-
         chatboxholder = document.createElement('div');
         chatboxholder.id = 'chatbox-holder';
         overlay.appendChild(chatboxholder);
@@ -1252,16 +1232,6 @@
         };
         chatbutton.disabled = true;
         overlay.appendChild(chatbutton);
-
-        fullchatlogbutton = document.createElement('input');
-        fullchatlogbutton.id = 'fullchatlog-button';
-        fullchatlogbutton.type = 'submit';
-        fullchatlogbutton.value = 'Full chatlog';
-        fullchatlogbutton.onclick = function () {
-            fullchatlog.show();
-        };
-        fullchatlogbutton.disabled = true;
-        overlay.appendChild(fullchatlogbutton);
 
         chooserbutton = document.createElement('input');
         chooserbutton.id = 'chooser-button';
@@ -1567,7 +1537,7 @@
             var msg = JSON.parse(e.data);
             switch (msg.type) {
                 case 'appear':
-                    userManager.add(msg.nick, msg.obj, msg.special, false);
+                    userManager.add(msg.nick, msg.obj, msg.special, false, !msg.joining);
                 break;
                 case 'update':
                     if (msg.nick !== myNick) {
@@ -1588,7 +1558,6 @@
 
                     chatbox.disabled = false;
                     chatbutton.disabled = false;
-                    fullchatlogbutton.disabled = false;
 
                     myNick = msg.nick;
                     mySpecialStatus = msg.special;

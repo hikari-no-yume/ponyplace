@@ -340,14 +340,16 @@ function doRoomChange(roomName, user) {
                     type: 'appear',
                     obj: iterUser.obj,
                     nick: iterUser.nick,
-                    special: iterUser.special
+                    special: iterUser.special,
+                    joining: false
                 });
                 // tell other clients in room about client
                 iterUser.send({
                     type: 'appear',
                     obj: user.obj,
                     nick: user.nick,
-                    special: user.special
+                    special: user.special,
+                    joining: true
                 });
             }
         }
