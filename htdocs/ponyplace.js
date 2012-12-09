@@ -24,6 +24,7 @@
     var container,
         overlay,
         loginbox, nickbox, personasubmit, loginsubmit,
+        topbuttons,
         accountsettings, accountsettingsbutton, changepassbutton, rmpassbutton,
         outerstage, stage,
         bitcount,
@@ -1240,6 +1241,16 @@
         chatbutton.disabled = true;
         overlay.appendChild(chatbutton);
 
+        inventorylistbutton = document.createElement('input');
+        inventorylistbutton.id = 'inventory-list-button';
+        inventorylistbutton.type = 'submit';
+        inventorylistbutton.value = 'Inventory';
+        inventorylistbutton.onclick = function () {
+            inventorylist.show();
+        };
+        inventorylistbutton.disabled = true;
+        overlay.appendChild(inventorylistbutton);
+
         chooserbutton = document.createElement('input');
         chooserbutton.id = 'chooser-button';
         chooserbutton.type = 'submit';
@@ -1252,16 +1263,9 @@
     }
 
     function initGUI_topbar() {
-        roomlist = makePopup('#room-list', 'Rooms', true, 200, 200, true);
-        roomlist.hide();
-        roomlistbutton = document.createElement('button');
-        roomlistbutton.id = 'room-list-button';
-        appendText(roomlistbutton, 'Choose room');
-        roomlistbutton.onclick = function () {
-            roomlist.show();
-        };
-        roomlistbutton.disabled = true;
-        overlay.appendChild(roomlistbutton);
+        topbuttons = document.createElement('div');
+        topbuttons.id = 'top-buttons';
+        overlay.appendChild(topbuttons);
 
         homebutton = document.createElement('button');
         var icon = document.createElement('img');
@@ -1276,7 +1280,18 @@
             }));
         };
         homebutton.disabled = true;
-        overlay.appendChild(homebutton);
+        topbuttons.appendChild(homebutton);
+
+        roomlist = makePopup('#room-list', 'Rooms', true, 200, 200, true);
+        roomlist.hide();
+        roomlistbutton = document.createElement('button');
+        roomlistbutton.id = 'room-list-button';
+        appendText(roomlistbutton, 'Choose room');
+        roomlistbutton.onclick = function () {
+            roomlist.show();
+        };
+        roomlistbutton.disabled = true;
+        topbuttons.appendChild(roomlistbutton);
 
         friendslistbutton = document.createElement('button');
         friendslistbutton.id = 'friends-list-button';
@@ -1285,23 +1300,7 @@
             friendslist.show();
         };
         friendslistbutton.disabled = true;
-        overlay.appendChild(friendslistbutton);
-
-        inventorylistbutton = document.createElement('input');
-        inventorylistbutton.id = 'inventory-list-button';
-        inventorylistbutton.type = 'submit';
-        inventorylistbutton.value = 'Inventory';
-        inventorylistbutton.onclick = function () {
-            inventorylist.show();
-        };
-        inventorylistbutton.disabled = true;
-        overlay.appendChild(inventorylistbutton);
-
-        bitcount = document.createElement('div');
-        bitcount.id = 'bit-count';
-        bitcount.title = 'bits';
-        appendText(bitcount, '???');
-        overlay.appendChild(bitcount);
+        topbuttons.appendChild(friendslistbutton);
 
         accountsettingsbutton = document.createElement('input');
         accountsettingsbutton.id = 'account-settings-button';
@@ -1311,7 +1310,13 @@
             accountsettings.show();
         };
         accountsettingsbutton.disabled = true;
-        overlay.appendChild(accountsettingsbutton);
+        topbuttons.appendChild(accountsettingsbutton);
+
+        bitcount = document.createElement('div');
+        bitcount.id = 'bit-count';
+        bitcount.title = 'bits';
+        appendText(bitcount, '???');
+        topbuttons.appendChild(bitcount);
 
         roomeditbutton = document.createElement('input');
         roomeditbutton.id = 'room-edit-button';

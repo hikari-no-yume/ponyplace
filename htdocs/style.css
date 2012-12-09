@@ -229,21 +229,20 @@ input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover, button:
     cursor: pointer;
 }
 
-#room-list-button, #home-button, #friends-list-button, #account-settings-button {
+#top-buttons {
     position: absolute;
+    overflow: hidden;
+    left: 6px;
     top: 6px;
 }
 
-#room-list-button { left: 35px; }
-#home-button { left: 5px; width: 25px; }
-#friends-list-button { left: 145px; }
-#account-settings-button { right: 6px; }
-
-#room-edit-button {
-    position: absolute;
-    top: 42px;
-    right: 6px;
+#room-list-button, #home-button, #friends-list-button, #account-settings-button, #bit-count {
+    float: left;
+    margin-right: 6px;
+    width: auto;
 }
+
+#home-button { width: 25px; }
 
 #bit-count {
     color: white;
@@ -251,9 +250,6 @@ input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover, button:
     font-weight: bold;
     font-family: 'Consolas', monospace;
     font-size: 14pt;
-    position: absolute;
-    top: 6px;
-    right: 115px;
     padding: 2px;
     height: 24px;
     vertical-align: middle;
@@ -261,6 +257,12 @@ input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover, button:
 #bit-count::after {
     margin-left: 4px;
     content: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAASCAYAAABit09LAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAXklEQVQoz2NkgIKP9/P/w9gf7u+EMRnknW4wMjAwMDCiK8KlmAmbBDbAxEAkYMJmLQMDA4OAojuc/XCfxn8mmLXIEpRZPXIVCii6E45CfsWJjBRZjTP1EIpCRmITLgDj5Skiz9Zq8QAAAABJRU5ErkJggg==);
+}
+
+#room-edit-button {
+    position: absolute;
+    top: 42px;
+    right: 6px;
 }
 
 #usercounter {
@@ -413,7 +415,7 @@ input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover, button:
     position: absolute;
     right: 0;
     width: 250px;
-    top: 36px;
+    top: 0;
     bottom: 36px;
     background-color: white;
     overflow: auto;
