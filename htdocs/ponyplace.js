@@ -34,7 +34,7 @@
         roomlistbutton, roomlist, refreshbutton, homebutton,
         roomedit, roomeditbutton, roomeditreset, roomeditvisible,
         background, roomwidgets,
-        chatbox, chatboxholder, chatbutton, chatlog;
+        chatbar, chatbox, chatboxholder, chatbutton, chatlog;
 
     var userManager = {
         users: {},
@@ -1188,9 +1188,13 @@
         chatlog.id = 'chatlog';
         overlay.appendChild(chatlog);
 
+        chatbar = document.createElement('div');
+        chatbar.id = 'chatbar';
+        overlay.appendChild(chatbar);
+
         chatboxholder = document.createElement('div');
         chatboxholder.id = 'chatbox-holder';
-        overlay.appendChild(chatboxholder);
+        chatbar.appendChild(chatboxholder);
 
         chatbox = document.createElement('input');
         chatbox.type = 'text';
@@ -1239,7 +1243,7 @@
             handleChatMessage();
         };
         chatbutton.disabled = true;
-        overlay.appendChild(chatbutton);
+        chatbar.appendChild(chatbutton);
 
         inventorylistbutton = document.createElement('input');
         inventorylistbutton.id = 'inventory-list-button';
@@ -1249,7 +1253,7 @@
             inventorylist.show();
         };
         inventorylistbutton.disabled = true;
-        overlay.appendChild(inventorylistbutton);
+        chatbar.appendChild(inventorylistbutton);
 
         chooserbutton = document.createElement('input');
         chooserbutton.id = 'chooser-button';
@@ -1259,7 +1263,7 @@
             chooser.show();
         };
         chooserbutton.disabled = true;;
-        overlay.appendChild(chooserbutton);
+        chatbar.appendChild(chooserbutton);
     }
 
     function initGUI_topbar() {

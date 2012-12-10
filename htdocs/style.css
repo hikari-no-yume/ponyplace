@@ -379,88 +379,133 @@ input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover, button:
     cursor: pointer;
 }
 
-#chatbox-holder {
-    position: absolute;
-    right: 6px;
-    width: 245px;
-    bottom: 36px;
+#chatlog {
+    overflow: auto;
 }
+
 #chatbox {
     width: 100%;
+    margin: 0;
     height: 24px;
     border: 1px solid black;
-    margin: 0;
 }
 
-#chatbutton {
+#chatbar {
     position: absolute;
-    right: 170px;
-    bottom: 6px;
-    width: 80px;
-}
-
-#inventory-list-button {
-    position: absolute;
-    bottom: 6px;
-    right: 90px;
-    width: 76px;
-}
-
-#chooser-button {
-    position: absolute;
-    bottom: 6px;
-    right: 6px;
-    width: 80px;
-}
-
-#chatlog {
-    position: absolute;
+    left: 0;
     right: 0;
-    width: 255px;
-    top: 0;
-    bottom: 66px;
-    background-color: white;
-    overflow: auto;
-    border-left: 3px solid black;
+    bottom: 0;
+    height: 36px;
+    background-color: pink;
 }
+#chatbox-holder {
+    position: absolute;
+    left: 6px;
+    top: 6px;
+    right: 336px;
+}
+#chatbutton, #inventory-list-button, #chooser-button {
+    position: absolute;
+    top: 6px;
+}
+#chatbutton { right: 226px; }
+#inventory-list-button { right: 116px; }
+#chooser-button { right: 6px; }
 
 .chat-line {
-    display: block;
-    margin-bottom: 5px;
-    padding: 2px;
-    border: 1px solid black;
-    background-color: white;
-    color: black;
     font-size: 11pt;
     overflow-x: hidden;
+}
+
+@media (min-width: 1500px) {
+    #chatlog {
+        position: absolute;
+        right: 0;
+        width: 255px;
+        top: 0;
+        bottom: 36px;
+        background-color: white;
+        border-left: 3px solid black;
+    }
+    #outer-stage {
+        right: 255px;
+    }
+
+    .chat-line {
+        display: block;
+        margin-bottom: 5px;
+        padding: 2px;
+        border: 1px solid black;
+        background-color: white;
+        color: black;
+    }
+    .modspeak {
+        background-color: #EDFFD4 !important;
+    }
+    .leave-join {
+        background-color: khaki !important;
+    }
+    .highlight {
+        background-color: fuchsia !important;
+    }
+    .console {
+        background-color: black !important;
+        font-family: monospace;
+        color: lime;
+        font-weight: bold;
+    }
+    .broadcast {
+        background-color: orange !important;
+    }
+    .kick {
+        background-color: red !important;
+    }
+}
+@media (min-width: 0px) and (max-width: 1500px) {
+    #chatlog {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 36px;
+        height: 200px;
+        padding: 2px;
+        pointer-events: none;
+    }
+    #outer-stage {
+        right: 0;
+    }
+
+    .chat-line {
+        border-radius: 2px;
+        background-color: rgba(255, 255, 255, 0.7);
+    }
+    .modspeak {
+        background-color: rgba(237, 255, 212, 0.7) !important;
+    }
+    .leave-join {
+        background-color: rgba(240, 230, 140, 0.7) !important;
+    }
+    .highlight {
+        background-color: rgba(255, 0, 255, 0.7) !important;
+    }
+    .console {
+        background-color: rgba(0, 0, 0, 0.7) !important;
+        font-family: monospace;
+        color: lime;
+        font-weight: bold;
+    }
+    .broadcast {
+        background-color: rgba(255, 165, 0, 0.7) !important;
+    }
+    .kick {
+        background-color: rgba(255, 0, 0, 0.7) !important;
+    }
 }
 
 .chat-link {
     pointer-events: auto;
     color: orange;
     text-decoration: underline;
-}
-
-.modspeak {
-    background-color: #EDFFD4 !important;
-}
-.leave-join {
-    background-color: khaki !important;
-}
-.highlight {
-    background-color: fuchsia !important;
-}
-.console {
-    background-color: black !important;
-    font-family: monospace;
-    color: lime;
-    font-weight: bold;
-}
-.broadcast {
-    background-color: orange !important;
-}
-.kick {
-    color: red;
 }
 
 .pony {
