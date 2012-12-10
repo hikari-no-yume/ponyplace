@@ -1293,15 +1293,6 @@
         roomlistbutton.disabled = true;
         topbuttons.appendChild(roomlistbutton);
 
-        friendslistbutton = document.createElement('button');
-        friendslistbutton.id = 'friends-list-button';
-        appendText(friendslistbutton, 'Friends');
-        friendslistbutton.onclick = function () {
-            friendslist.show();
-        };
-        friendslistbutton.disabled = true;
-        topbuttons.appendChild(friendslistbutton);
-
         accountsettingsbutton = document.createElement('input');
         accountsettingsbutton.id = 'account-settings-button';
         accountsettingsbutton.type = 'submit';
@@ -1311,12 +1302,6 @@
         };
         accountsettingsbutton.disabled = true;
         topbuttons.appendChild(accountsettingsbutton);
-
-        bitcount = document.createElement('div');
-        bitcount.id = 'bit-count';
-        bitcount.title = 'bits';
-        appendText(bitcount, '???');
-        topbuttons.appendChild(bitcount);
 
         roomeditbutton = document.createElement('input');
         roomeditbutton.id = 'room-edit-button';
@@ -1352,8 +1337,23 @@
         };
         roomedit.appendChild(roomeditreset);
 
-        accountsettings = makePopup('#account-settings', 'Account Settings', true, 300, 300, true);
+        accountsettings = makePopup('#account-settings', 'My Account', true, 300, 300, true);
         accountsettings.hide();
+
+        bitcount = document.createElement('div');
+        bitcount.id = 'bit-count';
+        bitcount.title = 'bits';
+        appendText(bitcount, '???');
+        accountsettings.content.appendChild(bitcount);
+
+        friendslistbutton = document.createElement('button');
+        friendslistbutton.id = 'friends-list-button';
+        appendText(friendslistbutton, 'Friends');
+        friendslistbutton.onclick = function () {
+            friendslist.show();
+        };
+        friendslistbutton.disabled = true;
+        accountsettings.content.appendChild(friendslistbutton);
 
         changepassbutton = document.createElement('a');
         changepassbutton.href = 'https://login.persona.org';
