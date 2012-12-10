@@ -33,6 +33,8 @@ var badRegex = /fuck|shit|milf|bdsm|fag|faggot|nigga|nigger|clop|(\[\]\(\/[a-zA-
 
 var validNickRegex = /^[a-zA-Z0-9_]+$/g;
 
+var globalMute = false;
+
 var fs = require('fs');
 
 function sanitiseChat(chat) {
@@ -385,6 +387,8 @@ function handleCommand(cmd, myNick, user) {
     }
 
     var isMod = User.isModerator(myNick);
+    var isCreator = User.getSpecialStatus(myNick) === 'creator';
+    var canMod = (isMod && !globalMute) || isCreator;
 
     // help
     if (cmd.substr(0, 4) === 'help') {
@@ -479,7 +483,7 @@ function handleCommand(cmd, myNick, user) {
             sendLine('Your house was unlocked. Use /lock to lock it.');
         }
     // mod help
-    } else if (isMod && cmd.substr(0, 7) === 'modhelp') {
+    } else if (canMod && cmd.substr(0, 7) === 'modhelp') {
         sendMultiLine([
             'Eight mod commands available: 1) kick, 2) kickban, 3) unban, 4) broadcast, 5) aliases, 6) move, 7) bits, 8) modlog',
             "1. kick & 2. kickban - kick takes the nick of someone, they (& any aliases) will be kicked, e.g. /kick sillyfilly. kickban is like kick but also permabans by IP. kick and kickban can also take a second parameter for a reason message, e.g. /kick sillyfilly Don't spam the chat!",
@@ -493,7 +497,7 @@ function handleCommand(cmd, myNick, user) {
 
         ]);
     // unbanning
-    } else if (isMod && cmd.substr(0, 6) === 'unban ') {
+    } else if (canMod && cmd.substr(0, 6) === 'unban ') {
         var IP = cmd.substr(6);
         if (!banManager.isIPBanned(IP)) {
             sendLine('The IP ' + IP + ' is not banned.');
@@ -503,7 +507,7 @@ function handleCommand(cmd, myNick, user) {
         sendLine('Unbanned IP ' + IP);
         modLogger.logUnban(myNick, IP);
     // kickbanning
-    } else if (isMod && cmd.substr(0, 8) === 'kickban ') {
+    } else if (canMod && cmd.substr(0, 8) === 'kickban ') {
         var pos = cmd.indexOf(' ', 8);
         var kickee, reason = null;
         if (pos !== -1) {
@@ -555,7 +559,7 @@ function handleCommand(cmd, myNick, user) {
         });
         modLogger.logBan(myNick, IP, aliases, reason);
     // kicking
-    } else if (isMod && cmd.substr(0, 5) === 'kick ') {
+    } else if (canMod && cmd.substr(0, 5) === 'kick ') {
         var pos = cmd.indexOf(' ', 5);
         var kickee, reason = null;
         if (pos !== -1) {
@@ -601,7 +605,7 @@ function handleCommand(cmd, myNick, user) {
         });
         modLogger.logKick(myNick, IP, aliases, reason);
     // forced move
-    } else if (isMod && cmd.substr(0, 5) === 'move ') {
+    } else if (canMod && cmd.substr(0, 5) === 'move ') {
         var pos = cmd.indexOf(' ', 5);
         if (pos !== -1) {
             var room = cmd.substr(5, pos-5);
@@ -622,7 +626,7 @@ function handleCommand(cmd, myNick, user) {
             return;
         }
     // check alias
-    } else if (isMod && cmd.substr(0, 8) === 'aliases ') {
+    } else if (canMod && cmd.substr(0, 8) === 'aliases ') {
         var checked = cmd.substr(8);
         if (!User.has(checked)) {
             sendLine('There is no online user with nick: "' + checked + '"');
@@ -640,7 +644,7 @@ function handleCommand(cmd, myNick, user) {
         });
         sendLine('(' + aliasCount + ' aliases total)');
     // broadcast message
-    } else if (isMod && cmd.substr(0, 10) === 'broadcast ') {
+    } else if (canMod && cmd.substr(0, 10) === 'broadcast ') {
         var broadcast = cmd.substr(10);
         User.forEach(function (iterUser) {
             iterUser.send({
@@ -652,7 +656,7 @@ function handleCommand(cmd, myNick, user) {
         sendLine('Broadcasted message');
         modLogger.logBroadcast(myNick, broadcast);
     // change bits
-    } else if (isMod && cmd.substr(0, 5) === 'bits ') {
+    } else if (canMod && cmd.substr(0, 5) === 'bits ') {
         var pos = cmd.indexOf(' ', 5);
         if (pos !== -1) {
             var amount = cmd.substr(5, pos-5);
@@ -683,7 +687,7 @@ function handleCommand(cmd, myNick, user) {
             return;
         }
     // moderation log
-    } else if (isMod && cmd.substr(0, 6) === 'modlog') {
+    } else if (canMod && cmd.substr(0, 6) === 'modlog') {
         var pos = cmd.indexOf(' ', 7);
         var count, filter;
         if (pos !== -1) {
@@ -699,6 +703,25 @@ function handleCommand(cmd, myNick, user) {
             type: 'mod_log',
             items: items
         });
+    // royal canterlot voice
+    } else if (User.getSpecialStatus(user.nick) === 'creator' && cmd.substr(0,4) === 'mute') {
+        if (globalMute) {
+            User.forEach(function (iterUser) {
+                iterUser.send({
+                    type: 'broadcast',
+                    msg: 'NOTE: ' + user.nick + ' HAS DISENGAGED THE ROYAL CANTERLOT VOICE'
+                });
+            });
+            globalMute = false;
+        } else {
+            User.forEach(function (iterUser) {
+                iterUser.send({
+                    type: 'broadcast',
+                    msg: 'NOTE: ' + user.nick + ' HAS ENGAGED THE ROYAL CANTERLOT VOICE'
+                });
+            });
+            globalMute = true;
+        }
     // unknown
     } else {
         sendLine('Unknown command');
@@ -815,6 +838,11 @@ wsServer.on('request', function(request) {
                         user.kick('dont_have_avatar');
                         return;
                     }
+                }
+
+                // global mute
+                if (globalMute) {
+                    msg.obj.chat = user.obj.chat;
                 }
 
                 // update their stored state
