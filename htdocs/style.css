@@ -379,14 +379,20 @@ input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover, button:
 }
 
 #chatlog {
-    overflow: auto;
     position: absolute;
     left: 0;
     right: 0;
     bottom: 36px;
     height: 200px;
     padding: 2px;
+}
+#chatlog.unlocked {
     pointer-events: none;
+    overflow: hidden;
+}
+#chatlog.locked {
+    pointer-events: auto;
+    overflow: auto;
 }
 
 #chatbox {
@@ -406,14 +412,15 @@ input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover, button:
 }
 #chatbox-holder {
     position: absolute;
-    left: 6px;
+    left: 116px;
     top: 6px;
     right: 336px;
 }
-#chatbutton, #inventory-list-button, #chooser-button {
+#chatlog-lock, #chatbutton, #inventory-list-button, #chooser-button {
     position: absolute;
     top: 6px;
 }
+#chatlog-lock { left: 6px; }
 #chatbutton { right: 226px; }
 #inventory-list-button { right: 116px; }
 #chooser-button { right: 6px; }

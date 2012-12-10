@@ -34,7 +34,7 @@
         roomlistbutton, roomlist, refreshbutton, homebutton,
         roomedit, roomeditbutton, roomeditreset, roomeditvisible,
         background, roomwidgets,
-        chatbar, chatbox, chatboxholder, chatbutton, chatlog;
+        chatbar, chatbox, chatboxholder, chatbutton, chatlog, chatloglock, chatloglocked = false;
 
     var userManager = {
         users: {},
@@ -287,7 +287,16 @@
             span.appendChild(document.createElement('br'));
 
             if (target === 'chatlog') {
-                chatlog.insertBefore(span, chatlog.firstChild);
+                if (chatloglocked) {
+                    var ph = chatlog.scrollHeight;
+                    chatlog.insertBefore(span, chatlog.firstChild);
+                    if (chatlog.scrollTop !== 0) {
+                        var increase = chatlog.scrollHeight - ph;
+                        chatlog.scrollTop += increase;
+                    }
+                } else {
+                    chatlog.insertBefore(span, chatlog.firstChild);
+                }
             } else {
                 target.appendChild(span);
             }
@@ -1179,11 +1188,29 @@
     function initGUI_chatbar() {
         chatlog = document.createElement('div');
         chatlog.id = 'chatlog';
+        chatlog.className = 'unlocked';
         overlay.appendChild(chatlog);
 
         chatbar = document.createElement('div');
         chatbar.id = 'chatbar';
         overlay.appendChild(chatbar);
+
+        chatloglock = document.createElement('button');
+        chatloglock.id = 'chatlog-lock';
+        appendText(chatloglock, 'Lock log');
+        chatloglock.onclick = function () {
+            chatloglocked = !chatloglocked;
+            chatloglock.innerHTML = '';
+            if (chatloglocked) {
+                appendText(chatloglock, 'Unlock log');
+                chatlog.className = 'locked';
+            } else {
+                appendText(chatloglock, 'Lock log');
+                chatlog.className = 'unlocked';
+                chatlog.scrollTop = 0;
+            }
+        };
+        chatbar.appendChild(chatloglock);
 
         chatboxholder = document.createElement('div');
         chatboxholder.id = 'chatbox-holder';
