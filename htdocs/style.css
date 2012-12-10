@@ -267,11 +267,10 @@ input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover, button:
 
 #usercounter {
     position: absolute;
-    left: 5px;
-    top: 36px;
+    left: 6px;
+    top: 30px;
     padding: 2px;
     font-weight: bold;
-    font-family: monospace;
     color: white;
     text-shadow: 2px 2px gray;
     pointer-events: none;

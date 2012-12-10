@@ -183,25 +183,18 @@
         },
         updateCounter: function () {
             this.userCounter.innerHTML = '';
+            var str;
             if (myRoom !== null) {
-                if (myRoom.type === 'real') {
-                    appendText(this.userCounter, 'You are in ' + myRoom.name + ' ("' + myRoom.name_full + '")');
-                } else if (myRoom.type === 'ephemeral') {
-                    appendText(this.userCounter, 'You are in the ephemeral room "' + myRoom.name + '"');
+                if (myRoom.type === 'real' || myRoom.type === 'ephemeral') {
+                    str = myRoom.name;
                 } else if (myRoom.type === 'house') {
-                    if (myRoom.user_nick === myNick) {
-                        appendText(this.userCounter, 'You are in your house');
-                    } else {
-                        appendText(this.userCounter, 'You are in the house of user with nick: "' + myRoom.user_nick + '"');
-                    }
+                    str = myRoom.user_nick + "'s house";
                 }
-                this.userCounter.appendChild(document.createElement('br'));
-                appendText(this.userCounter, this.userCount + '/' + globalUserCount + ' users in room');
+                str += ' - ' + this.userCount + '/' + globalUserCount + ' users';
             } else {
-                appendText(this.userCounter, 'You are not in a room');
-                this.userCounter.appendChild(document.createElement('br'));
-                appendText(this.userCounter, globalUserCount + ' users online')
+                str = globalUserCount + ' users online';
             }
+            appendText(this.userCounter, str);
         }
     };
 
