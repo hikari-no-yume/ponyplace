@@ -704,12 +704,12 @@ function handleCommand(cmd, myNick, user) {
             items: items
         });
     // royal canterlot voice
-    } else if (User.getSpecialStatus(user.nick) === 'creator' && cmd.substr(0,4) === 'mute') {
+    } else if (isCreator && cmd.substr(0,4) === 'mute') {
         if (globalMute) {
             User.forEach(function (iterUser) {
                 iterUser.send({
                     type: 'broadcast',
-                    msg: 'NOTE: ' + user.nick + ' HAS DISENGAGED THE ROYAL CANTERLOT VOICE'
+                    msg: '** ' + user.nick.toUpperCase() + ' HAS DISENGAGED THE ROYAL CANTERLOT VOICE - YOU MAY NOW SPEAK, AND BE HEARD **'
                 });
             });
             globalMute = false;
@@ -717,7 +717,7 @@ function handleCommand(cmd, myNick, user) {
             User.forEach(function (iterUser) {
                 iterUser.send({
                     type: 'broadcast',
-                    msg: 'NOTE: ' + user.nick + ' HAS ENGAGED THE ROYAL CANTERLOT VOICE'
+                    msg: '** NOTE: ' + user.nick.toUpperCase() + ' HAS ENGAGED THE ROYAL CANTERLOT VOICE - YOU MAY SPEAK, BUT YOU SHALL NOT BE HEARD **'
                 });
             });
             globalMute = true;
