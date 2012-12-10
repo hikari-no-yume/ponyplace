@@ -1054,6 +1054,24 @@
                     };
                 }(friends[i]));
                 li.appendChild(a);
+
+                appendText(li, ' (');
+
+                var delbtn = document.createElement('button');
+                delbtn.className = 'friend-remove';
+                (function (friend) {
+                    delbtn.onclick = function () {
+                        socket.send(JSON.stringify({
+                            type: 'friend_remove',
+                            nick: friend
+                        }));
+                    };
+                }(friends[i]));
+                appendText(delbtn, 'remove');
+                li.appendChild(delbtn);
+
+                appendText(li, ')');
+
                 ul.appendChild(li);
             }
             friendslist.content.appendChild(ul);

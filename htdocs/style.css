@@ -600,6 +600,16 @@ input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover, button:
 #friends-list .friend:hover {
     cursor: pointer;
 }
+.friend-remove {
+    color: maroon !important;
+    text-decoration: underline !important;
+    background: none !important;
+    border: none !important;
+    padding: 0 !important;
+    width: auto !important;
+    height: auto !important;
+    display: inline !important;
+}
 
 .nickname::after {
     font-family: sans-serif;
