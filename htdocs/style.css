@@ -154,7 +154,7 @@ h1 {
 #outer-stage {
     position: absolute;
     left: 0;
-    right: 255px;
+    right: 0;
     top: 0;
     bottom: 0;
     background-color: rgb(230, 230, 230);
@@ -380,6 +380,13 @@ input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover, button:
 
 #chatlog {
     overflow: auto;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 36px;
+    height: 200px;
+    padding: 2px;
+    pointer-events: none;
 }
 
 #chatbox {
@@ -414,91 +421,29 @@ input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover, button:
 .chat-line {
     font-size: 11pt;
     overflow-x: hidden;
+    border-radius: 2px;
+    background-color: rgba(255, 255, 255, 0.7);
 }
-
-@media (min-width: 1500px) {
-    #chatlog {
-        position: absolute;
-        right: 0;
-        width: 255px;
-        top: 0;
-        bottom: 36px;
-        background-color: white;
-        border-left: 3px solid black;
-    }
-    #outer-stage {
-        right: 255px;
-    }
-
-    .chat-line {
-        display: block;
-        margin-bottom: 5px;
-        padding: 2px;
-        border: 1px solid black;
-        background-color: white;
-        color: black;
-    }
-    .modspeak {
-        background-color: #EDFFD4 !important;
-    }
-    .leave-join {
-        background-color: khaki !important;
-    }
-    .highlight {
-        background-color: fuchsia !important;
-    }
-    .console {
-        background-color: black !important;
-        font-family: monospace;
-        color: lime;
-        font-weight: bold;
-    }
-    .broadcast {
-        background-color: orange !important;
-    }
-    .kick {
-        background-color: red !important;
-    }
+.modspeak {
+    background-color: rgba(237, 255, 212, 0.7) !important;
 }
-@media (min-width: 0px) and (max-width: 1500px) {
-    #chatlog {
-        position: absolute;
-        left: 0;
-        right: 0;
-        bottom: 36px;
-        height: 200px;
-        padding: 2px;
-        pointer-events: none;
-    }
-    #outer-stage {
-        right: 0;
-    }
-
-    .chat-line {
-        border-radius: 2px;
-        background-color: rgba(255, 255, 255, 0.7);
-    }
-    .modspeak {
-        background-color: rgba(237, 255, 212, 0.7) !important;
-    }
-    .leave-join {
-        background-color: rgba(240, 230, 140, 0.7) !important;
-    }
-    .highlight {
-        background-color: rgba(255, 0, 255, 0.7) !important;
-    }
-    .console {
-        background-color: rgba(0, 0, 0, 0.7) !important;
-        font-family: monospace;
-        color: lime;
-        font-weight: bold;
-    }
-    .broadcast {
-        background-color: rgba(255, 165, 0, 0.7) !important;
-    }
-    .kick {
-        background-color: rgba(255, 0, 0, 0.7) !important;
-    }
+.leave-join {
+    background-color: rgba(240, 230, 140, 0.7) !important;
+}
+.highlight {
+    background-color: rgba(255, 0, 255, 0.7) !important;
+}
+.console {
+    background-color: rgba(0, 0, 0, 0.7) !important;
+    font-family: monospace;
+    color: lime;
+    font-weight: bold;
+}
+.broadcast {
+    background-color: rgba(255, 165, 0, 0.7) !important;
+}
+.kick {
+    background-color: rgba(255, 0, 0, 0.7) !important;
 }
 
 .chat-link {
