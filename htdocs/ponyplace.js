@@ -734,8 +734,8 @@
         }
         function logFail () {
             chatPrint([messages], [
-                ['text', '* warning: sending the previous message failed - user is not online' + body]
-            ]);
+                ['text', 'warning: sending the previous message failed - user is not online']
+            ], 'leave-join');
             messages.scrollTop = messages.scrollHeight;
         }
         function doSend () {
