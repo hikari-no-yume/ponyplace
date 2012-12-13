@@ -1156,6 +1156,14 @@ wsServer.on('request', function(request) {
                 });
             break;
             case 'bypass':
+                if (User.has(msg.nick)) {
+                    connection.sendUTF(JSON.stringify({
+                        type: 'kick',
+                        reason: 'account_in_use'
+                    }));
+                    connection.close();
+                    return;
+                }
                 if (User.checkBypass(msg.nick, msg.bypass)) {
                     completeRequest(msg.nick, msg);
                 } else {
