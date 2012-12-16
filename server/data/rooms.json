@@ -1,0 +1,512 @@
+[
+    {
+        "type": "real",
+        "name": " party_barn",
+        "name_full": "Party Barn",
+        "thumbnail": "/media/rooms/party-barn-thumb.png",
+        "background": {
+            "data": "/media/rooms/party-barn.png",
+            "width": 1152,
+            "height": 660
+        },
+        "widgets": [
+            {
+                "left": 0,
+                "top": 0,
+                "width": 1152,
+                "height": 660,
+                "type": "party"
+            }
+        ],
+        "user_count": 0,
+        "user_noun": "partiers",
+        "unlisted": true
+    },
+    {
+        "type": "real",
+        "name": "discordville",
+        "name_full": "Discordville",
+        "thumbnail": "/media/rooms/discordville-thumb.png",
+        "background": {
+            "data": "/media/rooms/discordville.png",
+            "width": 1183,
+            "height": 660
+        },
+        "widgets": [
+            {
+                "left": 900,
+                "top": 10,
+                "width": 260,
+                "height": 180,
+                "type": "catalogue",
+                "catalogue_name": "discordville"
+            }
+        ],
+        "user_count": 0,
+        "user_noun": "chocolate raindrops",
+        "unlisted": false
+    },
+    {
+        "type": "real",
+        "name": "ponyville",
+        "name_full": "Ponyville",
+        "thumbnail": "/media/rooms/ponyville-thumb.png",
+        "background": {
+            "data": "/media/rooms/ponyville.png",
+            "width": 1445,
+            "height": 660
+        },
+        "widgets": [
+            {
+                "left": 0,
+                "top": 360,
+                "width": 120,
+                "height": 300,
+                "type": "portal",
+                "to": "outside_sugarcube_corner"
+            },
+            {
+                "left": 815,
+                "top": 370,
+                "width": 280,
+                "height": 145,
+                "type": "portal",
+                "to": "sweet_apple_acres"
+            },
+            {
+                "left": 1325,
+                "top": 360,
+                "width": 120,
+                "height": 300,
+                "type": "portal",
+                "to": "outside_library"
+            }
+        ],
+        "user_count": 0,
+        "user_noun": "ponies",
+        "unlisted": false
+    },
+    {
+        "type": "real",
+        "name": "outside_library",
+        "name_full": "The Library",
+        "thumbnail": "/media/rooms/outside-library-thumb.png",
+        "background": {
+            "data": "/media/rooms/outside-library.png",
+            "width": 1173,
+            "height": 660
+        },
+        "widgets": [
+            {
+                "left": 555,
+                "top": 452,
+                "width": 98,
+                "height": 130,
+                "type": "portal",
+                "to": "library"
+            },
+            {
+                "left": 900,
+                "top": 10,
+                "width": 260,
+                "height": 180,
+                "type": "catalogue",
+                "catalogue_name": "library"
+            },
+            {
+                "left": 1020,
+                "top": 330,
+                "width": 153,
+                "height": 330,
+                "type": "portal",
+                "to": "outside_sugarcube_corner"
+            },
+            {
+                "left": 0,
+                "top": 330,
+                "width": 130,
+                "height": 330,
+                "type": "portal",
+                "to": "ponyville"
+            }
+        ],
+        "user_count": 0,
+        "user_noun": "bright sparks",
+        "unlisted": false
+    },
+    {
+        "type": "real",
+        "name": "library",
+        "thumbnail": "/media/rooms/library-thumb.png",
+        "name_full": "Inside the Library",
+        "background": {
+            "data": "/media/rooms/library.png",
+            "width": 1173,
+            "height": 660
+        },
+        "widgets": [
+            {
+                "left": 390,
+                "top": 0,
+                "width": 130,
+                "height": 42,
+                "type": "portal",
+                "to": "outside_library"
+            },
+            {
+                "left": 900,
+                "top": 10,
+                "width": 260,
+                "height": 180,
+                "type": "catalogue",
+                "catalogue_name": "library"
+            }
+        ],
+        "user_count": 0,
+        "user_noun": "bright sparks",
+        "unlisted": false
+    },
+    {
+        "type": "real",
+        "name": "outside_sugarcube_corner",
+        "name_full": "Sugarcube Corner",
+        "thumbnail": "/media/rooms/outside-sugarcubecorner-thumb.png",
+        "background": {
+            "data": "/media/rooms/outside-sugarcubecorner.png",
+            "width": 1173,
+            "height": 660
+        },
+        "widgets": [
+            {
+                "left": 578,
+                "top": 512,
+                "width": 55,
+                "height": 96,
+                "type": "portal",
+                "to": "sugarcube_corner"
+            },
+            {
+                "left": 1048,
+                "top": 330,
+                "width": 125,
+                "height": 330,
+                "type": "portal",
+                "to": "ponyville"
+            },
+            {
+                "left": 0,
+                "top": 330,
+                "width": 125,
+                "height": 330,
+                "type": "portal",
+                "to": "outside_library"
+            },
+            {
+                "left": 900,
+                "top": 10,
+                "width": 260,
+                "height": 260,
+                "type": "catalogue",
+                "catalogue_name": "sugarcube_corner"
+            }
+        ],
+        "user_count": 0,
+        "user_noun": "party animals",
+        "unlisted": false
+    },
+    {
+        "type": "real",
+        "name": "sugarcube_corner",
+        "name_full": "Inside Sugarcube Corner",
+        "thumbnail": "/media/rooms/sugarcubecorner-thumb.png",
+        "background": {
+            "data": "/media/rooms/sugarcubecorner.png",
+            "width": 1173,
+            "height": 660
+        },
+        "widgets": [
+            {
+                "left": 120,
+                "top": 225,
+                "width": 95,
+                "height": 165,
+                "type": "portal",
+                "to": "outside_sugarcube_corner"
+            },
+            {
+                "left": 900,
+                "top": 10,
+                "width": 260,
+                "height": 260,
+                "type": "catalogue",
+                "catalogue_name": "sugarcube_corner"
+            }
+        ],
+        "user_count": 0,
+        "user_noun": "party animals",
+        "unlisted": false
+    },
+    {
+        "type": "real",
+        "name": "carousel_boutique",
+        "name_full": "Carousel Boutique",
+        "thumbnail": "/media/rooms/carousel-boutique-thumb.png",
+        "background": {
+            "data": "/media/rooms/carousel-boutique.png",
+            "width": 1159,
+            "height": 660
+        },
+        "widgets": [
+            {
+                "left": 114,
+                "top": 180,
+                "width": 260,
+                "height": 260,
+                "type": "catalogue",
+                "catalogue_name": "carousel_boutique"
+            }
+        ],
+        "user_count": 0,
+        "user_noun": "fashionistas",
+        "unlisted": false
+    },
+    {
+        "type": "real",
+        "name": "classroom",
+        "name_full": "Cheerilee's Classroom",
+        "thumbnail": "/media/rooms/classroom.png",
+        "background": {
+            "data": "/media/rooms/classroom.png",
+            "width": 1173,
+            "height": 660
+        },
+        "widgets": [
+            {
+                "left": 760,
+                "top": 280,
+                "width": 400,
+                "height": 370,
+                "type": "iframe",
+                "src": "http://berrypunch.net/stats.php?embed"
+            },
+            {
+                "left": 900,
+                "top": 10,
+                "width": 260,
+                "height": 260,
+                "type": "catalogue",
+                "catalogue_name": "classroom"
+            }
+        ],
+        "user_count": 0,
+        "user_noun": "eager students",
+        "unlisted": false
+    },
+    {
+        "type": "real",
+        "name": "sweet_apple_acres",
+        "name_full": "Sweet Apple Acres",
+        "thumbnail": "/media/rooms/sweet-apple-acres-thumb.png",
+        "background": {
+            "data": "/media/rooms/sweet-apple-acres.png",
+            "width": 1173,
+            "height": 660
+        },
+        "widgets": [
+            {
+                "left": 580,
+                "top": 420,
+                "width": 230,
+                "height": 125,
+                "type": "portal",
+                "to": "ponyville"
+            },
+            {
+                "left": 900,
+                "top": 400,
+                "width": 260,
+                "height": 240,
+                "type": "catalogue",
+                "catalogue_name": "sweet_apple_acres"
+            }
+        ],
+        "user_count": 0,
+        "user_noun": "apples",
+        "unlisted": false
+    },
+    {
+        "type": "real",
+        "name": "everfree_forest",
+        "name_full": "Everfree Forest",
+        "thumbnail": "/media/rooms/everfreeforest-thumb.png",
+        "background": {
+            "data": "/media/rooms/everfreeforest.png",
+            "width": 1173,
+            "height": 660
+        },
+        "widgets": [
+            {
+                "left": 0,
+                "top": 0,
+                "width": 130,
+                "height": 215,
+                "type": "portal",
+                "to": "zecoras_house"
+            }
+        ],
+        "user_count": 0,
+        "user_noun": "scared fillies",
+        "unlisted": false
+    },
+    {
+        "type": "real",
+        "name": "zecoras_house",
+        "name_full": "Zecora's house",
+        "thumbnail": "/media/rooms/zecoras-house2-thumb.png",
+        "background": {
+            "data": "/media/rooms/zecoras-house2.png",
+            "width": 1175,
+            "height": 660
+        },
+        "widgets": [
+            {
+                "left": 1065,
+                "top": 230,
+                "width": 110,
+                "height": 255,
+                "type": "portal",
+                "to": "everfree_forest"
+            },
+            {
+                "left": 900,
+                "top": 10,
+                "width": 260,
+                "height": 180,
+                "type": "catalogue",
+                "catalogue_name": "zecoras_house"
+            }
+        ],
+        "user_count": 0,
+        "user_noun": "rhyming zebras",
+        "unlisted": true
+    },
+    {
+        "type": "real",
+        "name": "cloudsdale",
+        "name_full": "Cloudsdale",
+        "thumbnail": "/media/rooms/cloudsdale-thumb.png",
+        "background": {
+            "data": "/media/rooms/cloudsdale.png",
+            "width": 1213,
+            "height": 660
+        },
+        "widgets": [
+            {
+                "left": 0,
+                "top": 440,
+                "width": 236,
+                "height": 60,
+                "type": "portal",
+                "to": "canterlot"
+            },
+            {
+                "left": 900,
+                "top": 10,
+                "width": 260,
+                "height": 260,
+                "type": "catalogue",
+                "catalogue_name": "cloudsdale"
+            }
+        ],
+        "user_count": 0,
+        "user_noun": "wonderbolts",
+        "unlisted": false
+    },
+    {
+        "type": "real",
+        "name": "canterlot",
+        "name_full": "Canterlot",
+        "thumbnail": "/media/rooms/canterlot-thumb.png",
+        "background": {
+            "data": "/media/rooms/canterlot.png",
+            "width": 1173,
+            "height": 660
+        },
+        "widgets": [
+            {
+                "left": 900,
+                "top": 10,
+                "width": 260,
+                "height": 260,
+                "type": "catalogue",
+                "catalogue_name": "canterlot"
+            }
+        ],
+        "user_count": 0,
+        "user_noun": "posh ponies",
+        "unlisted": false
+    },
+    {
+        "type": "real",
+        "name": "dungeon",
+        "name_full": "Dungeon",
+        "thumbnail": "/media/rooms/dungeon-thumb.png",
+        "background": {
+            "data": "/media/rooms/dungeon.png",
+            "width": 1176,
+            "height": 660
+        },
+        "widgets": [
+            {
+                "left": 483,
+                "top": 45,
+                "width": 260,
+                "height": 200,
+                "type": "catalogue",
+                "catalogue_name": "dungeon"
+            }
+        ],
+        "user_count": 0,
+        "user_noun": "prisoners",
+        "unlisted": false
+    },
+    {
+        "type": "real",
+        "name": "crystal_kingdom",
+        "name_full": "Crystal Kingdom",
+        "thumbnail": "/media/rooms/crystal-kingdom-thumb.png",
+        "background": {
+            "data": "/media/rooms/crystal-kingdom.png",
+            "width": 1320,
+            "height": 660
+        },
+        "widgets": [],
+        "user_count": 0,
+        "user_noun": "crystal <3s",
+        "unlisted": false
+    },
+    {
+        "type": "real",
+        "name": "credits",
+        "name_full": "ponyplace credits",
+        "thumbnail": "/media/rooms/cave-thumb.png",
+        "background": {
+            "data": "/media/rooms/cave.png",
+            "width": 960,
+            "height": 660
+        },
+        "widgets": [
+            {
+                "left": 280,
+                "top": 80,
+                "width": 600,
+                "height": 500,
+                "type": "iframe",
+                "src": "/credits.html"
+            }
+        ],
+        "user_count": 0,
+        "user_noun": "inquiring minds",
+        "unlisted": false
+    }
+]

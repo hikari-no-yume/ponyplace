@@ -1,0 +1,77 @@
+{
+    "3000_bits_free": {
+        "type": "useless",
+        "name_full": "3000 free bits receipt",
+        "img": "/media/store/free-bits.png"
+    },
+    "roombg_cherry_jubilees_guest_room": {
+        "type": "house_background",
+        "name_full": "House Background - Cherry Jubilee's Guest Room",
+        "img": "/media/rooms/house/cherry-jubilees-guest-room.png",
+        "background_data": {
+            "data": "/media/rooms/house/cherry-jubilees-guest-room.png",
+            "width": 1173,
+            "height": 660
+        }
+    },
+    "roombg_pinkies_room": {
+        "type": "house_background",
+        "name_full": "House Background - Pinkie's Room",
+        "img": "/media/rooms/house/pinkies-room.png",
+        "background_data": {
+            "data": "/media/rooms/house/pinkies-room.png",
+            "width": 1173,
+            "height": 660
+        }
+    },
+    "roombg_canterlot_bedroom": {
+        "type": "house_background",
+        "name_full": "House Background - Canterlot Bedroom",
+        "img": "/media/rooms/house/canterlot-bedroom.png",
+        "background_data": {
+            "data": "/media/rooms/house/canterlot-bedroom.png",
+            "width": 1173,
+            "height": 660
+        }
+    },
+    "roombg_dashies_bedroom": {
+        "type": "house_background",
+        "name_full": "House Background - Dashie's Bedroom",
+        "img": "/media/rooms/house/dashies-bedroom.png",
+        "background_data": {
+            "data": "/media/rooms/house/dashies-bedroom.png",
+            "width": 1173,
+            "height": 660
+        }
+    },
+    "roombg_shining_armors_apartments": {
+        "type": "house_background",
+        "name_full": "House Background - Shining Armor's Apartments",
+        "img": "/media/rooms/house/shining-armors-apartments.png",
+        "background_data": {
+            "data": "/media/rooms/house/shining-armors-apartments.png",
+            "width": 1173,
+            "height": 660
+        }
+    },
+    "roombg_princess_celestias_room": {
+        "type": "house_background",
+        "name_full": "House Background - Princess Celestia's Room",
+        "img": "/media/rooms/house/princess-celestias-room.png",
+        "background_data": {
+            "data": "/media/rooms/house/princess-celestias-room.png",
+            "width": 1178,
+            "height": 660
+        }
+    },
+    "roombg_madam_pinkies_tent": {
+        "type": "house_background",
+        "name_full": "House Background - Madam Pinkie's Tent",
+        "img": "/media/rooms/house/madam-pinkies-tent.png",
+        "background_data": {
+            "data": "/media/rooms/house/madam-pinkies-tent.png",
+            "width": 1173,
+            "height": 660
+        }
+    }
+}
