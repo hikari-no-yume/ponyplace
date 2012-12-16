@@ -1670,7 +1670,7 @@
                             me.y -= 56;
                             pushAndUpdateState(me);
                         }, 250);
-                        me.y -= 100;
+                        me.y -= 56;
                         pushAndUpdateState(me);
                     }
                     e.preventDefault();
@@ -1697,7 +1697,7 @@
                             me.y += 56;
                             pushAndUpdateState(me);
                         }, 250);
-                        me.y += 100;
+                        me.y += 56;
                         pushAndUpdateState(me);
                     }
                     e.preventDefault();
