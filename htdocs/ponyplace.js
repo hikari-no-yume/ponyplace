@@ -1663,7 +1663,7 @@
                     if (!moveInterval) {
                         doFlyingAvatarSwap();
                         moveInterval = window.setInterval(function () {
-                            me.y -= 100;
+                            me.y -= 56;
                             pushAndUpdateState(me);
                         }, 250);
                         me.y -= 100;
@@ -1690,7 +1690,7 @@
                     if (!moveInterval) {
                         doFlyingAvatarSwap();
                         moveInterval = window.setInterval(function () {
-                            me.y += 100;
+                            me.y += 56;
                             pushAndUpdateState(me);
                         }, 250);
                         me.y += 100;
