@@ -1623,6 +1623,10 @@
                 return;
             }
             switch (e.keyCode || e.which) {
+                // tab
+                case 9:
+                    chatbox.focus();
+                    return false;
                 // left
                 case 37:
                 // up
