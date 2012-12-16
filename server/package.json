@@ -1,8 +1,0 @@
-{
-    "name": "ponyplace",
-    "version": "0.0.0",
-    "dependencies": {
-        "websocket": "1.0.7",
-        "keypress": "0.1.0"
-    }
-}
