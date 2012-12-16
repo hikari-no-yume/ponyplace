@@ -14,6 +14,7 @@
 
     var socket, connected = false, ignoreDisconnect = false, pageFocussed = false, unseenHighlights = 0,
         me, myNick, myRoom = null, mySpecialStatus, avatarInventory, inventory = [], friends = [],
+        blockMovement = false, moveInterval = null, oldImgIndex = 0,
         roomwidgetstate = [],
         currentUser = null,
         lastmove = (new Date().getTime()),
@@ -98,6 +99,7 @@
                     nickName: nickName,
                     img: null
                 },
+                imgURL: null,
                 special: special
             };
 
@@ -117,27 +119,30 @@
             if (avatars.hasOwnProperty(obj.img_name)) {
                 if (avatars[obj.img_name].hasOwnProperty(obj.img_index)) {
                     var imgURL = '/media/avatars/' + avatars[obj.img_name][obj.img_index];
-                    user.elem.root.style.backgroundImage = 'url(' + imgURL + ')';
-                    user.elem.img = document.createElement('img');
-                    user.elem.img.src = imgURL;
-                    user.elem.img.onload = function () {
-                        var newHeight = user.elem.img.height;
-                        var newWidth = user.elem.img.width;
+                    if (imgURL !== user.imgURL) {
+                        user.imgURL = imgURL;
+                        user.elem.root.style.backgroundImage = 'url(' + imgURL + ')';
+                        user.elem.img = document.createElement('img');
+                        user.elem.img.src = imgURL;
+                        user.elem.img.onload = function () {
+                            var newHeight = user.elem.img.height;
+                            var newWidth = user.elem.img.width;
 
-                        // adjust bounding box size
-                        user.elem.root.style.width = newWidth + 'px';
-                        user.elem.root.style.height = newHeight + 'px';
+                            // adjust bounding box size
+                            user.elem.root.style.width = newWidth + 'px';
+                            user.elem.root.style.height = newHeight + 'px';
 
-                        // adjust bounding box margin (translate about image centre)
-                        user.elem.root.style.marginLeft = -newWidth/2 + 'px';
-                        user.elem.root.style.marginTop = -newHeight/2 + 'px';
+                            // adjust bounding box margin (translate about image centre)
+                            user.elem.root.style.marginLeft = -newWidth/2 + 'px';
+                            user.elem.root.style.marginTop = -newHeight/2 + 'px';
 
-                        // adjust positioning of nick tag and chat bubble
-                        user.elem.chat.style.bottom = newHeight + 'px';
-                        user.elem.chat.style.marginLeft = (newWidth - 168) / 2 + 'px';
-                        user.elem.nickTag.style.top = newHeight + 'px';
-                        user.elem.nickTag.style.marginLeft = (newWidth - 188) / 2 + 'px';
-                    };
+                            // adjust positioning of nick tag and chat bubble
+                            user.elem.chat.style.bottom = newHeight + 'px';
+                            user.elem.chat.style.marginLeft = (newWidth - 168) / 2 + 'px';
+                            user.elem.nickTag.style.top = newHeight + 'px';
+                            user.elem.nickTag.style.marginLeft = (newWidth - 188) / 2 + 'px';
+                        };
+                    }
                 }
             } else {
                 user.elem.root.style.backgroundImage = 'none';
@@ -711,10 +716,53 @@
         }
     }
 
+    function doAvatarRevert() {
+        if (oldImgIndex !== null) {
+            me.img_index = oldImgIndex;
+        }
+    }
+
+    function doAvatarFlip(dir) {
+        me.img_index = (me.img_index | 1) - (dir ? 0 : 1);
+    }
+
+    function doRunningAvatarSwap(to) {
+        oldImgIndex = null;
+        var imgs = avatars[me.img_name];
+        var start = (me.img_index & 1);
+        for (var i = start; i < imgs.length; i += 2) {
+            if (imgs[i].indexOf('_run') !== -1) {
+                oldImgIndex = me.img_index;
+                me.img_index = i;
+                return;
+            }
+        }
+        for (var i = start; i < imgs.length; i += 2) {
+            if (imgs[i].indexOf('_walk') !== -1) {
+                oldImgIndex = me.img_index;
+                me.img_index = i;
+                return;
+            }
+        }
+    }
+
+    function doFlyingAvatarSwap() {
+        oldImgIndex = null;
+        var imgs = avatars[me.img_name];
+        var start = (me.img_index & 1);
+        for (var i = start; i < imgs.length; i += 2) {
+            if (imgs[i].indexOf('_hover') !== -1) {
+                oldImgIndex = me.img_index;
+                me.img_index = i;
+                return;
+            }
+        }
+    }
+
     function doMove(x, y) {
         var cur = (new Date().getTime());
         if (cur - lastmove > 400) {
-            me.img_index = (me.img_index | 1) - (me.x < x ? 0 : 1);
+            doAvatarFlip(x > me.x);
             me.x = x;
             me.y = y;
             pushAndUpdateState(me);
@@ -765,14 +813,22 @@
             popup.content.appendChild(messages);
 
             var replybox = document.createElement('input');
+            replybox.type = 'text';
             replybox.className = 'pm-log-replybox';
             replybox.onkeypress = function (e) {
                 // enter
                 if (e.which === 13) {
                     doSend();
                     e.preventDefault();
+                    replybox.blur();
                     return false;
                 }
+            };
+            replybox.onfocus = function () {
+                blockMovement = true;
+            };
+            replybox.onblur = function () {
+                blockMovement = false;
             };
             popup.content.appendChild(replybox);
 
@@ -1238,10 +1294,19 @@
         chatbox.type = 'text';
         chatbox.id = 'chatbox';
         chatbox.maxLength = 100;
+        chatbox.onfocus = function () {
+            blockMovement = true;
+        };
+        chatbox.onblur = function () {
+            blockMovement = false;
+        };
         chatbox.onkeypress = function (e) {
             // enter
             if (e.which === 13) {
                 handleChatMessage();
+                e.preventDefault();
+                chatbox.blur();
+                return false;
             }
         };
         chatbox.onkeydown = function (e) {
@@ -1485,6 +1550,12 @@
         nickbox.type = 'text';
         nickbox.placeholder = 'nickname';
         nickbox.maxLength = 18;
+        nickbox.onfocus = function () {
+            blockMovement = true;
+        };
+        nickbox.onblur = function () {
+            blockMovement = false;
+        };
         loginbox.content.appendChild(nickbox);
         nickbox.focus();
 
@@ -1546,6 +1617,80 @@
         };
         window.onblur = function () {
             pageFocussed = false;
+        };
+        document.body.onkeyup = function (e) {
+            if (blockMovement) {
+                return;
+            }
+            switch (e.keyCode || e.which) {
+                // left
+                case 37:
+                // up
+                case 38:
+                // right
+                case 39:
+                // down
+                case 40:
+                    window.clearInterval(moveInterval);
+                    moveInterval = null;
+                    doAvatarRevert(true);
+                    pushAndUpdateState(me);
+                    e.preventDefault();
+                    return false;
+            }
+        };
+        document.body.onkeydown = function (e) {
+            if (blockMovement) {
+                return;
+            }
+            switch (e.keyCode || e.which) {
+                // left
+                case 37:
+                    if (!moveInterval) {
+                        doAvatarFlip(false);
+                        doRunningAvatarSwap();
+                        moveInterval = window.setInterval(function () {
+                            me.x -= 100;
+                            pushAndUpdateState(me);
+                        }, 250);
+                    }
+                    e.preventDefault();
+                    return false;
+                // up
+                case 38:
+                    if (!moveInterval) {
+                        doFlyingAvatarSwap();
+                        moveInterval = window.setInterval(function () {
+                            me.y -= 100;
+                            pushAndUpdateState(me);
+                        }, 250);
+                    }
+                    e.preventDefault();
+                    return false;
+                // right
+                case 39:
+                    if (!moveInterval) {
+                        doAvatarFlip(true);
+                        doRunningAvatarSwap();
+                        moveInterval = window.setInterval(function () {
+                            me.x += 100;
+                            pushAndUpdateState(me);
+                        }, 250);
+                    }
+                    e.preventDefault();
+                    return false;
+                // down
+                case 40:
+                    if (!moveInterval) {
+                        doFlyingAvatarSwap();
+                        moveInterval = window.setInterval(function () {
+                            me.y += 100;
+                            pushAndUpdateState(me);
+                        }, 250);
+                    }
+                    e.preventDefault();
+                    return false;
+            }
         };
     }
 
