@@ -406,7 +406,7 @@ input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover, button:
     position: absolute;
     left: 0;
     right: 0;
-    bottom: 36px;
+    bottom: 0;
     height: 36px;
     background-color: pink;
 }
