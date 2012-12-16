@@ -1653,6 +1653,8 @@
                             me.x -= 100;
                             pushAndUpdateState(me);
                         }, 250);
+                        me.x -= 100;
+                        pushAndUpdateState(me);
                     }
                     e.preventDefault();
                     return false;
@@ -1664,6 +1666,8 @@
                             me.y -= 100;
                             pushAndUpdateState(me);
                         }, 250);
+                        me.y -= 100;
+                        pushAndUpdateState(me);
                     }
                     e.preventDefault();
                     return false;
@@ -1676,6 +1680,8 @@
                             me.x += 100;
                             pushAndUpdateState(me);
                         }, 250);
+                        me.x += 100;
+                        pushAndUpdateState(me);
                     }
                     e.preventDefault();
                     return false;
@@ -1687,6 +1693,8 @@
                             me.y += 100;
                             pushAndUpdateState(me);
                         }, 250);
+                        me.y += 100;
+                        pushAndUpdateState(me);
                     }
                     e.preventDefault();
                     return false;
