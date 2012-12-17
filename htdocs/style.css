@@ -286,13 +286,18 @@ input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover, button:
     background-color: rgba(255, 192, 203, 0.7);
 }
 
+.chooser-preview {
+    border: 1px solid black;
+}
 .chooser-preview, .inventory-item-preview {
     max-height: 50px;
-    border: 1px solid black;
     margin: 2px;
     background-image: url(data:image/gif;base64,R0lGODlhEAAQAKEBAH9/f////////////yH5BAEKAAIALAAAAAAQABAAAAIfjG+gq4jM3IFLJgpswNly/XkcBpIiVaInlLJr9FZWAQA7);
     display: block;
     float: left;
+}
+.inventory-item-preview {
+    border-radius: 5px;
 }
 
 .inventory-item-preview:hover {
