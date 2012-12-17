@@ -100,6 +100,7 @@
                     img: null
                 },
                 imgURL: null,
+                effect: null,
                 special: special
             };
 
@@ -119,14 +120,21 @@
             if (avatars.hasOwnProperty(obj.img_name)) {
                 if (avatars[obj.img_name].hasOwnProperty(obj.img_index)) {
                     var imgURL = '/media/avatars/' + avatars[obj.img_name][obj.img_index];
-                    if (imgURL !== user.imgURL) {
+                    if (imgURL !== user.imgURL || obj.effect !== user.effect) {
                         user.imgURL = imgURL;
+                        user.effect = obj.effect;
                         user.elem.root.style.backgroundImage = 'url(' + imgURL + ')';
                         user.elem.img = document.createElement('img');
                         user.elem.img.src = imgURL;
                         user.elem.img.onload = function () {
                             var newHeight = user.elem.img.height;
                             var newWidth = user.elem.img.width;
+
+                            if (obj.effect === 'effect_shrink') {
+                                newHeight /= 2;
+                                newWidth /= 2;
+                            }
+                            user.elem.root.style.backgroundSize = newWidth + 'px ' + newHeight + 'px';
 
                             // adjust bounding box size
                             user.elem.root.style.width = newWidth + 'px';
@@ -713,6 +721,9 @@
                     bg_name: name
                 }));
             }
+        } else if (obj.type === 'effect') {
+            me.effect = obj.effect;
+            pushAndUpdateState(me);
         }
     }
 
@@ -1719,6 +1730,7 @@
             me = {
                 img_name: localStorage.getItem('last-avatar') || 'derpy',
                 img_index: 0,
+                effect: null,
                 x: 0,
                 y: 0,
                 chat: ''
@@ -1910,6 +1922,8 @@
                         alert('There was a protocol error. This usually means your client sent a malformed packet. Your client is probably out of date, try clearing your cache and refreshing.');
                     } else if (msg.reason === 'no_such_room') {
                         alert("No such room. You tried to join a room that doesn't exist.");
+                    } else if (msg.reason === 'dont_have_item') {
+                        alert("You do not have the item you tried to wear. This is probably a bug.");
                     } else if (msg.reason === 'dont_have_avatar') {
                         alert("You do not have the avatar you tried to wear. This is probably a bug.");
                         // erase last avatar

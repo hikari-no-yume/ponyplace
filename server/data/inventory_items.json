@@ -4,6 +4,18 @@
         "name_full": "3000 free bits receipt",
         "img": "/media/store/free-bits.png"
     },
+    "effect_shrink": {
+        "type": "effect",
+        "name_full": "Shrink avatar",
+        "img": "/media/items/effect-shrink.png",
+        "effect": "effect_shrink"
+    },
+    "effect_unshrink": {
+        "type": "effect",
+        "name_full": "Unshrink avatar",
+        "img": "/media/items/effect-unshrink.png",
+        "effect": null
+    },    
     "roombg_cherry_jubilees_guest_room": {
         "type": "house_background",
         "name_full": "House Background - Cherry Jubilee's Guest Room",

@@ -437,6 +437,21 @@
         {
             "items": [
                 {
+                    "type": "inventory_item",
+                    "item_name": "effect_shrink"
+                },
+                {
+                    "type": "inventory_item",
+                    "item_name": "effect_unshrink"
+                }
+            ],
+            "name_full": "Avatar shrinker",
+            "price": 200,
+            "img": "/media/items/effect-shrink.png"
+        },
+        {
+            "items": [
+                {
                     "type": "avatar",
                     "avatar_name": "lotus"
                 }

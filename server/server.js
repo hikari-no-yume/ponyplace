@@ -840,6 +840,14 @@ wsServer.on('request', function(request) {
                     }
                 }
 
+                // check effect
+                if (msg.obj.hasOwnProperty('effect') && msg.obj.effect !== null) {
+                    if (!User.hasInventoryItem(user.nick, msg.obj.effect)) {
+                        user.kick('dont_have_item');
+                        return;
+                    }
+                }
+
                 // global mute
                 if (globalMute) {
                     msg.obj.chat = user.obj.chat;
