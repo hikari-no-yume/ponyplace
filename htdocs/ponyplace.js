@@ -13,7 +13,7 @@
     var avatars = [], inventoryItems = [];
 
     var socket, connected = false, ignoreDisconnect = false, pageFocussed = false, unseenHighlights = 0,
-        me, myNick, myRoom = null, mySpecialStatus, avatarInventory, inventory = [], friends = [],
+        me, myNick, myRoom = null, myRoomWidth = 0, myRoomHeight = 0, mySpecialStatus, avatarInventory, inventory = [], friends = [],
         blockMovement = false, moveInterval = null, oldImgIndex = 0,
         roomwidgetstate = [],
         currentUser = null,
@@ -117,6 +117,9 @@
             var user = this.users[nick];
             user.elem.root.style.left = obj.x + 'px';
             user.elem.root.style.top = obj.y + 'px';
+            if (nick === myNick) {
+                translateViewport();
+            }
             if (avatars.hasOwnProperty(obj.img_name)) {
                 if (avatars[obj.img_name].hasOwnProperty(obj.img_index)) {
                     var imgURL = '/media/avatars/' + avatars[obj.img_name][obj.img_index];
@@ -223,6 +226,18 @@
     function pushAndUpdateState(newState) {
         userManager.update(myNick, newState);
         pushState();
+    }
+
+    function translateViewport() {
+        var vpW = window.innerWidth, vpH = window.innerHeight - 36;
+        var rmW = myRoomWidth, rmH = myRoomHeight;
+        var offsetX, offsetY;
+
+        offsetX = Math.min(Math.max(vpW / 2 - me.x, vpW - rmW), 0);
+        offsetY = Math.min(Math.max(vpH / 2 - me.y, vpH - rmH), 0);
+
+        stage.style.left = offsetX + 'px';
+        stage.style.top = offsetY + 'px';
     }
 
     function appendText(parent, text) {
@@ -661,6 +676,8 @@
             background.src = room.background.data;
             stage.style.width = room.background.width + 'px';
             stage.style.height = room.background.height + 'px';
+            myRoomWidth = room.background.width;
+            myRoomHeight = room.background.height;
             if (room.hasOwnProperty('widgets')) {
                 updateRoomWidgets(room.widgets);
             }
@@ -668,6 +685,8 @@
             background.src = '/media/rooms/cave.png';
             stage.style.width = '960px';
             stage.style.height = '660px';
+            myRoomWidth = 960;
+            myRoomHeight = 660;
         }
 
         // clear users
@@ -687,7 +706,6 @@
             me.x = me.x || Math.floor(Math.random() * room.background.width);
         }
         me.y = me.y || Math.floor(Math.random() * ROOM_HEIGHT);
-        outerstage.scrollLeft = Math.floor(me.x + window.innerWidth / 2);
 
         // push state
         pushAndUpdateState(me);
@@ -1629,6 +1647,7 @@
         window.onblur = function () {
             pageFocussed = false;
         };
+        window.onresize = translateViewport;
         document.body.onkeyup = function (e) {
             if (blockMovement) {
                 return;
