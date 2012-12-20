@@ -529,6 +529,10 @@ input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover, button:
     cursor: pointer;
 }
 
+.shrink .nickname {
+    font-size: 50%;
+}
+
 .pony .nickname {
     text-shadow: 1px 1px black, -1px -1px black, 1px -1px black, -1px 1px black;
     color: white;

@@ -135,6 +135,9 @@
                             if (obj.effect === 'effect_shrink') {
                                 newHeight /= 2;
                                 newWidth /= 2;
+                                user.elem.root.className = 'pony shrink';
+                            } else {
+                                user.elem.root.className = 'pony';
                             }
                             user.elem.root.style.backgroundSize = newWidth + 'px ' + newHeight + 'px';
 
