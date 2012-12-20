@@ -7,7 +7,6 @@
         return;
     }
 
-    var ROOM_HEIGHT = 660;
     var PONY_WIDTH = 168, PONY_HEIGHT = 168;
 
     var avatars = [], inventoryItems = [];
@@ -702,10 +701,11 @@
         // go to random position
         if (room.type === 'ephemeral') {
             me.x = me.x || Math.floor(Math.random() * 920);
+            me.y = me.y || Math.floor(Math.random() * 660);
         } else {
             me.x = me.x || Math.floor(Math.random() * room.background.width);
+            me.y = me.y || Math.floor(Math.random() * room.background.height);
         }
-        me.y = me.y || Math.floor(Math.random() * ROOM_HEIGHT);
 
         // push state
         pushAndUpdateState(me);

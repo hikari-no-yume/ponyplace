@@ -61,10 +61,11 @@ function sanitisePosition(obj, roomName) {
 
         if (room.type === 'ephemeral') {
             obj.x = Math.max(Math.min(obj.x, 960), 0);
+            obj.y = Math.max(Math.min(obj.y, 660), 0);
         } else {
             obj.x = Math.max(Math.min(obj.x, room.background.width), 0);
+            obj.y = Math.max(Math.min(obj.y, room.background.height), 0);
         }
-        obj.y = Math.max(Math.min(obj.y, 660), 0);
     }
     return obj;
 }
