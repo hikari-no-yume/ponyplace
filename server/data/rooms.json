@@ -1,8 +1,8 @@
 [
     {
         "type": "real",
-        "name": " party_barn",
-        "name_full": "Party Barn",
+        "name": "party_barn",
+        "name_full": "Xmas and/or Apocalypse Party",
         "thumbnail": "/media/rooms/party-barn-thumb.png",
         "background": {
             "data": "/media/rooms/party-barn.png",
@@ -16,11 +16,19 @@
                 "width": 1152,
                 "height": 660,
                 "type": "party"
+            },
+            {
+                "left": 900,
+                "top": 10,
+                "width": 260,
+                "height": 180,
+                "type": "catalogue",
+                "catalogue_name": "party_barn"
             }
         ],
         "user_count": 0,
-        "user_noun": "partiers",
-        "unlisted": true
+        "user_noun": "dancer",
+        "unlisted": false
     },
     {
         "type": "real",

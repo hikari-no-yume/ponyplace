@@ -1,4 +1,65 @@
 {
+    "party_barn": [
+        {
+            "items": [
+                {
+                    "type": "inventory_item",
+                    "item_name": "effect_shrink"
+                },
+                {
+                    "type": "inventory_item",
+                    "item_name": "effect_unshrink"
+                }
+            ],
+            "name_full": "Avatar shrinker",
+            "price": 200,
+            "img": "/media/items/effect-shrink.png"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "rainbowdash_shades"
+                }
+            ],
+            "name_full": "Rainbow #SWAG",
+            "price": 150,
+            "img": "/media/avatars/rainbowdash_right_shades.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "gummy"
+                }
+            ],
+            "name_full": "Gummy",
+            "price": 50,
+            "img": "/media/avatars/gummy_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "berrypunch"
+                }
+            ],
+            "name_full": "Berry Punch",
+            "price": 50,
+            "img": "/media/avatars/berrypunch_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "vinylscratch"
+                }
+            ],
+            "name_full": "Vinyl Scratch",
+            "price": 50,
+            "img": "/media/avatars/vinylscratch_right.gif"
+        }
+    ],
     "sugarcube_corner": [
         {
             "items": [
