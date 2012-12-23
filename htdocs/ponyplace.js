@@ -1009,7 +1009,7 @@
                     if (reason !== null) {
                         socket.send(JSON.stringify({
                             type: 'console_command',
-                            cmd: 'kick ' + profile.nick + (reason ? ' ' + reason : '')
+                            cmd: 'kick ' + profile.nick + ' ' + reason
                         }));
                         popup.hide();
                     }
@@ -1023,7 +1023,21 @@
                     if (reason !== null) {
                         socket.send(JSON.stringify({
                             type: 'console_command',
-                            cmd: 'kickban ' + profile.nick + (reason ? ' ' + reason : '')
+                            cmd: 'kickban ' + profile.nick + ' ' + reason
+                        }));
+                        popup.hide();
+                    }
+                };
+                popup.content.appendChild(button);
+
+                button = document.createElement('button');
+                appendText(button, 'Warn');
+                button.onclick = function (e) {
+                    var reason = prompt('Warning reason:', '');
+                    if (reason !== null) {
+                        socket.send(JSON.stringify({
+                            type: 'console_command',
+                            cmd: 'warn ' + profile.nick + ' ' + reason
                         }));
                         popup.hide();
                     }
@@ -1899,6 +1913,7 @@
                             ban: 'Ban',
                             unban: 'Unban',
                             kick: 'Kick',
+                            warn: 'Warning',
                             move: 'Move room',
                             broadcast: 'Broadcast message',
                             bits_change: 'Bits balance change'
@@ -1922,10 +1937,20 @@
                         var li = document.createElement('li');
                         if (message.type === 'user_report') {
                             appendText(li, 'At ' + (new Date(message.date)).toLocaleString() +' "' + message.nick + '" was reported by "' + message.from + '" because: "' + message.reason + '"');
+                        } else if (message.type === 'warn') {
+                            appendText(li, 'At ' + (new Date(message.date)).toLocaleString() +' "' + message.nick + '" was warned by "' + message.from + '" because: "' + message.reason + '"');
                         }
                         ul.appendChild(li);
                     }
                     popup.content.appendChild(ul);
+                break;
+                case 'mod_warning':
+                    var popup = makePopup('.mod-warning', 'Moderator Warning', true, 250, 250, true, function () {
+                        popup.destroy();
+                    });
+                    appendText(popup.content, 'You have been warned by ');
+                    appendNickname(popup.content, msg.mod_nick, msg.mod_special);
+                    appendText(popup.content, ' because: "' + msg.reason + '"');
                 break;
                 case 'profile':
                     showProfile(msg.data, msg.moderator_mode);

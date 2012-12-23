@@ -250,6 +250,16 @@ var modLogger = {
         });
         this.save();
     },
+    logWarn: function (mod, nick, reason) {
+        this.log.push({
+            type: 'warn',
+            date: this.timestamp(),
+            mod: mod,
+            nick: nick,
+            reason: reason
+        });
+        this.save();
+    },
     logMove: function (mod, nick, oldRoom, newRoom, state) {
         this.log.push({
             type: 'move',
@@ -343,6 +353,16 @@ var modMessages = {
                 });
             }
         });
+    },
+    logWarn: function (mod, nick, reason) {
+        this.messages.push({
+            type: 'warn',
+            date: this.timestamp(),
+            from: mod,
+            nick: nick,
+            reason: reason
+        });
+        this.save();
     }
 };
 
@@ -547,15 +567,16 @@ function handleCommand(cmd, myNick, user) {
     // mod help
     } else if (canMod && cmd.substr(0, 7) === 'modhelp') {
         sendMultiLine([
-            'Nine mod commands available: 1) kick, 2) kickban, 3) unban, 4) broadcast, 5) aliases, 6) move, 7) bits, 8) modlog, 9) modmsgs',
+            'Ten mod commands available: 1) kick, 2) kickban, 3) warn, 4) unban, 5) broadcast, 6) aliases, 7) move, 8) bits, 9) modlog, 10) modmsgs',
             "1. kick & 2. kickban - kick takes the nick of someone, they (& any aliases) will be kicked, e.g. /kick sillyfilly. kickban is like kick but also permabans by IP. kick and kickban can also take a second parameter for a reason message, e.g. /kick sillyfilly Don't spam the chat!",
-            '3. unban - Unbans an IP, e.g. /unban 192.168.1.1',
-            '4. broadcast - Sends a message to everyone on the server, e.g. /broadcast Hello all!',
-            "5. aliases - Lists someone's aliases (people with same IP address), e.g. /aliases joebloggs",
-            '6. move - Forcibly moves a user to a room, e.g. /move canterlot sillyfilly',
-            "7. bits - Adds to or removes from someone's bits balance, e.g. /bits 20 ajf, /bits -10 otherguy",
-            "8. modlog - Shows moderator activity log. Optionally specify count (default 10), e.g. /modlog 15. You can also specify filter (ban/unban/kick/move/broadcast/bits_change), e.g. /modlog 25 unban",
-            "9. modmsgs - Shows messages/reports to mods. Optionally specify count (default 10), e.g. /modmsgs 10. You can also specify nick filter to see messages concerning or by someone, e.g. /modmsgs 25 somefilly",
+            '3. warn - formally warns someone (shown immediately if online or upon next login if not), e.g. /warn somefilly Stop spamming. Final warning.',
+            '4. unban - Unbans an IP, e.g. /unban 192.168.1.1',
+            '5. broadcast - Sends a message to everyone on the server, e.g. /broadcast Hello all!',
+            "6. aliases - Lists someone's aliases (people with same IP address), e.g. /aliases joebloggs",
+            '7. move - Forcibly moves a user to a room, e.g. /move canterlot sillyfilly',
+            "8. bits - Adds to or removes from someone's bits balance, e.g. /bits 20 ajf, /bits -10 otherguy",
+            "9. modlog - Shows moderator activity log. Optionally specify count (default 10), e.g. /modlog 15. You can also specify filter (ban/unban/kick/move/broadcast/bits_change), e.g. /modlog 25 unban",
+            "10. modmsgs - Shows messages/reports to mods. Optionally specify count (default 10), e.g. /modmsgs 10. You can also specify nick filter to see messages concerning or by someone, e.g. /modmsgs 25 somefilly",
             'See also: /help'
 
         ]);
@@ -667,6 +688,36 @@ function handleCommand(cmd, myNick, user) {
             }
         });
         modLogger.logKick(myNick, IP, aliases, reason);
+    // warning
+    } else if (canMod && cmd.substr(0, 5) === 'warn ') {
+        var pos = cmd.indexOf(' ', 5);
+        var warnee, reason = null;
+        if (pos !== -1) {
+            warnee = cmd.substr(5, pos-5);
+            reason = cmd.substr(pos+1);
+        } else {
+            sendLine('Two parameters required for /warn.');
+            return;
+        }
+        if (!User.hasAccount(warnee)) {
+            sendLine('There is no user with nick: "' + kickee + '"');
+            return;
+        }
+
+        if (User.has(warnee)) {
+            User.get(warnee).send({
+                type: 'mod_warning',
+                mod_nick: user.nick,
+                mod_special: user.special,
+                reason: reason
+            });
+            sendLine('"' + warnee + '" was warned and will see the warning immediately.');
+        } else {
+            User.addWarning(warnee, user.nick, user.special, reason);
+            sendLine('"' + warnee + '" was warned and will see the warning upon their next login.');
+        }
+        modLogger.logWarn(myNick, warnee, reason);
+        modMessages.logWarn(myNick, warnee, reason);
     // forced move
     } else if (canMod && cmd.substr(0, 5) === 'move ') {
         var pos = cmd.indexOf(' ', 5);
@@ -1137,6 +1188,18 @@ wsServer.on('request', function(request) {
         myNick = nick;
         user = new User(nick, connection, msg.obj, null);
         user.sendAccountState();
+
+        // send warnings, if any
+        var warnings = User.getUnseenWarnings(nick);
+        for (var i = 0; i < warnings.length; i++) {
+            user.send({
+                type: 'mod_warning',
+                mod_nick: warnings[i].mod_nick,
+                mod_special: warnings[i].mod_special,
+                reason: warnings[i].reason
+            });
+        }
+        User.clearUnseenWarnings(nick);
 
         // give daily reward
         var date = (new Date()).toISOString().split('T', 1)[0];

@@ -126,6 +126,17 @@ h1 {
     width: 24px;
 }
 
+.mod-warning {
+    width: 300px;
+    height: 300px;
+}
+.mod-warning {
+    border-color: red;
+}
+.mod-warning .popup-titlebar {
+    background-color: maroon;
+}
+
 #loginbox {
     left: 50%;
     top: 50%;

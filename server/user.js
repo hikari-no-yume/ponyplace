@@ -213,6 +213,22 @@ User.changeBits = function (nick, amount) {
     return false;
 };
 
+User.getUnseenWarnings = function (nick) {
+    return this.getUserData(nick, 'warnings', []);
+};
+User.addWarning = function (nick, mod_nick, mod_special, reason) {
+    var warnings = this.getUnseenWarnings(nick);
+    warnings.push({
+        mod_nick: mod_nick,
+        mod_special: mod_special,
+        reason: reason
+    });
+    this.setUserData(nick, 'warnings', warnings);
+};
+User.clearUnseenWarnings = function (nick, friend) {
+    this.setUserData(nick, 'warnings', []);
+};
+
 User.getProfile = function (nick) {
     if (!this.hasAccount(nick)) {
         return null;
