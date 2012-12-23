@@ -426,7 +426,7 @@ function handleCommand(cmd, myNick, user) {
         if (roomName.indexOf(' ') !== -1) {
             if (roomName.substr(0, 6) === 'house ') {
                 var houseName = roomName.substr(6);
-                if (User.isHouseLocked(houseName) && myNick !== houseName) {
+                if (User.isHouseLocked(houseName) && myNick !== houseName && !User.isModerator(myNick)) {
                     sendLine('That house is locked.');
                 } else {
                     doRoomChange(roomName, user);
