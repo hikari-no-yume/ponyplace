@@ -1944,6 +1944,18 @@
                     }
                     popup.content.appendChild(ul);
                 break;
+                case 'help':
+                    var popup = makePopup('.mod-log', 'Help', true, 250, 250, true, function () {
+                        popup.destroy();
+                    });
+                    var ul = document.createElement('ul');
+                    for (var i = 0; i < msg.lines.length; i++) {
+                        var li = document.createElement('li');
+                        appendText(li, msg.lines[i]);
+                        ul.appendChild(li);
+                    }
+                    popup.content.appendChild(ul);
+                break;
                 case 'mod_warning':
                     var popup = makePopup('.mod-warning', 'Moderator Warning', true, 250, 250, true, function () {
                         popup.destroy();

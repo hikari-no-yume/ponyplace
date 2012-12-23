@@ -474,16 +474,19 @@ function handleCommand(cmd, myNick, user) {
 
     // help
     if (cmd.substr(0, 4) === 'help') {
-        sendMultiLine([
-            'Three user commands are available: 1) profile, 2) list, 3) join',
-            "1. profile - Brings up someone's profile, e.g. /profile someguy",
-            '2. list - Lists available rooms, e.g. /list',
-            "3. join - Joins a room, e.g. /join library - if room doesn't exist, an ephemeral room will be created - you can also enter people's houses, e.g. /join house ajf",
-            'Three house commands are available: 1) empty, 2) lock, 3) unlock',
-            '1. empty - Removes everyone else from your house, e.g. /empty',
-            '2. lock - Prevents anyone else from joining your house, e.g. /lock',
-            '3. unlock - Lets other people join your house again, e.g. /unlock'
-        ]);
+        user.send({
+            type: 'help',
+            lines: [
+                'Three user commands are available: 1) profile, 2) list, 3) join',
+                "1. profile - Brings up someone's profile, e.g. /profile someguy",
+                '2. list - Lists available rooms, e.g. /list',
+                "3. join - Joins a room, e.g. /join library - if room doesn't exist, an ephemeral room will be created - you can also enter people's houses, e.g. /join house ajf",
+                'Three house commands are available: 1) empty, 2) lock, 3) unlock',
+                '1. empty - Removes everyone else from your house, e.g. /empty',
+                '2. lock - Prevents anyone else from joining your house, e.g. /lock',
+                '3. unlock - Lets other people join your house again, e.g. /unlock'
+            ]
+        });
         if (isMod) {
             sendLine('See also: /modhelp');
         }
@@ -566,20 +569,23 @@ function handleCommand(cmd, myNick, user) {
         }
     // mod help
     } else if (canMod && cmd.substr(0, 7) === 'modhelp') {
-        sendMultiLine([
-            'Ten mod commands available: 1) kick, 2) kickban, 3) warn, 4) unban, 5) broadcast, 6) aliases, 7) move, 8) bits, 9) modlog, 10) modmsgs',
-            "1. kick & 2. kickban - kick takes the nick of someone, they (& any aliases) will be kicked, e.g. /kick sillyfilly. kickban is like kick but also permabans by IP. kick and kickban can also take a second parameter for a reason message, e.g. /kick sillyfilly Don't spam the chat!",
-            '3. warn - formally warns someone (shown immediately if online or upon next login if not), e.g. /warn somefilly Stop spamming. Final warning.',
-            '4. unban - Unbans an IP, e.g. /unban 192.168.1.1',
-            '5. broadcast - Sends a message to everyone on the server, e.g. /broadcast Hello all!',
-            "6. aliases - Lists someone's aliases (people with same IP address), e.g. /aliases joebloggs",
-            '7. move - Forcibly moves a user to a room, e.g. /move canterlot sillyfilly',
-            "8. bits - Adds to or removes from someone's bits balance, e.g. /bits 20 ajf, /bits -10 otherguy",
-            "9. modlog - Shows moderator activity log. Optionally specify count (default 10), e.g. /modlog 15. You can also specify filter (ban/unban/kick/move/broadcast/bits_change), e.g. /modlog 25 unban",
-            "10. modmsgs - Shows messages/reports to mods. Optionally specify count (default 10), e.g. /modmsgs 10. You can also specify nick filter to see messages concerning or by someone, e.g. /modmsgs 25 somefilly",
-            'See also: /help'
+        user.send({
+            type: 'help',
+            lines: [
+                'Ten mod commands available: 1) kick, 2) kickban, 3) warn, 4) unban, 5) broadcast, 6) aliases, 7) move, 8) bits, 9) modlog, 10) modmsgs',
+                "1. kick & 2. kickban - kick takes the nick of someone, they (& any aliases) will be kicked, e.g. /kick sillyfilly. kickban is like kick but also permabans by IP. kick and kickban can also take a second parameter for a reason message, e.g. /kick sillyfilly Don't spam the chat!",
+                '3. warn - formally warns someone (shown immediately if online or upon next login if not), e.g. /warn somefilly Stop spamming. Final warning.',
+                '4. unban - Unbans an IP, e.g. /unban 192.168.1.1',
+                '5. broadcast - Sends a message to everyone on the server, e.g. /broadcast Hello all!',
+                "6. aliases - Lists someone's aliases (people with same IP address), e.g. /aliases joebloggs",
+                '7. move - Forcibly moves a user to a room, e.g. /move canterlot sillyfilly',
+                "8. bits - Adds to or removes from someone's bits balance, e.g. /bits 20 ajf, /bits -10 otherguy",
+                "9. modlog - Shows moderator activity log. Optionally specify count (default 10), e.g. /modlog 15. You can also specify filter (ban/unban/kick/move/broadcast/bits_change), e.g. /modlog 25 unban",
+                "10. modmsgs - Shows messages/reports to mods. Optionally specify count (default 10), e.g. /modmsgs 10. You can also specify nick filter to see messages concerning or by someone, e.g. /modmsgs 25 somefilly",
+                'See also: /help'
 
-        ]);
+            ]
+        });
     // unbanning
     } else if (canMod && cmd.substr(0, 6) === 'unban ') {
         var IP = cmd.substr(6);
