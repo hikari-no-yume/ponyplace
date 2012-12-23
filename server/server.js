@@ -369,7 +369,8 @@ function doRoomChange(roomName, user) {
     user.send({
         type: 'room_list',
         list: roomManager.getList(),
-        user_count: User.userCount
+        user_count: User.userCount,
+        mod_count: User.modCount
     });
 }
 
@@ -896,7 +897,8 @@ wsServer.on('request', function(request) {
                 user.send({
                     type: 'room_list',
                     list: roomManager.getList(),
-                    user_count: User.userCount
+                    user_count: User.userCount,
+                    mod_count: User.modCount
                 });
             break;
             case 'profile_get':
@@ -1033,7 +1035,8 @@ wsServer.on('request', function(request) {
         connection.sendUTF(JSON.stringify({
             type: 'room_list',
             list: roomManager.getList(),
-            user_count: User.userCount
+            user_count: User.userCount,
+            mod_count: User.modCount
         }));
 
         // tell client about avatars

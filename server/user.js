@@ -14,6 +14,9 @@ function User (nick, conn, obj, room) {
 
     User.users[nick] = this;
     User.userCount++;
+    if (User.isModerator(nick)) {
+        User.modCount++;
+    }
 }
 User.prototype.sendAccountState = function () {
     this.send({
@@ -30,6 +33,9 @@ User.prototype.kill = function () {
     delete User.users[this.nick];
 
     User.userCount--;
+    if (User.isModerator(this.nick)) {
+        User.modCount--;
+    }
 };
 User.prototype.send = function (msg) {
     this.conn.sendUTF(JSON.stringify(msg));
@@ -45,6 +51,7 @@ User.prototype.kick = function (reason, msg) {
 
 User.users = [];
 User.userCount = 0;
+User.modCount = 0;
 User.specialUsers = {};
 User.accounts = {};
 User.emails = {};

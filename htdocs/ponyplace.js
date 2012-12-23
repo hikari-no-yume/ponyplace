@@ -17,7 +17,7 @@
         roomwidgetstate = [],
         currentUser = null,
         lastmove = (new Date().getTime()),
-        globalUserCount = 0,
+        globalUserCount = 0, globalModCount = 0,
         catalogueCallback = null,
         openProfiles = {}, openPMLogs = {};
 
@@ -212,6 +212,7 @@
             } else {
                 str = globalUserCount + ' users online';
             }
+            str += ' (' + globalModCount + ' mods online)';
             appendText(this.userCounter, str);
         }
     };
@@ -1897,6 +1898,7 @@
                 case 'room_list':
                     updateRoomList(msg.list);
                     globalUserCount = msg.user_count;
+                    globalModCount = msg.mod_count;
                     userManager.showUserCounter();
                     userManager.updateCounter();
                 break;
