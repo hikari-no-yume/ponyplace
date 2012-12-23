@@ -308,8 +308,18 @@ var modMessages = {
         }));
         console.log('Saved moderator messages');
     },
-    getLast: function (count) {
-        return this.messages.slice(-count);
+    getLast: function (count, filter) {
+        var retrieved = 0;
+        var slice = [];
+        for (var i = this.messages.length - 1; i >= 0; i--) {
+            if (!filter || this.messages[i].nick === filter || this.messages[i].from === filter) {
+                slice.push(this.messages[i]);
+                if (++retrieved === count) {
+                    break;
+                }
+            }
+        }
+        return slice;
     },
 
     timestamp: function () {
@@ -329,7 +339,7 @@ var modMessages = {
             if (User.isModerator(iterUser.nick)) {
                 iterUser.send({
                     type: 'console_msg',
-                    msg: 'There is a new moderator report.'
+                    msg: 'There is a new moderator report. View it with /modmsgs'
                 });
             }
         });
@@ -545,7 +555,7 @@ function handleCommand(cmd, myNick, user) {
             '6. move - Forcibly moves a user to a room, e.g. /move canterlot sillyfilly',
             "7. bits - Adds to or removes from someone's bits balance, e.g. /bits 20 ajf, /bits -10 otherguy",
             "8. modlog - Shows moderator activity log. Optionally specify count (default 10), e.g. /modlog 15. You can also specify filter (ban/unban/kick/move/broadcast/bits_change), e.g. /modlog 25 unban",
-            "9. modmsgs - Shows messages/reports to mods. Optionally specify count (default 10), e.g. /modmsgs 10.",
+            "9. modmsgs - Shows messages/reports to mods. Optionally specify count (default 10), e.g. /modmsgs 10. You can also specify nick filter to see messages concerning or by someone, e.g. /modmsgs 25 somefilly",
             'See also: /help'
 
         ]);
@@ -754,15 +764,25 @@ function handleCommand(cmd, myNick, user) {
         sendLine('Showing ' + items.length + ' log items' + (filter ? ' filtered by type "' + filter + '"' : ''));
         user.send({
             type: 'mod_log',
+            cmd: cmd,
             items: items
         });
     // moderator messages
     } else if (canMod && cmd.substr(0, 7) === 'modmsgs') {
-        var count = parseInt(cmd.substr(7)) || 10;
-        var messages = modMessages.getLast(count);
-        sendLine('Showing ' + messages.length + ' messages');
+        var pos = cmd.indexOf(' ', 8);
+        var count, filter;
+        if (pos !== -1) {
+            count = cmd.substr(7, pos-7);
+            filter = cmd.substr(pos+1);
+        } else {
+            count = cmd.substr(7);
+        }
+        count = parseInt(count) || 10;
+        var messages = modMessages.getLast(count, filter);
+        sendLine('Showing ' + messages.length + ' messages' + (filter ? ' filtered by nick "' + filter + '"' : ''));
         user.send({
             type: 'mod_msgs',
+            cmd: cmd,
             messages: messages
         });
     // royal canterlot voice

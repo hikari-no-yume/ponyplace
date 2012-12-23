@@ -961,7 +961,7 @@
         button = document.createElement('button');
         appendText(button, 'Report to moderators');
         button.onclick = function () {
-            var reason = prompt('Reason for reporting:', '');
+            var reason = prompt('This will report this person to the moderators.\nOnly do this if you believe they have done something wrong.\nIf you abuse this feature moderators may take action against you.\n\nReason for reporting:', '');
             if (reason !== null) {
                 socket.send(JSON.stringify({
                     type: 'user_report',
@@ -1876,7 +1876,7 @@
                     logConsoleMessageInChat(msg.msg);
                 break;
                 case 'mod_log':
-                    var popup = makePopup('.mod-log', 'Moderation log', true, 250, 250, true, function () {
+                    var popup = makePopup('.mod-log', '/' + msg.cmd, true, 250, 250, true, function () {
                         popup.destroy();
                     });
                     var ul = document.createElement('ul');
@@ -1902,7 +1902,7 @@
                     popup.content.appendChild(ul);
                 break;
                 case 'mod_msgs':
-                    var popup = makePopup('.mod-log', 'Moderator messages', true, 250, 250, true, function () {
+                    var popup = makePopup('.mod-log', '/' + msg.cmd, true, 250, 250, true, function () {
                         popup.destroy();
                     });
                     var ul = document.createElement('ul');
@@ -1910,7 +1910,7 @@
                         var message = msg.messages[i];
                         var li = document.createElement('li');
                         if (message.type === 'user_report') {
-                            appendText(li, 'User report about user with nick: "' + message.nick + '" from user with nick: "' + message.from + '" at ' + (new Date(message.date)).toLocaleString() + ' giving the reason: ' + message.reason);
+                            appendText(li, 'At ' + (new Date(message.date)).toLocaleString() +' "' + message.nick + '" was reported by "' + message.from + '" because: "' + message.reason + '"');
                         }
                         ul.appendChild(li);
                     }
