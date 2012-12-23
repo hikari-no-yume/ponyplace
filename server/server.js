@@ -191,7 +191,7 @@ var modLogger = {
             console.log('Error loading moderation log, skipped.');
             return;
         }
-        data = JSON.parse(fs.readFileSync('data/mod-log.json'));
+        data = JSON.parse(data);
         this.log = data.log;
         console.log('Loaded moderation log');
     },
@@ -287,6 +287,56 @@ var modLogger = {
 };
 
 modLogger.init();
+
+var modMessages = {
+    messages: [],
+
+    init: function () {
+        try {
+            var data = fs.readFileSync('data/mod-messages.json');
+        } catch (e) {
+            console.log('Error loading moderator messages, skipped.');
+            return;
+        }
+        data = JSON.parse(data);
+        this.messages = data.messages;
+        console.log('Loaded moderator messages');
+    },
+    save: function () {
+        fs.writeFileSync('data/mod-messages.json', JSON.stringify({
+            messages: this.messages
+        }));
+        console.log('Saved moderator messages');
+    },
+    getLast: function (count) {
+        return this.messages.slice(-count);
+    },
+
+    timestamp: function () {
+        return (new Date()).toISOString();
+    },
+
+    reportUser: function (from, nick, reason) {
+        this.messages.push({
+            type: 'user_report',
+            date: this.timestamp(),
+            from: from,
+            nick: nick,
+            reason: reason
+        });
+        this.save();
+        User.forEach(function (iterUser) {
+            if (User.isModerator(iterUser.nick)) {
+                iterUser.send({
+                    type: 'console_msg',
+                    msg: 'There is a new moderator report.'
+                });
+            }
+        });
+    }
+};
+
+modMessages.init();
 
 function doRoomChange(roomName, user) {
     var room;
@@ -487,7 +537,7 @@ function handleCommand(cmd, myNick, user) {
     // mod help
     } else if (canMod && cmd.substr(0, 7) === 'modhelp') {
         sendMultiLine([
-            'Eight mod commands available: 1) kick, 2) kickban, 3) unban, 4) broadcast, 5) aliases, 6) move, 7) bits, 8) modlog',
+            'Nine mod commands available: 1) kick, 2) kickban, 3) unban, 4) broadcast, 5) aliases, 6) move, 7) bits, 8) modlog, 9) modmsgs',
             "1. kick & 2. kickban - kick takes the nick of someone, they (& any aliases) will be kicked, e.g. /kick sillyfilly. kickban is like kick but also permabans by IP. kick and kickban can also take a second parameter for a reason message, e.g. /kick sillyfilly Don't spam the chat!",
             '3. unban - Unbans an IP, e.g. /unban 192.168.1.1',
             '4. broadcast - Sends a message to everyone on the server, e.g. /broadcast Hello all!',
@@ -495,6 +545,7 @@ function handleCommand(cmd, myNick, user) {
             '6. move - Forcibly moves a user to a room, e.g. /move canterlot sillyfilly',
             "7. bits - Adds to or removes from someone's bits balance, e.g. /bits 20 ajf, /bits -10 otherguy",
             "8. modlog - Shows moderator activity log. Optionally specify count (default 10), e.g. /modlog 15. You can also specify filter (ban/unban/kick/move/broadcast/bits_change), e.g. /modlog 25 unban",
+            "9. modmsgs - Shows messages/reports to mods. Optionally specify count (default 10), e.g. /modmsgs 10.",
             'See also: /help'
 
         ]);
@@ -704,6 +755,15 @@ function handleCommand(cmd, myNick, user) {
         user.send({
             type: 'mod_log',
             items: items
+        });
+    // moderator messages
+    } else if (canMod && cmd.substr(0, 7) === 'modmsgs') {
+        var count = parseInt(cmd.substr(7)) || 10;
+        var messages = modMessages.getLast(count);
+        sendLine('Showing ' + messages.length + ' messages');
+        user.send({
+            type: 'mod_msgs',
+            messages: messages
         });
     // royal canterlot voice
     } else if (isCreator && cmd.substr(0,4) === 'mute') {
@@ -930,6 +990,9 @@ wsServer.on('request', function(request) {
                         msg: msg.msg
                     });
                 }
+            break;
+            case 'user_report':
+                modMessages.reportUser(myNick, msg.nick, msg.reason);
             break;
             case 'friend_add':
                 User.addFriend(myNick, msg.nick);

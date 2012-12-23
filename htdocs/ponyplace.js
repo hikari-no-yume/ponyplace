@@ -958,6 +958,24 @@
         };
         popup.content.appendChild(button);
 
+        button = document.createElement('button');
+        appendText(button, 'Report to moderators');
+        button.onclick = function () {
+            var reason = prompt('Reason for reporting:', '');
+            if (reason !== null) {
+                socket.send(JSON.stringify({
+                    type: 'user_report',
+                    nick: profile.nick,
+                    reason: reason
+                }));
+                alert('Your report has been sent and will be reviewed shortly.');
+                popup.hide();
+            } else {
+                alert('You must specify a reason for reporting them.');
+            }
+        };
+        popup.content.appendChild(button);
+
         if (profile.online) {
             button = document.createElement('button');
             appendText(button, 'Send private message');
@@ -1879,6 +1897,21 @@
                         delete item.mod;
                         appendText(pre, JSON.stringify(item, null, 2));
                         li.appendChild(pre);
+                        ul.appendChild(li);
+                    }
+                    popup.content.appendChild(ul);
+                break;
+                case 'mod_msgs':
+                    var popup = makePopup('.mod-log', 'Moderator messages', true, 250, 250, true, function () {
+                        popup.destroy();
+                    });
+                    var ul = document.createElement('ul');
+                    for (var i = 0; i < msg.messages.length; i++) {
+                        var message = msg.messages[i];
+                        var li = document.createElement('li');
+                        if (message.type === 'user_report') {
+                            appendText(li, 'User report about user with nick: "' + message.nick + '" from user with nick: "' + message.from + '" at ' + (new Date(message.date)).toLocaleString() + ' giving the reason: ' + message.reason);
+                        }
                         ul.appendChild(li);
                     }
                     popup.content.appendChild(ul);
