@@ -1,8 +1,8 @@
 [
     {
         "type": "real",
-        "name": "party_barn",
-        "name_full": "Xmas and/or Apocalypse Party",
+        "name": " party_barn",
+        "name_full": "Party Barn",
         "thumbnail": "/media/rooms/party-barn-thumb.png",
         "background": {
             "data": "/media/rooms/party-barn.png",
@@ -28,7 +28,7 @@
         ],
         "user_count": 0,
         "user_noun": "dancer",
-        "unlisted": false
+        "unlisted": true
     },
     {
         "type": "real",
