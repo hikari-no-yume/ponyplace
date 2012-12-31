@@ -1031,20 +1031,6 @@
                 popup.content.appendChild(button);
 
                 button = document.createElement('button');
-                appendText(button, 'Warn');
-                button.onclick = function (e) {
-                    var reason = prompt('Warning reason:', '');
-                    if (reason !== null) {
-                        socket.send(JSON.stringify({
-                            type: 'console_command',
-                            cmd: 'warn ' + profile.nick + ' ' + reason
-                        }));
-                        popup.hide();
-                    }
-                };
-                popup.content.appendChild(button);
-
-                button = document.createElement('button');
                 appendText(button, 'List Aliases');
                 button.onclick = function (e) {
                     socket.send(JSON.stringify({
@@ -1066,6 +1052,21 @@
                 };
                 popup.content.appendChild(button);
             }
+        }
+        if (modMode) {
+            button = document.createElement('button');
+            appendText(button, 'Warn');
+            button.onclick = function (e) {
+                var reason = prompt('Warning reason:', '');
+                if (reason !== null) {
+                    socket.send(JSON.stringify({
+                        type: 'console_command',
+                        cmd: 'warn ' + profile.nick + ' ' + reason
+                    }));
+                    popup.hide();
+                }
+            };
+            popup.content.appendChild(button);
         }
 
         openProfiles[profile.nick] = popup;
