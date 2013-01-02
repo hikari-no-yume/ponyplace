@@ -961,15 +961,17 @@
         button = document.createElement('button');
         appendText(button, 'Report to moderators');
         button.onclick = function () {
-            var reason = prompt('This will report this person to the moderators.\nOnly do this if you believe they have done something wrong.\nIf you abuse this feature moderators may take action against you.\n\nReason for reporting:', '');
+            var reason = prompt('This will report this person to the moderators.\nOnly do this if you believe they have done something wrong.\n\nReason for reporting:', '');
             if (reason !== null) {
-                socket.send(JSON.stringify({
-                    type: 'user_report',
-                    nick: profile.nick,
-                    reason: reason
-                }));
-                alert('Your report has been sent and will be reviewed shortly.');
-                popup.hide();
+                if (confirm('By clicking OK you accept that frivolous or false reports may lead to warnings, kicking, or being banned.')) {
+                    socket.send(JSON.stringify({
+                        type: 'user_report',
+                        nick: profile.nick,
+                        reason: reason
+                    }));
+                    alert('Your report has been sent and will be reviewed shortly.');
+                    popup.hide();
+                }
             } else {
                 alert('You must specify a reason for reporting them.');
             }
