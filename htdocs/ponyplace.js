@@ -1040,17 +1040,6 @@
                     popup.hide();
                 };
                 popup.content.appendChild(button);
-
-                button = document.createElement('button');
-                appendText(button, 'Last 10 Mod Reports');
-                button.onclick = function (e) {
-                    socket.send(JSON.stringify({
-                        type: 'console_command',
-                        cmd: 'modmsgs 10 ' + profile.nick
-                    }));
-                    popup.hide();
-                };
-                popup.content.appendChild(button);
             }
         }
         if (modMode) {
@@ -1065,6 +1054,18 @@
                     }));
                     popup.hide();
                 }
+            };
+            popup.content.appendChild(button);
+
+            button = document.createElement('button');
+            appendText(button, 'Last 10 Mod Reports');
+            button.onclick = function (e) {
+
+                socket.send(JSON.stringify({
+                    type: 'console_command',
+                    cmd: 'modmsgs 10 ' + profile.nick
+                }));
+                popup.hide();
             };
             popup.content.appendChild(button);
         }
