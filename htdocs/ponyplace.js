@@ -1609,7 +1609,7 @@
 
         personasubmit = document.createElement('input');
         personasubmit.type = 'submit';
-        personasubmit.value = 'Log in with Persona';
+        personasubmit.value = 'Sign in to ponyplace (using Persona login)';
         personasubmit.onclick = function () {
             navigator.id.watch({
                 loggedInUser: currentUser,
@@ -1641,7 +1641,7 @@
 
         loginsubmit = document.createElement('input');
         loginsubmit.type = 'submit';
-        loginsubmit.value = 'Create Account using Persona';
+        loginsubmit.value = 'Create ponyplace Account (using Persona login)';
         loginsubmit.onclick = function () {
             navigator.id.watch({
                 loggedInUser: currentUser,
@@ -2016,7 +2016,7 @@
                     } else if (msg.reason === 'bad_login') {
                         alert('Login with Persona failed.');
                     } else if (msg.reason === 'no_assoc_account') {
-                        alert('There is no account associated with this email address. Are you sure you have a ponyplace account?');
+                        alert('There is no account associated with this email address.\nAre you sure you have a ponyplace account? This is separate from your Persona account, which you log in to to sign in to ponyplace or create a ponyplace account.');
                     } else if (msg.reason === 'already_email') {
                         alert('There is already an account associated with this email address. You can only have one ponyplace account for one email address.');
                     } else if (msg.reason === 'already_account') {
