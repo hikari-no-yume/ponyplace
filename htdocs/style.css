@@ -59,9 +59,9 @@ h1 {
 #container {
     position: absolute;
     left: 0;
-    top: 25px;
+    top: 0;
     width: 100%;
-    bottom: 0;
+    height: 100%;
     background-color: pink;
     margin: 0 auto;
     transition: transform 0.5s linear, filter 15s ease-in;

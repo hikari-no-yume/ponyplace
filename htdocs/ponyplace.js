@@ -1672,6 +1672,8 @@
     }
 
     function initGUI() {
+        document.body.innerHTML = '';
+
         container = document.createElement('div');
         container.id = 'container';
         document.body.appendChild(container);
