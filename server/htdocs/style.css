@@ -366,7 +366,7 @@ input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover, button:
     position: absolute;
     left: 0;
     right: 0;
-    bottom: 36px;
+    bottom: 40px;
     height: 200px;
     padding: 2px;
 }

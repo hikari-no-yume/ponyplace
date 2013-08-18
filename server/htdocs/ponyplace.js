@@ -318,15 +318,9 @@
             span.appendChild(document.createElement('br'));
 
             if (target === 'chatlog') {
-                if (chatloglocked) {
-                    var ph = chatlog.scrollHeight;
-                    chatlog.insertBefore(span, chatlog.firstChild);
-                    if (chatlog.scrollTop !== 0) {
-                        var increase = chatlog.scrollHeight - ph;
-                        chatlog.scrollTop += increase;
-                    }
-                } else {
-                    chatlog.insertBefore(span, chatlog.firstChild);
+                chatlog.appendChild(span);
+                if (!chatloglocked) {
+                    chatlog.scrollTop = chatlog.scrollHeight;
                 }
             } else {
                 target.appendChild(span);
