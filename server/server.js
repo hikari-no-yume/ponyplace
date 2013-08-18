@@ -7,14 +7,20 @@ var fs = require('fs');
 var debugMode = (process.argv.hasOwnProperty('2') && process.argv[2] === '--debug');
 var config = require('./data_config/config.json');
 
-var server = http.createServer(function(request, response) {
-    console.log((new Date()) + ' Received request for ' + request.url);
-    response.writeHead(404);
-    response.end();
-});
+var express = require('express');
+var app = express();
+
+var server = http.createServer(app);
 server.listen((debugMode ? config.port_debug : config.port), function() {
     console.log((new Date()) + ' Server is listening on port ' + (debugMode ? config.port_debug : config.port));
 });
+
+if (debugMode) {
+    app.use('/', express.static(__dirname + '/htdocs'));
+} else {
+    app.use('/media', express.static(__dirname + '/htdocs/media', { maxAge: 3600 * 24 * 365 * 1000 }));
+    app.use('/', express.static(__dirname + '/htdocs'));
+}
 
 wsServer = new WebSocketServer({
     httpServer: server,

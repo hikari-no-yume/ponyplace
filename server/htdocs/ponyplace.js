@@ -1662,12 +1662,7 @@
     }
 
     function initNetwork(newAccount, assertion) {
-        if (window.location.hostname === 'localhost') {
-
-            socket = new WebSocket('ws://localhost:9001', 'ponyplace');
-        } else {
-            socket = new WebSocket('ws://ajf.me:9001', 'ponyplace');
-        }
+        socket = new WebSocket('ws://' + window.location.host + '/', 'ponyplace');
 
         socket.onopen = function () {
             connected = true;

@@ -3,6 +3,7 @@
     "version": "0.0.0",
     "dependencies": {
         "websocket": "1.0.7",
-        "keypress": "0.1.0"
+        "keypress": "0.1.0",
+        "express": "3.3.5"
     }
 }

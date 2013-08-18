@@ -27,8 +27,8 @@ Configuration
     {
         "origin": "http://ponyplace.ajf.me",
         "origin_debug": "http://localhost:8000",
-        "port": 9001,
-        "port_debug": 9001,
+        "port": 8000,
+        "port_debug": 8000,
         "allow_missing_origin": true
     }
 
@@ -39,4 +39,5 @@ Running Server
 2. `cd` into the `server` directory and do `npm install`. This is equivalent to `npm install websocket` to get [WebSocket-Node](https://github.com/Worlize/WebSocket-Node) (which itself requires node-gyp, do `sudo npm install -g node-gyp` first) and `npm install keypress` to get the keypress module.
 3. Make sure `server/data_user` is writeable.
 4. Run `server.js` (add `--debug` switch if running locally)
-5. Run a web server at the same hostname. Make sure the origin matches up.
+
+ponyplace no longer requires a separate web server. To integrate as part of a site using vhosts, run ponyplace on a different port and reverse-proxy.

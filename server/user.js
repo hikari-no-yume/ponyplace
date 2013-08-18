@@ -1,6 +1,9 @@
 var fs = require('fs');
 var https = require('https');
 
+var debugMode = (process.argv.hasOwnProperty('2') && process.argv[2] === '--debug');
+var config = require('./data_config/config.json');
+
 function User (nick, conn, obj, room) {
     if (User.has(nick)) {
         throw new Error('There is already a user with the same nick "' + nick + '"');
@@ -107,10 +110,10 @@ User.checkBypass = function (nick, bypass) {
 User.assert = function (assertion, callback) {
     var postdata;
 
-    if (process.argv.hasOwnProperty('2') && process.argv[2] === '--debug') {
-        postdata = 'assertion=' + assertion + '&audience=http://localhost:8000';
+    if (debugMode) {
+        postdata = 'assertion=' + assertion + '&audience=' + config.origin_debug;
     } else {
-        postdata = 'assertion=' + assertion + '&audience=http://ponyplace.ajf.me';
+        postdata = 'assertion=' + assertion + '&audience=' + config.origin;
     }
 
     var req = https.request({
