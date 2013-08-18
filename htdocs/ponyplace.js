@@ -201,8 +201,10 @@
             this.userCounter.innerHTML = '';
             var str;
             if (myRoom !== null) {
-                if (myRoom.type === 'real' || myRoom.type === 'ephemeral') {
+                if (myRoom.type === 'real') {
                     str = myRoom.name;
+                } else if (myRoom.type === 'ephemeral') {
+                    str = myRoom.name + " (owned by " + myRoom.user_nick + ")";
                 } else if (myRoom.type === 'house') {
                     str = myRoom.user_nick + "'s house";
                 }
@@ -426,7 +428,7 @@
 
     function logEphemeralRoomJoinInChat(name) {
         chatPrint(['chatlog'], [
-            ['nick', myNick, special],
+            ['nick', myNick, mySpecialStatus],
             ['text', ' joined the ephemeral room "' + name + '"']
         ], 'leave-join');
     }
@@ -434,12 +436,12 @@
     function logHouseRoomJoinInChat(nick) {
         if (nick !== myNick) {
             chatPrint(['chatlog'], [
-                ['nick', myNick, special],
+                ['nick', myNick, mySpecialStatus],
                 ['text', ' entered the house of user with nick: "' + nick + '"']
             ], 'leave-join');
         } else {
             chatPrint(['chatlog'], [
-                ['nick', myNick, special],
+                ['nick', myNick, mySpecialStatus],
                 ['text', ' entered your house']
             ], 'leave-join');
         }
@@ -577,21 +579,13 @@
         // change room background and widgets
         roomwidgets.innerHTML = '';
         roomwidgetstate = [];
-        if (room.type !== 'ephemeral') {
-            background.src = room.background.data;
-            stage.style.width = room.background.width + 'px';
-            stage.style.height = room.background.height + 'px';
-            myRoomWidth = room.background.width;
-            myRoomHeight = room.background.height;
-            if (room.hasOwnProperty('widgets')) {
-                updateRoomWidgets(room.widgets);
-            }
-        } else {
-            background.src = '/media/rooms/cave.png';
-            stage.style.width = '960px';
-            stage.style.height = '660px';
-            myRoomWidth = 960;
-            myRoomHeight = 660;
+        background.src = room.background.data;
+        stage.style.width = room.background.width + 'px';
+        stage.style.height = room.background.height + 'px';
+        myRoomWidth = room.background.width;
+        myRoomHeight = room.background.height;
+        if (room.hasOwnProperty('widgets')) {
+            updateRoomWidgets(room.widgets);
         }
 
         // clear users
@@ -605,13 +599,8 @@
         userManager.add(myNick, me, mySpecialStatus, true, false);
 
         // go to random position
-        if (room.type === 'ephemeral') {
-            me.x = me.x || Math.floor(Math.random() * 920);
-            me.y = me.y || Math.floor(Math.random() * 660);
-        } else {
-            me.x = me.x || Math.floor(Math.random() * room.background.width);
-            me.y = me.y || Math.floor(Math.random() * room.background.height);
-        }
+        me.x = me.x || Math.floor(Math.random() * room.background.width);
+        me.y = me.y || Math.floor(Math.random() * room.background.height);
 
         // push state
         pushAndUpdateState(me);
@@ -628,7 +617,7 @@
         window.location.hash = room.name;
 
         // hide/show room edit button
-        if (room.type === 'house' && myNick === room.user_nick) {
+        if ((room.type === 'house' || room.type === 'ephemeral') && myNick === room.user_nick) {
             roomeditbutton.style.display = 'block';
         } else {
             roomeditbutton.style.display = 'none';
@@ -638,12 +627,17 @@
     }
 
     function handleItemClick(name, obj) {
-        if (obj.type === 'house_background') {
-            if (confirm('Do you want to change your house background to: "' + obj.name_full + '"?')) {
-                socket.send(JSON.stringify({
-                    type: 'change_house_background',
-                    bg_name: name
-                }));
+        if (obj.type === 'room_background') {
+            if ((myRoom.type === 'house' || myRoom.type === 'ephemeral') && myNick === myRoom.user_nick) {
+                if (confirm('Do you want to this room\'s background to: "' + obj.name_full + '"?')) {
+                    socket.send(JSON.stringify({
+                        type: 'change_room_background',
+                        bg_name: name,
+                        room: myRoom.name
+                    }));
+                }
+            } else {
+                alert("You can only change the background of rooms you own, or your house.");
             }
         } else if (obj.type === 'effect') {
             me.effect = obj.effect;
@@ -703,7 +697,9 @@
             pushAndUpdateState(me);
             lastmove = cur;
         } else {
-            chatPrint('You are doing that too often.');
+            chatPrint([messages], [
+                ['text', 'You are doing that too often.']
+            ], 'console');
         }
     }
 
@@ -1384,7 +1380,7 @@
         roomeditbutton = document.createElement('input');
         roomeditbutton.id = 'room-edit-button';
         roomeditbutton.type = 'submit';
-        roomeditbutton.value = 'Edit House';
+        roomeditbutton.value = 'Edit Room';
         roomeditbutton.onclick = function () {
             if (roomeditvisible) {
                 roomedit.style.display = 'none';
@@ -1400,7 +1396,7 @@
         roomedit = document.createElement('div');
         roomedit.id = 'room-edit';
         roomedit.style.display = 'none';
-        appendText(roomedit, 'Buy house backgrounds from the Carousel Boutique. Change your house background by clicking one in your inventory.');
+        appendText(roomedit, "Change this room's background by clicking one in your inventory.");
         roomeditvisible = false;
         overlay.appendChild(roomedit);
 
@@ -1409,7 +1405,8 @@
         roomeditreset.value = 'Reset to default';
         roomeditreset.onclick = function () {
             socket.send(JSON.stringify({
-                type: 'change_house_background',
+                type: 'change_room_background',
+                room: myRoom.name,
                 bg_name: null
             }));
         };

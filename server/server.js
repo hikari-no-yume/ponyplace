@@ -52,20 +52,14 @@ function sanitisePosition(obj, roomName) {
             room = roomManager.get(roomName);
         } else if (roomName.substr(0, 6) === 'house ') {
             room = User.getHouse(roomName.substr(6));
+        } else if (roomManager.hasEphemeral(roomName)) {
+            room = roomManager.getEphemeral(roomName);
         } else {
-            room = {
-                type: 'ephemeral',
-                name: roomName
-            };
+            room = { background: { width: 0, height: 0 } };
         }
 
-        if (room.type === 'ephemeral') {
-            obj.x = Math.max(Math.min(obj.x, 960), 0);
-            obj.y = Math.max(Math.min(obj.y, 660), 0);
-        } else {
-            obj.x = Math.max(Math.min(obj.x, room.background.width), 0);
-            obj.y = Math.max(Math.min(obj.y, room.background.height), 0);
-        }
+        obj.x = Math.max(Math.min(obj.x, room.background.width), 0);
+        obj.y = Math.max(Math.min(obj.y, room.background.height), 0);
     }
     return obj;
 }
@@ -128,6 +122,9 @@ var roomManager = {
         }
         return false;
     },
+    hasEphemeral: function (name) {
+        return this.ephemeralRooms.hasOwnProperty(name);
+    },
     get: function (name) {
         for (var i = 0; i < this.rooms.length; i++) {
             if (this.rooms[i].name === name) {
@@ -136,45 +133,62 @@ var roomManager = {
         }
         throw new Error('There is no room with the name: "' + name + '"');
     },
+    getEphemeral: function (name) {
+        if (this.hasEphemeral(name)) {
+            return this.ephemeralRooms[name];
+        }
+        throw new Error('There is no ephemeral room with the name: "' + name + '"');
+    },
+    createEphemeral: function (name, owner) {
+        if (this.hasEphemeral(name)) {
+            throw new Error('There is already an ephemeral room with the name: "' + name + '"');
+        }
+        return this.ephemeralRooms[name] = {
+            type: 'ephemeral',
+            name: name,
+            user_count: 0,
+            user_noun: " ghosts",
+            user_nick: owner,
+            locked: false,
+            thumbnail: "/media/rooms/cave-thumb.png",
+            background: {
+                data: '/media/rooms/cave.png',
+                width: 960,
+                height: 660
+            }
+        };
+    },
     onEphemeralJoin: function (name) {
-        if (this.ephemeralRooms.hasOwnProperty(name)) {
-            this.ephemeralRooms[name]++;
-        } else {
-            this.ephemeralRooms[name] = 1;
+        if (this.hasEphemeral(name)) {
+            this.ephemeralRooms[name].user_count++;
         }
     },
     onEphemeralLeave: function (name) {
         if (this.ephemeralRooms.hasOwnProperty(name)) {
-            this.ephemeralRooms[name]--;
-            if (this.ephemeralRooms[name] <= 0) {
+            this.ephemeralRooms[name].user_count--;
+            if (this.ephemeralRooms[name].user_count <= 0) {
                 delete this.ephemeralRooms[name];
             }
         }
     },
     getList: function () {
-        var list = [];
-        for (var i = 0; i < this.rooms.length; i++) {
-            if (!this.rooms[i].unlisted) {
+        var list = [], that = this;
+        function iterate(room) {
+            if (!room.unlisted) {
                 list.push({
-                    type: this.rooms[i].type,
-                    name: this.rooms[i].name,
-                    name_full: this.rooms[i].name_full,
-                    user_count: this.rooms[i].user_count,
-                    user_noun: this.rooms[i].user_noun,
-                    thumbnail: this.rooms[i].thumbnail
+                    type: room.type,
+                    name: room.name,
+                    name_full: room.name_full,
+                    user_count: room.user_count,
+                    user_noun: room.user_noun,
+                    thumbnail: room.thumbnail
                 });
             }
         }
-        for (var name in this.ephemeralRooms) {
-            if (this.ephemeralRooms.hasOwnProperty(name)) {
-                list.push({
-                    type: 'ephemeral',
-                    name: name,
-                    user_count: this.ephemeralRooms[name],
-                    thumbnail: '/media/rooms/cave-thumb.png'
-                });
-            }
-        }
+        this.rooms.forEach(iterate);
+        Object.keys(this.ephemeralRooms).forEach(function (name) {
+            iterate(that.ephemeralRooms[name]);
+        });
         return list;
     }
 };
@@ -360,11 +374,10 @@ function doRoomChange(roomName, user) {
         room = roomManager.get(roomName);
     } else if (roomName.substr(0, 6) === 'house ') {
         room = User.getHouse(roomName.substr(6));
+    } else if (roomManager.hasEphemeral(roomName)) {
+        room = roomManager.getEphemeral(roomName);
     } else {
-        room = {
-            type: 'ephemeral',
-            name: roomName
-        };
+        room = roomManager.createEphemeral(roomName, user.nick);
     }
 
     var oldRoom = user.room;
@@ -380,12 +393,6 @@ function doRoomChange(roomName, user) {
                 });
             }
         });
-        // decrease user count of old room
-        if (roomManager.has(oldRoom)) {
-            roomManager.get(oldRoom).user_count--;
-        } else if (oldRoom.substr(0, 6) !== 'house ') {
-            roomManager.onEphemeralLeave(oldRoom);
-        }
     }
 
     // set current room to new room
@@ -428,6 +435,15 @@ function doRoomChange(roomName, user) {
         room.user_count++;
     } else if (room.name.substr(0, 6) !== 'house ') {
         roomManager.onEphemeralJoin(room.name);
+    }
+
+    // decrease user count of old room
+    if (oldRoom !== null) {
+        if (roomManager.has(oldRoom)) {
+            roomManager.get(oldRoom).user_count--;
+        } else if (oldRoom.substr(0, 6) !== 'house ') {
+            roomManager.onEphemeralLeave(oldRoom);
+        }
     }
 
     // tell client about room list & user count
@@ -1016,42 +1032,72 @@ wsServer.on('request', function(request) {
                 User.removeFriend(myNick, msg.nick);
                 user.sendAccountState();
             break;
-            case 'change_house_background':
-                var house = User.getHouse(myNick);
-                // default
-                if (msg.bg_name === null) {
-                    house.background = {
-                        data: '/media/rooms/cave.png',
-                        width: 960,
-                        height: 660,
-                        iframe: false
-                    };
-                    User.setHouse(myNick, house);
+            case 'change_room_background':
+                var room = null, isHouse = false;
+                if (roomManager.has(msg.room)) {
                     user.send({
                         type: 'console_msg',
-                        msg: 'House background reset.'
+                        msg: 'You cannot change the backgrounds of default rooms.'
                     });
-                    User.forEach(function (iterUser) {
-                        if (iterUser.room === 'house ' + myNick) {
-                            doRoomChange('house ' + myNick, iterUser);
-                        }
-                    });
-                } else {
-                    if (User.inventoryItems.hasOwnProperty(msg.bg_name)) {
-                        house.background = User.inventoryItems[msg.bg_name].background_data;
-                        User.setHouse(myNick, house);
+                } else if (roomManager.hasEphemeral(msg.room)) {
+                    room = roomManager.getEphemeral(msg.room);
+                    if (room.user_nick !== myNick) {
                         user.send({
                             type: 'console_msg',
-                            msg: 'House background changed.'
+                            msg: 'You can only change the backgrounds of rooms you own.'
                         });
-                        User.forEach(function (iterUser) {
-                            if (iterUser.room === 'house ' + myNick) {
-                                doRoomChange('house ' + myNick, iterUser);
-                            }
+                        room = null;
+                    }
+                } else if (msg.room.substr(0, 6) === 'house ') {
+                    if (msg.room.substr(6) !== myNick) {
+                        user.send({
+                            type: 'console_msg',
+                            msg: 'You can only change the backgrounds of rooms you own.'
                         });
                     } else {
-                        user.kick('protocol_error');
+                        room = User.getHouse(msg.room.substr(6));
+                        isHouse = true;
                     }
+                } else {
+                    user.kick('no_such_room');
+                }
+
+                if (room !== null) {
+                    // default
+                    if (msg.bg_name === null) {
+                        room.background = {
+                            data: '/media/rooms/cave.png',
+                            width: 960,
+                            height: 660,
+                            iframe: false
+                        };
+                    } else {
+                        if (User.inventoryItems.hasOwnProperty(msg.bg_name)) {
+                            room.background = User.inventoryItems[msg.bg_name].background_data;
+                            if (!isHouse) {
+                                room.thumbnail = User.inventoryItems[msg.bg_name].img;
+                            }
+                        } else {
+                            user.kick('protocol_error');
+                        }
+                    }
+                    if (isHouse) {
+                        User.setHouse(myNick, room);
+                        user.send({
+                            type: 'console_msg',
+                            msg: 'House background ' + (msg.bg_name ? 'changed.' : 'reset.')
+                        });
+                    } else {
+                        user.send({
+                            type: 'console_msg',
+                            msg: 'Room background ' + (msg.bg_name ? 'changed.' : 'reset.')
+                        });
+                    }
+                    User.forEach(function (iterUser) {
+                        if (iterUser.room === msg.room) {
+                            doRoomChange(msg.room, iterUser);
+                        }
+                    });
                 }
             break;
             // handle unexpected packet types

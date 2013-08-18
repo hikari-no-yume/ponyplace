@@ -250,8 +250,7 @@ User.getHouse = function (nick) {
         background: {
             data: '/media/rooms/cave.png',
             width: 960,
-            height: 660,
-            iframe: false
+            height: 660
         }
     });
 };

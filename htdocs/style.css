@@ -161,7 +161,7 @@ h1 {
 #room-edit {
     position: absolute;
     right: 6px;
-    top: 66px;
+    top: 30px;
     width: 280px;
     height: 80px;
     padding: 6px;
@@ -264,7 +264,7 @@ input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover, button:
 
 #room-edit-button {
     position: absolute;
-    top: 42px;
+    top: 6px;
     right: 6px;
 }
 
