@@ -23,9 +23,8 @@ User.prototype.sendAccountState = function () {
         type: 'account_state',
         nick: this.nick,
         special: User.getSpecialStatus(this.nick),
-        bits: User.hasBits(this.nick),
-        avatar_inventory: User.getAvatarInventory(this.nick),
-        inventory: User.getInventory(this.nick),
+        avatar_inventory: Object.keys(User.avatars),
+        inventory: Object.keys(User.inventoryItems),
         friends: User.getFriends(this.nick)
     });
 };
@@ -61,30 +60,32 @@ User.catalogues = {};
 User.bypass = {};
 
 User.init = function () {
-    this.avatars = JSON.parse(fs.readFileSync('data/avatars.json'));
+    this.avatars = require('./data/avatars.json');
     console.log('Loaded avatars list');
-    this.inventoryItems = JSON.parse(fs.readFileSync('data/inventory_items.json'));
+    this.inventoryItems = require('./data/inventory_items.json');
     console.log('Loaded inventory items list');
-    this.catalogues = JSON.parse(fs.readFileSync('data/catalogues.json'));
+    this.catalogues = require('./data/catalogues.json');
     console.log('Loaded catalogues');
-    this.specialUsers = JSON.parse(fs.readFileSync('data/special-users.json'));
+
+    this.specialUsers = require('./data_config/special-users.json');
     console.log('Loaded special users info');
-    this.bypass = JSON.parse(fs.readFileSync('data/bypass.json'));
+    this.bypass = require('./data_config/bypass.json');
     console.log('Loaded login bypass exceptions');
+
     try {
-        var data1 = fs.readFileSync('data/accounts.json');
-        var data2 = fs.readFileSync('data/emails.json');
+        var data1 = require('./data_user/accounts.json');
+        var data2 = require('./data_user/emails.json');
     } catch (e) {
         console.log('Error loading accounts, skipped');
         return;
     }
-    this.accounts = JSON.parse(data1);
-    this.emails = JSON.parse(data2);
+    this.accounts = data1;
+    this.emails = data2;
     console.log('Loaded accounts');
 };
 User.save = function () {
-    fs.writeFileSync('data/accounts.json', JSON.stringify(this.accounts));
-    fs.writeFileSync('data/emails.json', JSON.stringify(this.emails));
+    fs.writeFileSync('./data_user/accounts.json', JSON.stringify(this.accounts));
+    fs.writeFileSync('./data_user/emails.json', JSON.stringify(this.emails));
     console.log('Saved accounts');
 };
 User.getSpecialStatus = function (nick) {
@@ -173,13 +174,6 @@ User.getAccountForEmail = function (email) {
     return null;
 };
 
-User.hasBits = function (nick) {
-    if (this.hasAccount(nick)) {
-        return this.getUserData(nick, 'bits', 0);
-    } else {
-        return null;
-    }
-};
 User.getUserData = function (nick, property, defaultValue) {
     if (this.accounts.hasOwnProperty(nick)) {
         if (this.accounts[nick].hasOwnProperty(property)) {
@@ -194,23 +188,6 @@ User.setUserData = function (nick, property, value) {
     }
     this.accounts[nick][property] = value;
     this.save();
-};
-User.changeBits = function (nick, amount) {
-    if (this.hasAccount(nick)) {
-        var bits = this.getUserData(nick, 'bits', 0);
-
-        bits += amount;
-
-        if (bits >= 0 && Number.isFinite(bits) && !Number.isNaN(bits)) {
-            this.setUserData(nick, 'bits', bits);
-
-            if (User.has(nick)) {
-                User.get(nick).sendAccountState();
-            }
-            return true;
-        }
-    }
-    return false;
 };
 
 User.getUnseenWarnings = function (nick) {
@@ -283,82 +260,6 @@ User.setHouse = function (nick, data) {
 };
 User.isHouseLocked = function (nick) {
     return this.getHouse(nick).locked;
-};
-
-User.getAvatarInventory = function (nick) {
-    return this.getUserData(nick, 'avatarInventory', ['derpy', 'applejack', 'fluttershy', 'pinkiepie', 'rainbowdash', 'rarity', 'twilight']);
-};
-User.hasAvatar = function (nick, avatar) {
-    return this.getAvatarInventory(nick).indexOf(avatar) !== -1;
-};
-User.giveAvatar = function (nick, avatar) {
-    var inventory = this.getAvatarInventory(nick);
-    if (inventory.indexOf(avatar) === -1) {
-        inventory.push(avatar);
-    }
-    this.setUserData(nick, 'avatarInventory', inventory);
-};
-User.getInventory = function (nick) {
-    return this.getUserData(nick, 'inventory', []);
-};
-User.hasInventoryItem = function (nick, item) {
-    return this.getInventory(nick).indexOf(item) !== -1;
-};
-User.giveInventoryItem = function (nick, item) {
-    var inventory = this.getInventory(nick);
-    if (inventory.indexOf(item) === -1) {
-        inventory.push(item);
-    }
-    this.setUserData(nick, 'inventory', inventory);
-};
-User.getCatalogue = function (name) {
-    if (this.catalogues.hasOwnProperty(name)) {
-        return this.catalogues[name];
-    }
-    return false;
-};
-User.buyFromCatalogue = function (nick, name, index) {
-    var catalogue = this.getCatalogue(name);
-    if (catalogue !== null) {
-        if (catalogue.hasOwnProperty(index)) {
-            var product = catalogue[index];
-            if (this.changeBits(nick, -product.price)) {
-                var total = product.items.length;
-                var alreadyHave = 0;
-                for (var i = 0; i < product.items.length; i++) {
-                    var item = product.items[i];
-                    if (product.items[0].type === 'avatar'
-                        && this.hasAvatar(nick, item.avatar_name)) {
-                        alreadyHave++;
-                    } else if (product.items[0].type === 'inventory_item'
-                        && this.hasInventoryItem(nick, item.item_name)) {
-                        alreadyHave++;
-                    }
-                }
-                if (alreadyHave === total && total !== 0) {
-                    return false;
-                }
-                for (var i = 0; i < product.items.length; i++) {
-                    var item = product.items[i];
-                    if (item.type === 'avatar') {
-                        this.giveAvatar(nick, item.avatar_name);
-                    } else if (item.type === 'inventory_item') {
-                        this.giveInventoryItem(nick, item.item_name);
-                    } else {
-                        console.log('Unknown product item type: "' + item.type + '"!');
-                    }
-                }
-                if (User.has(nick)) {
-                    User.get(nick).sendAccountState();
-                }
-                return {
-                    name_full: product.name_full,
-                    price: product.price
-                };
-            }
-        }
-    }
-    return false;
 };
 
 User.get = function (nick) {

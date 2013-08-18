@@ -77,7 +77,7 @@ var banManager = {
 
     init: function () {
         try {
-            var data = JSON.parse(fs.readFileSync('data/bans.json'));
+            var data = require('./data_user/bans.json');
         } catch (e) {
             console.log('Error loading banned users info, skipped');
             return;
@@ -86,7 +86,7 @@ var banManager = {
         console.log('Loaded banned users info');
     },
     save: function () {
-        fs.writeFileSync('data/bans.json', JSON.stringify({
+        fs.writeFileSync('./data_user/bans.json', JSON.stringify({
             IPs: this.bannedIPs
         }));
         console.log('Saved banned users info');
@@ -115,7 +115,7 @@ var roomManager = {
     ephemeralRooms: [],
 
     init: function () {
-        var data = JSON.parse(fs.readFileSync('data/rooms.json'));
+        var data = require('./data/rooms.json');
         this.rooms = data;
         console.log('Loaded rooms');
     },
@@ -186,17 +186,16 @@ var modLogger = {
 
     init: function () {
         try {
-            var data = fs.readFileSync('data/mod-log.json');
+            var data = require('./data_user/mod-log.json');
         } catch (e) {
             console.log('Error loading moderation log, skipped.');
             return;
         }
-        data = JSON.parse(data);
         this.log = data.log;
         console.log('Loaded moderation log');
     },
     save: function () {
-        fs.writeFileSync('data/mod-log.json', JSON.stringify({
+        fs.writeFileSync('./data/mod-log.json', JSON.stringify({
             log: this.log
         }));
         console.log('Saved moderation log');
@@ -280,19 +279,6 @@ var modLogger = {
             msg: msg
         });
         this.save();
-    },
-    logBitsChange: function (mod, nick, amount, oldBalance, newBalance, state) {
-        this.log.push({
-            type: 'bits_change',
-            date: this.timestamp(),
-            mod: mod,
-            nick: nick,
-            amount: amount,
-            old_balance: oldBalance,
-            new_balance: newBalance,
-            state: state
-        });
-        this.save();
     }
 };
 
@@ -303,17 +289,16 @@ var modMessages = {
 
     init: function () {
         try {
-            var data = fs.readFileSync('data/mod-messages.json');
+            var data = require('./data_user/mod-messages.json');
         } catch (e) {
             console.log('Error loading moderator messages, skipped.');
             return;
         }
-        data = JSON.parse(data);
         this.messages = data.messages;
         console.log('Loaded moderator messages');
     },
     save: function () {
-        fs.writeFileSync('data/mod-messages.json', JSON.stringify({
+        fs.writeFileSync('./data/mod-messages.json', JSON.stringify({
             messages: this.messages
         }));
         console.log('Saved moderator messages');
@@ -572,16 +557,15 @@ function handleCommand(cmd, myNick, user) {
         user.send({
             type: 'help',
             lines: [
-                'Ten mod commands available: 1) kick, 2) kickban, 3) warn, 4) unban, 5) broadcast, 6) aliases, 7) move, 8) bits, 9) modlog, 10) modmsgs',
+                'Nine mod commands available: 1) kick, 2) kickban, 3) warn, 4) unban, 5) broadcast, 6) aliases, 7) move, 8) modlog, 9) modmsgs',
                 "1. kick & 2. kickban - kick takes the nick of someone, they (& any aliases) will be kicked, e.g. /kick sillyfilly. kickban is like kick but also permabans by IP. kick and kickban can also take a second parameter for a reason message, e.g. /kick sillyfilly Don't spam the chat!",
                 '3. warn - formally warns someone (shown immediately if online or upon next login if not), e.g. /warn somefilly Stop spamming. Final warning.',
                 '4. unban - Unbans an IP, e.g. /unban 192.168.1.1',
                 '5. broadcast - Sends a message to everyone on the server, e.g. /broadcast Hello all!',
                 "6. aliases - Lists someone's aliases (people with same IP address), e.g. /aliases joebloggs",
                 '7. move - Forcibly moves a user to a room, e.g. /move canterlot sillyfilly',
-                "8. bits - Adds to or removes from someone's bits balance, e.g. /bits 20 ajf, /bits -10 otherguy",
-                "9. modlog - Shows moderator activity log. Optionally specify count (default 10), e.g. /modlog 15. You can also specify filter (ban/unban/kick/move/broadcast/bits_change), e.g. /modlog 25 unban",
-                "10. modmsgs - Shows messages/reports to mods. Optionally specify count (default 10), e.g. /modmsgs 10. You can also specify nick filter to see messages concerning or by someone, e.g. /modmsgs 25 somefilly",
+                "8. modlog - Shows moderator activity log. Optionally specify count (default 10), e.g. /modlog 15. You can also specify filter (ban/unban/kick/move/broadcast), e.g. /modlog 25 unban",
+                "9. modmsgs - Shows messages/reports to mods. Optionally specify count (default 10), e.g. /modmsgs 10. You can also specify nick filter to see messages concerning or by someone, e.g. /modmsgs 25 somefilly",
                 'See also: /help'
 
             ]
@@ -775,37 +759,6 @@ function handleCommand(cmd, myNick, user) {
         console.log('Broadcasted message "' + broadcast + '" from user "' + myNick + '"');
         sendLine('Broadcasted message');
         modLogger.logBroadcast(myNick, broadcast);
-    // change bits
-    } else if (canMod && cmd.substr(0, 5) === 'bits ') {
-        var pos = cmd.indexOf(' ', 5);
-        if (pos !== -1) {
-            var amount = cmd.substr(5, pos-5);
-            var receiver = cmd.substr(pos+1);
-            if (!User.has(receiver)) {
-                sendLine('There is no online user with nick: "' + receiver + '"');
-                return;
-            }
-            if (User.hasBits(receiver) === null) {
-                sendLine('The user with nick: "' + receiver + '" does not have an account.');
-                return;
-            }
-            amount = parseInt(amount);
-            if (Number.isNaN(amount) || !Number.isFinite(amount)) {
-                sendLine('Amount is not valid');
-                return;
-            }
-            var oldBalance = User.hasBits(receiver);
-            if (User.changeBits(receiver, amount)) {
-                sendLine('Changed balance of user with nick: "' + receiver + '" by ' + amount + ' bits ');
-                sendLine('Your bits balance was changed by the amount ' + amount + ' bits by user with nick: "' + user.nick + '"', receiver);
-                modLogger.logBitsChange(myNick, receiver, amount, oldBalance, User.hasBits(receiver), User.get(receiver).obj);
-            } else {
-                sendLine("Failed to change user's bits balance");
-            }
-        } else {
-            sendLine('/move takes a room and a nickname');
-            return;
-        }
     // moderation log
     } else if (canMod && cmd.substr(0, 6) === 'modlog') {
         var pos = cmd.indexOf(' ', 7);
@@ -971,22 +924,6 @@ wsServer.on('request', function(request) {
                     msg.obj = sanitisePosition(msg.obj, user.room);
                 }
 
-                // check avatar
-                if (msg.obj.hasOwnProperty('img_name')) {
-                    if (!User.hasAvatar(user.nick, msg.obj.img_name)) {
-                        user.kick('dont_have_avatar');
-                        return;
-                    }
-                }
-
-                // check effect
-                if (msg.obj.hasOwnProperty('effect') && msg.obj.effect !== null) {
-                    if (!User.hasInventoryItem(user.nick, msg.obj.effect)) {
-                        user.kick('dont_have_item');
-                        return;
-                    }
-                }
-
                 // global mute
                 if (globalMute) {
                     msg.obj.chat = user.obj.chat;
@@ -1079,26 +1016,6 @@ wsServer.on('request', function(request) {
                 User.removeFriend(myNick, msg.nick);
                 user.sendAccountState();
             break;
-            case 'get_catalogue':
-                user.send({
-                    type: 'catalogue_content',
-                    data: User.getCatalogue(msg.name)
-                });
-            break;
-            case 'buy_from_catalogue':
-                var result;
-                if (result = User.buyFromCatalogue(user.nick, msg.name, msg.index)) {
-                    user.send({
-                        type: 'console_msg',
-                        msg: 'You bought the item: "' + result.name_full + '" for ' + result.price + ' bits'
-                    });
-                } else {
-                    user.send({
-                        type: 'console_msg',
-                        msg: 'Buying product failed - do you have enough money, or already have the product?'
-                    });
-                }
-            break;
             case 'change_house_background':
                 var house = User.getHouse(myNick);
                 // default
@@ -1120,24 +1037,20 @@ wsServer.on('request', function(request) {
                         }
                     });
                 } else {
-                    if (User.hasInventoryItem(myNick, msg.bg_name)) {
-                        if (User.inventoryItems.hasOwnProperty(msg.bg_name)) {
-                            house.background = User.inventoryItems[msg.bg_name].background_data;
-                            User.setHouse(myNick, house);
-                            user.send({
-                                type: 'console_msg',
-                                msg: 'House background changed.'
-                            });
-                            User.forEach(function (iterUser) {
-                                if (iterUser.room === 'house ' + myNick) {
-                                    doRoomChange('house ' + myNick, iterUser);
-                                }
-                            });
-                        } else {
-                            user.kick('protocol_error');
-                        }
+                    if (User.inventoryItems.hasOwnProperty(msg.bg_name)) {
+                        house.background = User.inventoryItems[msg.bg_name].background_data;
+                        User.setHouse(myNick, house);
+                        user.send({
+                            type: 'console_msg',
+                            msg: 'House background changed.'
+                        });
+                        User.forEach(function (iterUser) {
+                            if (iterUser.room === 'house ' + myNick) {
+                                doRoomChange('house ' + myNick, iterUser);
+                            }
+                        });
                     } else {
-                        user.kick('dont_have_item');
+                        user.kick('protocol_error');
                     }
                 }
             break;
@@ -1156,19 +1069,6 @@ wsServer.on('request', function(request) {
         // sanitise chat message
         if (msg.obj.hasOwnProperty('chat')) {
             msg.obj.chat = sanitiseChat(msg.obj.chat);
-        }
-
-        // check avatar
-        if (msg.obj.hasOwnProperty('img_name')) {
-            if (!User.hasAvatar(nick, msg.obj.img_name)) {
-                msg.obj.img_name = 'derpy';
-                msg.obj.img_index = 0;
-                connection.sendUTF(JSON.stringify({
-                    type: 'avatar_change',
-                    img_name: msg.obj.img_name,
-                    img_index: msg.obj.img_index
-                }));
-            }
         }
 
         // tell client about rooms
@@ -1206,31 +1106,6 @@ wsServer.on('request', function(request) {
             });
         }
         User.clearUnseenWarnings(nick);
-
-        // give daily reward
-        var date = (new Date()).toISOString().split('T', 1)[0];
-        if (User.getUserData(nick, 'last_reward', '1970-01-01') !== date) {
-            if (User.hasBits(nick) < 500) {
-                var reward = Math.floor(Math.random()*100);
-                if (User.changeBits(nick, reward)) {
-                    User.setUserData(nick, 'last_reward', date);
-                    user.send({
-                        type: 'console_msg',
-                        msg: "As a thanks for visiting ponyplace again today, here's " + reward + " free bits! :)"
-                    });
-                } else {
-                    user.send({
-                        type: 'console_msg',
-                        msg: 'Sorry, something went wrong. Giving you your daily reward failed :('
-                    });
-                }
-            } else {
-                user.send({
-                    type: 'console_msg',
-                    msg: "Sorry, you can only get rewards if you have less than 500 bits. :("
-                });
-            }
-        }
 
         console.log((new Date()) + ' User with nick: "' + myNick + '" connected.');
     }

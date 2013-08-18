@@ -18,7 +18,6 @@
         currentUser = null,
         lastmove = (new Date().getTime()),
         globalUserCount = 0, globalModCount = 0,
-        catalogueCallback = null,
         openProfiles = {}, openPMLogs = {};
 
     var container,
@@ -27,7 +26,6 @@
         topbuttons,
         accountsettings, accountsettingsbutton, changepassbutton, rmpassbutton,
         outerstage, stage,
-        bitcount,
         chooser, chooserbutton,
         inventorylist, inventorylistbutton,
         friendslist, friendslistbutton,
@@ -513,102 +511,12 @@
         roomlistbutton.disabled = false;
     }
 
-    function getCatalogue (name, callback) {
-        socket.send(JSON.stringify({
-            type: 'get_catalogue',
-            name: name
-        }));
-        catalogueCallback = callback;
-    }
-
-    function haveAvatar (name) {
-        return (avatarInventory.indexOf(name) !== -1);
-    }
-    function haveInventoryItem (name) {
-        return (inventory.indexOf(name) !== -1);
-    }
-
-    function doBuy (catalogueName, itemIndex, itemName, itemPrice) {
-        if (confirm('Do you want to buy the product "' + itemName + '" for ' + itemPrice + ' bits?')) {
-            socket.send(JSON.stringify({
-                type: 'buy_from_catalogue',
-                name: catalogueName,
-                index: itemIndex
-            }));
-        }
-    }
-
-    function createCatalogueWidget(config, root) {
-        getCatalogue(config.catalogue_name, function (catalogue) {
-            for (var i = 0; i < catalogue.length; i++) {
-                var item = catalogue[i];
-
-                var total = item.items.length;
-                var alreadyHave = 0;
-                for (var j = 0; j < item.items.length; j++) {
-                    if (item.items[j].type === 'avatar'
-                        && haveAvatar(item.items[j].avatar_name)) {
-                        alreadyHave++;
-                    } else if (item.items[j].type === 'inventory_item'
-                        && haveInventoryItem(item.items[j].item_name)) {
-                        alreadyHave++;
-                    }
-                }
-
-                var catalogueitem = document.createElement('div');
-                catalogueitem.className = 'catalogue-item';
-                if (alreadyHave) {
-                    catalogueitem.className += ' catalogue-item-have';
-                }
-
-                var img = document.createElement('img');
-                img.className = 'chooser-preview';
-                img.src = item.img;
-                catalogueitem.appendChild(img);
-
-                var h2 = document.createElement('h2');
-                appendText(h2, item.name_full);
-                catalogueitem.appendChild(h2);
-
-                if (alreadyHave) {
-                    var p = document.createElement('p');
-                    appendText(p, 'You already have: ' + alreadyHave + '/' + total + ' items of this product');
-                    catalogueitem.appendChild(p);
-                }
-
-                if (alreadyHave !== total || total === 0) {
-                    var buy = document.createElement('input');
-                    buy.type = 'submit';
-                    buy.value = 'Buy for ' + item.price + ' bits';
-                    (function (catalogueName, itemIndex, itemName, itemPrice) {
-                        buy.onclick = function () {
-                            doBuy(catalogueName, itemIndex, itemName, itemPrice);
-                        };
-                    }(config.catalogue_name, i, item.name_full, item.price));
-                    catalogueitem.appendChild(buy);
-                }
-
-                root.appendChild(catalogueitem);
-            }
-        });
-    }
-
     function createIframeWidget(config, root) {
         root.className += ' iframe-widget';
 
         var iframe = document.createElement('iframe');
         iframe.src = config.src;
         root.appendChild(iframe);
-    }
-
-    function createPortalWidget(config, root) {
-        root.className += ' portal';
-        root.onclick = function () {
-            socket.send(JSON.stringify({
-                type: 'room_change',
-                name: config.to
-            }));
-        };
     }
 
     function createPartyWidget(config, root) {
@@ -649,14 +557,8 @@
             element.style.width = widget.width + 'px';
             element.style.height = widget.height + 'px';
             switch (widget.type) {
-                case 'catalogue':
-                    createCatalogueWidget(widget, element);
-                break;
                 case 'iframe':
                     createIframeWidget(widget, element);
-                break;
-                case 'portal':
-                    createPortalWidget(widget, element);
                 break;
                 case 'party':
                     createPartyWidget(widget, element);
@@ -1218,18 +1120,6 @@
 
     function renderChooser() {
         chooser.content.innerHTML = '';
-        var ad = document.createElement('img');
-        ad.src = '/media/store/buy-more.png';
-        ad.className = 'chooser-preview';
-        ad.title = 'Buy some avatars!';
-        ad.onclick = function () {
-            socket.send(JSON.stringify({
-                type: 'room_change',
-                name: 'carousel_boutique'
-            }));
-            chooser.hide();
-        };
-        chooser.content.appendChild(ad);
         for (var i = 0; i < avatarInventory.length; i++) {
             var name = avatarInventory[i];
             if (avatars.hasOwnProperty(name)) {
@@ -1364,6 +1254,7 @@
                 chatlog.scrollTop = 0;
             }
         };
+        chatloglock.disabled = true;
         chatbar.appendChild(chatloglock);
 
         chatboxholder = document.createElement('div');
@@ -1527,12 +1418,6 @@
         accountsettings = makePopup('#account-settings', 'My Account', true, 300, 300, true);
         accountsettings.hide();
 
-        bitcount = document.createElement('div');
-        bitcount.id = 'bit-count';
-        bitcount.title = 'bits';
-        appendText(bitcount, '???');
-        accountsettings.content.appendChild(bitcount);
-
         friendslistbutton = document.createElement('button');
         friendslistbutton.id = 'friends-list-button';
         appendText(friendslistbutton, 'Friends');
@@ -1557,7 +1442,7 @@
         rmpassbutton.type = 'submit';
         rmpassbutton.value = 'Delete account';
         rmpassbutton.onclick = function () {
-            if (confirm("Are you sure you want to delete your ponyplace account?\nYou'll loose all of your bits, items, avatars, your house, and your nickname!\nNote: This will *not* do anything to your Persona ID.")) {
+            if (confirm("Are you sure you want to delete your ponyplace account?\nYou'll your house, and your nickname!\nNote: This will *not* do anything to your Persona ID.")) {
                 socket.send(JSON.stringify({
                     type: 'delete_account'
                 }));
@@ -1594,7 +1479,7 @@
     function initGUI_login() {
         loginbox = makePopup('#loginbox', 'Log in');
         loginbox.content.innerHTML = "<h1>Welcome to ponyplace!</h1>\
-        <p>ponyplace is a My Little Pony-themed chatroom! You can hang out, play games and earn bits and customise your avatar and house. It's all free, forever. You'll never have to pay a cent!</p>\
+        <p>ponyplace is a My Little Pony-themed chatroom! You can hang out, chat and customise your avatar and house. It's all free, forever. You'll never have to pay a cent!</p>\
         <div id=rules>By creating an account and logging in you must abide by these rules:\
         <ul>\
             <li>You must be 13 years or older, or have asked your parents for permission.\
@@ -1660,14 +1545,6 @@
         a.href = '/credits.html';
         a.target = '_blank';
         appendText(a, "Disclaimer and Credits");
-        loginbox.content.appendChild(a);
-
-        appendText(loginbox.content, ' + ');
-
-        a = document.createElement('a');
-        a.href = 'http://phconline.net/';
-        a.target = '_blank';
-        appendText(a, "check out PHC, too :)");
         loginbox.content.appendChild(a);
     }
 
@@ -1858,13 +1735,10 @@
 
                     chatbox.disabled = false;
                     chatbutton.disabled = false;
+                    chatloglock.disabled = false;
 
                     myNick = msg.nick;
                     mySpecialStatus = msg.special;
-                    bitcount.innerHTML = '';
-                    if (msg.bits !== null) {
-                        appendText(bitcount, msg.bits);
-                    }
                     avatarInventory = msg.avatar_inventory;
                     renderChooser();
                     inventory = msg.inventory;
@@ -1919,8 +1793,7 @@
                             kick: 'Kick',
                             warn: 'Warning',
                             move: 'Move room',
-                            broadcast: 'Broadcast message',
-                            bits_change: 'Bits balance change'
+                            broadcast: 'Broadcast message'
                         }[item.type] + ' by ' + item.mod + ' at ' + (new Date(item.date)).toLocaleString());
                         delete item.type;
                         delete item.date;
@@ -1995,12 +1868,6 @@
                 break;
                 case 'room_change':
                     changeRoom(msg.data);
-                break;
-                case 'catalogue_content':
-                    if (catalogueCallback) {
-                        catalogueCallback(msg.data);
-                        catalogueCallback = null;
-                    }
                 break;
                 case 'kick_notice':
                     logKickNoticeInChat(msg.mod_nick, msg.mod_special, msg.kickee_nick, msg.kickee_special, msg.reason);

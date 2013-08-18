@@ -1,9 +1,4 @@
 {
-    "3000_bits_free": {
-        "type": "useless",
-        "name_full": "3000 free bits receipt",
-        "img": "/media/store/free-bits.png"
-    },
     "effect_shrink": {
         "type": "effect",
         "name_full": "Shrink avatar",

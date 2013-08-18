@@ -147,7 +147,7 @@ h1 {
     border: 4px solid lime;
 }
 
-.profile .popup-content button, #loginbox .popup-content input, #account-settings .popup-content input, #account-settings .popup-content button, #bit-count, #account-settings .popup-content .button, #room-list .popup-content button {
+.profile .popup-content button, #loginbox .popup-content input, #account-settings .popup-content input, #account-settings .popup-content button, #account-settings .popup-content .button, #room-list .popup-content button {
     display: block;
     width: 100%;
     margin-bottom: 6px;
@@ -262,21 +262,6 @@ input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover, button:
 
 #home-button { width: 25px; }
 
-#bit-count {
-    color: white;
-    background-color: #FF67D5;
-    font-weight: bold;
-    font-family: 'Consolas', monospace;
-    font-size: 14pt;
-    padding: 2px;
-    height: 24px;
-    vertical-align: middle;
-}
-#bit-count::after {
-    margin-left: 4px;
-    content: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAASCAYAAABit09LAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAXklEQVQoz2NkgIKP9/P/w9gf7u+EMRnknW4wMjAwMDCiK8KlmAmbBDbAxEAkYMJmLQMDA4OAojuc/XCfxn8mmLXIEpRZPXIVCii6E45CfsWJjBRZjTP1EIpCRmITLgDj5Skiz9Zq8QAAAABJRU5ErkJggg==);
-}
-
 #room-edit-button {
     position: absolute;
     top: 42px;
@@ -304,13 +289,9 @@ input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover, button:
     background-color: rgba(255, 192, 203, 0.7);
 }
 
-.chooser-preview {
-    border: 1px solid black;
-}
 .chooser-preview, .inventory-item-preview {
     max-height: 50px;
     margin: 2px;
-    background-image: url(data:image/gif;base64,R0lGODlhEAAQAKEBAH9/f////////////yH5BAEKAAIALAAAAAAQABAAAAIfjG+gq4jM3IFLJgpswNly/XkcBpIiVaInlLJr9FZWAQA7);
     display: block;
     float: left;
 }
@@ -358,39 +339,6 @@ input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover, button:
 
 .chooser-preview:hover {
     cursor: pointer;
-}
-
-.catalogue-item {
-    border: 1px solid gold;
-    margin-bottom: 5px;
-    overflow: hidden;
-    background-color: white;
-    text-align: right;
-    padding: 4px;
-}
-
-.catalogue-item h2 {
-    margin: 2px;
-    font-size: 11pt;
-}
-
-.catalogue-item input {
-    background-color: gold;
-    color: black;
-    display: inline-block;
-}
-
-.catalogue-item-have {
-    background-color: gray;
-}
-
-.catalogue-item .chooser-preview {
-    float: left;
-    margin: 2px;
-    max-height: 40px;
-}
-.catalogue-item .chooser-preview:hover {
-    cursor: auto;
 }
 
 .portal {
