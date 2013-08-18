@@ -22,6 +22,16 @@ Configuration
             "somebot": "password123"
         }
 
+3. Finally, set up a `config.json` file in `server/data_config`, to specify the port listened on for debugging and production modes, and the origins needed. `"allow_missing_origin"`, if `true`, allows clients to connect which don't provide an origin (i.e. non-web browser clients like bots). It doesn't really matter what you set this to, though, since if they can avoid providing an origin, they can also probably fake one. For example:
+
+    {
+        "origin": "http://ponyplace.ajf.me",
+        "origin_debug": "http://localhost:8000",
+        "port": 9001,
+        "port_debug": 9001,
+        "allow_missing_origin": true
+    }
+
 Running Server
 --------------
 
@@ -29,4 +39,4 @@ Running Server
 2. `cd` into the `server` directory and do `npm install`. This is equivalent to `npm install websocket` to get [WebSocket-Node](https://github.com/Worlize/WebSocket-Node) (which itself requires node-gyp, do `sudo npm install -g node-gyp` first) and `npm install keypress` to get the keypress module.
 3. Make sure `server/data_user` is writeable.
 4. Run `server.js` (add `--debug` switch if running locally)
-5. Run a web server at the same hostname. When debugging, run one at `localhost:8000`. Note that it expects, for login verification purposes, the production server to always be called `ponyplace.ajf.me` and be on port 80.
+5. Run a web server at the same hostname. Make sure the origin matches up.

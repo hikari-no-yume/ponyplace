@@ -4,13 +4,16 @@ var WebSocketServer = require('websocket').server;
 var http = require('http');
 var fs = require('fs');
 
+var debugMode = (process.argv.hasOwnProperty('2') && process.argv[2] === '--debug');
+var config = require('./data_config/config.json');
+
 var server = http.createServer(function(request, response) {
     console.log((new Date()) + ' Received request for ' + request.url);
     response.writeHead(404);
     response.end();
 });
-server.listen(9001, function() {
-    console.log((new Date()) + ' Server is listening on port 9001');
+server.listen((debugMode ? config.port_debug : config.port), function() {
+    console.log((new Date()) + ' Server is listening on port ' + (debugMode ? config.port_debug : config.port));
 });
 
 wsServer = new WebSocketServer({
@@ -21,11 +24,11 @@ wsServer = new WebSocketServer({
 function originIsAllowed(origin) {
     // undefined origin (i.e. non-web clients) always allowed
     if (!origin) {
-        return true;
-    } else if (process.argv.hasOwnProperty('2') && process.argv[2] === '--debug') {
-        return true;
+        return config.allow_missing_origin;
+    } else if (debugMode) {
+        return origin === config.origin_debug;
     } else {
-        return origin === 'http://ponyplace.ajf.me';
+        return origin === config.origin;
     }
 }
 
