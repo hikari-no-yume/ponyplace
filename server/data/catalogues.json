@@ -60,6 +60,45 @@
             "img": "/media/avatars/vinylscratch_right.gif"
         }
     ],
+    "sugarcube_corner": [
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "crazypie"
+                }
+            ],
+            "name_full": "Pinkamena Diane Pie",
+            "price": 50,
+            "img": "/media/avatars/crazypie_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "fillypinkiepie"
+                },
+                {
+                    "type": "avatar",
+                    "avatar_name": "fillypinkiepie2"
+                }
+            ],
+            "name_full": "Filly Pinkie Pie",
+            "price": 50,
+            "img": "/media/avatars/fillypinkiepie_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "gummy"
+                }
+            ],
+            "name_full": "Gummy",
+            "price": 50,
+            "img": "/media/avatars/gummy_right.gif"
+        }
+    ],
     "dungeon": [
         {
             "name_full": "3000 bits, free",
@@ -90,6 +129,45 @@
             ],
             "price": 100,
             "img": "/media/avatars/rover_right_walk_threaten.gif"
+        }
+    ],
+    "discordville": [
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "discord"
+                }
+            ],
+            "name_full": "Discord",
+            "price": 50,
+            "img": "/media/avatars/discord_right.gif"
+        }
+    ],
+    "library": [
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "spike"
+                }
+            ],
+            "name_full": "Spike",
+            "price": 50,
+            "img": "/media/avatars/spike_right.gif"
+        }
+    ],
+    "zecoras_house": [
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "zecora"
+                }
+            ],
+            "name_full": "Zecora",
+            "price": 50,
+            "img": "/media/avatars/zecora_right.gif"
         }
     ],
     "classroom": [
@@ -147,6 +225,85 @@
             "name_full": "Sweetie Belle",
             "price": 50,
             "img": "/media/avatars/sweetiebelle_right.gif"
+        }
+    ],
+    "cloudsdale": [
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "gilda"
+                }
+            ],
+            "name_full": "Gilda",
+            "price": 50,
+            "img": "/media/avatars/gilda_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "derpynn"
+                }
+            ],
+            "name_full": "Derpy in Nightmare Night costume",
+            "price": 50,
+            "img": "/media/avatars/derpynn_right_muffin.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "rainbowdash_shades"
+                }
+            ],
+            "name_full": "Rainbow #SWAG",
+            "price": 150,
+            "img": "/media/avatars/rainbowdash_right_shades.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "raindrops"
+                }
+            ],
+            "name_full": "Raindrops",
+            "price": 50,
+            "img": "/media/avatars/raindrops_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "spitfire"
+                }
+            ],
+            "name_full": "Spitfire",
+            "price": 50,
+            "img": "/media/avatars/spitfire_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "spitfire2"
+                }
+            ],
+            "name_full": "Spitfire (without suit)",
+            "price": 50,
+            "img": "/media/avatars/spitfire2_right.gif"
+        },
+        {
+            "items": [
+                {
+                    "type": "avatar",
+                    "avatar_name": "soarin"
+                }
+            ],
+            "name_full": "Soarin'",
+            "price": 50,
+            "img": "/media/avatars/soarin_right.gif"
         }
     ],
     "canterlot": [
@@ -352,153 +509,6 @@
             "name_full": "Avatar shrinker",
             "price": 200,
             "img": "/media/items/effect-shrink.png"
-        },
-        {
-            "items": [
-                {
-                    "type": "avatar",
-                    "avatar_name": "gilda"
-                }
-            ],
-            "name_full": "Gilda",
-            "price": 50,
-            "img": "/media/avatars/gilda_right.gif"
-        },
-        {
-            "items": [
-                {
-                    "type": "avatar",
-                    "avatar_name": "derpynn"
-                }
-            ],
-            "name_full": "Derpy in Nightmare Night costume",
-            "price": 50,
-            "img": "/media/avatars/derpynn_right_muffin.gif"
-        },
-        {
-            "items": [
-                {
-                    "type": "avatar",
-                    "avatar_name": "rainbowdash_shades"
-                }
-            ],
-            "name_full": "Rainbow #SWAG",
-            "price": 150,
-            "img": "/media/avatars/rainbowdash_right_shades.gif"
-        },
-        {
-            "items": [
-                {
-                    "type": "avatar",
-                    "avatar_name": "raindrops"
-                }
-            ],
-            "name_full": "Raindrops",
-            "price": 50,
-            "img": "/media/avatars/raindrops_right.gif"
-        },
-        {
-            "items": [
-                {
-                    "type": "avatar",
-                    "avatar_name": "spitfire"
-                }
-            ],
-            "name_full": "Spitfire",
-            "price": 50,
-            "img": "/media/avatars/spitfire_right.gif"
-        },
-        {
-            "items": [
-                {
-                    "type": "avatar",
-                    "avatar_name": "spitfire2"
-                }
-            ],
-            "name_full": "Spitfire (without suit)",
-            "price": 50,
-            "img": "/media/avatars/spitfire2_right.gif"
-        },
-        {
-            "items": [
-                {
-                    "type": "avatar",
-                    "avatar_name": "soarin"
-                }
-            ],
-            "name_full": "Soarin'",
-            "price": 50,
-            "img": "/media/avatars/soarin_right.gif"
-        },
-        {
-            "items": [
-                {
-                    "type": "avatar",
-                    "avatar_name": "zecora"
-                }
-            ],
-            "name_full": "Zecora",
-            "price": 50,
-            "img": "/media/avatars/zecora_right.gif"
-        },
-        {
-            "items": [
-                {
-                    "type": "avatar",
-                    "avatar_name": "spike"
-                }
-            ],
-            "name_full": "Spike",
-            "price": 50,
-            "img": "/media/avatars/spike_right.gif"
-        },
-        {
-            "items": [
-                {
-                    "type": "avatar",
-                    "avatar_name": "discord"
-                }
-            ],
-            "name_full": "Discord",
-            "price": 50,
-            "img": "/media/avatars/discord_right.gif"
-        },
-        {
-            "items": [
-                {
-                    "type": "avatar",
-                    "avatar_name": "crazypie"
-                }
-            ],
-            "name_full": "Pinkamena Diane Pie",
-            "price": 50,
-            "img": "/media/avatars/crazypie_right.gif"
-        },
-        {
-            "items": [
-                {
-                    "type": "avatar",
-                    "avatar_name": "fillypinkiepie"
-                },
-                {
-                    "type": "avatar",
-                    "avatar_name": "fillypinkiepie2"
-                }
-            ],
-            "name_full": "Filly Pinkie Pie",
-            "price": 50,
-            "img": "/media/avatars/fillypinkiepie_right.gif"
-        },
-        {
-            "items": [
-                {
-                    "type": "avatar",
-                    "avatar_name": "gummy"
-                }
-            ],
-            "name_full": "Gummy",
-            "price": 50,
-            "img": "/media/avatars/gummy_right.gif"
         },
         {
             "items": [
