@@ -36,7 +36,7 @@ Running Server
 --------------
 
 1. Obviously, make sure you have node.js.
-2. `cd` into the `server` directory and do `npm install`. This is equivalent to `npm install websocket` to get [WebSocket-Node](https://github.com/Worlize/WebSocket-Node) (which itself requires node-gyp, do `sudo npm install -g node-gyp` first) and `npm install keypress` to get the keypress module.
+2. `cd` into the `server` directory and do `npm install`. This is equivalent to `npm install websocket` to get [WebSocket-Node](https://github.com/Worlize/WebSocket-Node) (which itself requires node-gyp, do `sudo npm install -g node-gyp` first), `npm install keypress` to get the keypress module and `npm install express` to get express.
 3. Make sure `server/data_user` is writeable.
 4. Run `server.js` (add `--debug` switch if running locally)
 
