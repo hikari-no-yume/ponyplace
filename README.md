@@ -25,7 +25,7 @@ Configuration
 3. Finally, set up a `config.json` file in `server/data_config`, to specify the port listened on for debugging and production modes, and the origins needed. `"allow_missing_origin"`, if `true`, allows clients to connect which don't provide an origin (i.e. non-web browser clients like bots). It doesn't really matter what you set this to, though, since if they can avoid providing an origin, they can also probably fake one. For example:
 
         {
-            "origin": "http://ponyplace.ajf.me",
+            "origin": "http://pp.ajf.me",
             "origin_debug": "http://localhost:8000",
             "port": 8000,
             "port_debug": 8000,
