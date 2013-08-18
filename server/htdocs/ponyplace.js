@@ -1255,6 +1255,7 @@
         chatbox.type = 'text';
         chatbox.id = 'chatbox';
         chatbox.maxLength = 100;
+        chatbox.placeholder = 'Press TAB to switch to the chat box. It also auto-completes nicknames. Type /help to get a command listing.';
         chatbox.onfocus = function () {
             blockMovement = true;
         };
