@@ -1123,8 +1123,8 @@
         for (var i = 0; i < avatarInventory.length; i++) {
             var name = avatarInventory[i];
             if (avatars.hasOwnProperty(name)) {
-                var preview = document.createElement('img');
-                preview.src = '/media/avatars/' + avatars[name][0];
+                var preview = document.createElement('div');
+                preview.style.backgroundImage = 'url(/media/avatars/' + avatars[name][0] + ')';
                 preview.className = 'chooser-preview';
                 (function (images, name) {
                     preview.onclick = function () {
@@ -1132,8 +1132,8 @@
                             subChooser.destroy();
                         }, null);
                         for (var i = 0; i < images.length; i++) {
-                            var preview = document.createElement('img');
-                            preview.src = '/media/avatars/' + images[i];
+                            var preview = document.createElement('div');
+                            preview.style.backgroundImage = 'url(/media/avatars/' + images[i] + ')';
                             preview.className = 'chooser-preview';
                             (function (imgid) {
                                 preview.onclick = function () {

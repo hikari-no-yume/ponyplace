@@ -289,7 +289,20 @@ input[type=submit]:not([disabled]):hover, .button:not([disabled]):hover, button:
     background-color: rgba(255, 192, 203, 0.7);
 }
 
-.chooser-preview, .inventory-item-preview {
+.chooser-preview {
+    height: 70px;
+    width: 70px;
+    display: block;
+    float: left;
+    background-position: left center;
+    background-repeat: no-repeat;
+    background-size: 75%;
+}
+.chooser-preview:hover {
+    cursor: pointer;
+}
+
+.inventory-item-preview {
     max-height: 50px;
     margin: 2px;
     display: block;
