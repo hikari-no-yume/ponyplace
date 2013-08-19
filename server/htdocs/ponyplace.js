@@ -691,7 +691,7 @@
             pushAndUpdateState(me);
             lastmove = cur;
         } else {
-            chatPrint([messages], [
+            chatPrint(['chatlog'], [
                 ['text', 'You are doing that too often.']
             ], 'console');
         }
