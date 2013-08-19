@@ -1241,7 +1241,7 @@
             } else {
                 appendText(chatloglock, 'Lock log');
                 chatlog.className = 'unlocked';
-                chatlog.scrollTop = 0;
+                chatlog.scrollTop = chatlog.scrollHeight;
             }
         };
         chatloglock.disabled = true;
