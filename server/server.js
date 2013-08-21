@@ -156,7 +156,6 @@ var roomManager = {
             type: 'ephemeral',
             name: name,
             user_count: 0,
-            user_noun: " ghosts",
             user_nick: owner,
             locked: false,
             thumbnail: "/media/rooms/cave-thumb.png",
@@ -182,22 +181,35 @@ var roomManager = {
     },
     getList: function () {
         var list = [], that = this;
-        function iterate(room) {
+        function iterate(room, count_override) {
             if (!room.unlisted) {
                 list.push({
                     type: room.type,
                     name: room.name,
                     name_full: room.name_full,
-                    user_count: room.user_count,
+                    user_count: room.user_count || count_override || 0,
                     user_noun: room.user_noun,
-                    thumbnail: room.thumbnail
+                    user_nick: room.user_nick,
+                    thumbnail: room.thumbnail || '/media/rooms/cave-thumb.png'
                 });
             }
         }
-        this.rooms.forEach(iterate);
+        this.rooms.forEach(function (x) { iterate(x); });
         Object.keys(this.ephemeralRooms).forEach(function (name) {
             iterate(that.ephemeralRooms[name]);
         });
+
+        var houses = {};
+        User.forEach(function (user) {
+            if (user.room !== null && user.room.substr(0, 6) === 'house ') {
+                var userName = user.room.substr(6);
+                houses[userName] = (houses[userName] || 0) + 1;
+            }
+        });
+        Object.keys(houses).forEach(function (name) {
+            iterate(User.getHouse(name), houses[name]);
+        });
+
         list.sort(function (room1, room2) {
             return room2.user_count - room1.user_count;
         });
@@ -1086,9 +1098,7 @@ wsServer.on('request', function(request) {
                     } else {
                         if (User.inventoryItems.hasOwnProperty(msg.bg_name)) {
                             room.background = User.inventoryItems[msg.bg_name].background_data;
-                            if (!isHouse) {
-                                room.thumbnail = User.inventoryItems[msg.bg_name].img;
-                            }
+                            room.thumbnail = User.inventoryItems[msg.bg_name].img;
                         } else {
                             user.kick('protocol_error');
                         }

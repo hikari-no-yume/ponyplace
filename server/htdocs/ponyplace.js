@@ -484,10 +484,12 @@
 
             var title = document.createElement('div');
             title.className = 'room-title';
-            if (data.type !== 'ephemeral') {
+            if (data.type === 'real') {
                 appendText(title, data.name_full + ' (' + data.user_count + ' ' + data.user_noun + ')');
-            } else {
+            } else if (data.type === 'ephemeral') {
                 appendText(title, '"' + data.name + '" (ephemeral; ' + data.user_count + ' users)');
+            } else if (data.type === 'house') {
+                appendText(title, data.user_nick + "'s house (" + data.user_count + " users)");
             }
             preview.appendChild(title);
             

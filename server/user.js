@@ -250,6 +250,7 @@ User.getHouse = function (nick) {
         name: 'house ' + nick,
         user_nick: nick,
         locked: false,
+        thumbnail: '/media/rooms/cave-thumb.png',
         background: {
             data: '/media/rooms/cave.png',
             width: 960,
