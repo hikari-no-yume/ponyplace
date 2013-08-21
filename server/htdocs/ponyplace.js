@@ -29,7 +29,7 @@
         chooser, chooserbutton,
         inventorylist, inventorylistbutton,
         friendslist, friendslistbutton,
-        roomlistbutton, roomlist, refreshbutton, homebutton,
+        roomlistbutton, roomlist, roomlistopen = false, refreshbutton, homebutton,
         roomedit, roomeditbutton, roomeditreset, roomeditvisible,
         background, roomwidgets,
         chatbar, chatbox, chatboxholder, chatbutton, chatlog, chatloglock, chatloglocked = false;
@@ -443,7 +443,7 @@
 
     function updateRoomList(rooms) {
         var preview, img, title;
-        roomlist.content.innerHTML = '';
+        roomlist.innerHTML = '';
 
         // refresh button
         var refreshbutton = document.createElement('button');
@@ -453,24 +453,25 @@
                 type: 'room_list'
             }));
         };
-        roomlist.content.appendChild(refreshbutton);
+        roomlist.appendChild(refreshbutton);
 
         // create new button
         var newbtn = document.createElement('button');
-        appendText(newbtn, 'Create new ephemeral room');
+        appendText(newbtn, 'Create room');
         newbtn.onclick = function () {
-            var roomName = prompt('Choose a room name (cannot contain spaces)', '');
+            var roomName = prompt('Create an ephemeral room:\nChoose a room name (cannot contain spaces)', '');
             if (roomName.indexOf(' ') === -1) {
                 socket.send(JSON.stringify({
                     type: 'room_change',
                     name: roomName
                 }));
-                roomlist.hide();
+                roomlist.style.display = 'none';
+                roomlistopen = false;
             } else {
                 alert('Room names cannot contain spaces.');
             }
         };
-        roomlist.content.appendChild(newbtn);
+        roomlist.appendChild(newbtn);
 
         for (var i = 0; i < rooms.length; i++) {
             var data = rooms[i];
@@ -496,11 +497,12 @@
                         type: 'room_change',
                         name: name
                     }));
-                    roomlist.hide();
+                    roomlist.style.display = 'none';
+                    roomlistopen = false;
                 };
             }(data.name));
             
-            roomlist.content.appendChild(preview);
+            roomlist.appendChild(preview);
         }
 
         // show list button
@@ -1351,13 +1353,17 @@
         homebutton.disabled = true;
         topbuttons.appendChild(homebutton);
 
-        roomlist = makePopup('#room-list', 'Rooms', true, 200, 200, true);
-        roomlist.hide();
         roomlistbutton = document.createElement('button');
         roomlistbutton.id = 'room-list-button';
         appendText(roomlistbutton, 'Choose room');
         roomlistbutton.onclick = function () {
-            roomlist.show();
+            if (!roomlistopen) {
+                roomlist.style.display = 'block';
+                roomlistopen = true;
+            } else {
+                roomlist.style.display = 'none';
+                roomlistopen = false;
+            }
         };
         roomlistbutton.disabled = true;
         topbuttons.appendChild(roomlistbutton);
@@ -1557,6 +1563,11 @@
 
         initGUI_topbar();
         initGUI_chatbar();
+
+        roomlist = document.createElement('div');
+        roomlist.id = 'room-list';
+        overlay.appendChild(roomlist);
+
         initGUI_login();
 
         window.onfocus = function () {
@@ -1753,7 +1764,8 @@
                             }));
                         // otherwise show room chooser popup
                         } else {
-                            roomlist.show();
+                            roomlist.style.display = 'block';
+                            roomlistopen = true;
                         }
                     }
 
@@ -1910,6 +1922,7 @@
                         window.setTimeout(function () {
                             alert('ponyplace update happening - page will reload');
                             window.location.reload();
+
                         }, (5+Math.floor(Math.random() * 5)) * 1000);
                     } else {
                         alert('You were disconnected for an unrecognised reason: "' + msg.reason + '"');
